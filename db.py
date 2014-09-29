@@ -58,6 +58,13 @@ def connection_info():
 #   #   to char/varchar values.
 #   proc.execute()
 #   ??? exactly how to get results?
+#   for row in conn:
+#       print # something appropriate to results
+#       e.g., print "Firstname: %s, LastName: %s" % (row['firstname'],row['lastname'])
+#   conn.close()
+#
+#   ? do procedure results go to conn or proc?
+#
 
 #
 #   dbtype:  one of (dbtype in CAPS, MS SQL type in parens):
@@ -82,7 +89,7 @@ def connection_info():
 #           (in transition to using Unit IDs as input)
 #
 
-def seqvar_range_1():
+def seqvar_range_1(conn):
     """
     Run stored procedure to collect sequence variants for a single range of positions, defined
     via the PDB sequence numbering system (using Unit IDs).
@@ -93,4 +100,33 @@ def seqvar_range_1():
     seqvar_r1.bind(chainid,'SQLCHAR','ChainID','False','False',1)
     seqvar_r1.bind(range1,'SQLCHAR','range1','False','False')
     seqvar_r1.bind(range2,'SQLCHAR','range2','False','False')
+    seqvar_r1.execute()
+
+#
+#   Output from BGSU.SeqVar_Range1 (29 September 2014):
+#   #   Currently has two output sets:  the second contains four additional columns
+#   #   The proc does not yet have logic for selecting between the two output sets
+#   #   How best to turn this into JSON?  Is that conversion necessary?
+#   SeqID
+#   SeqVersion
+#   CompleteFragment
+#   AccessionID
+#   TaxID
+#   ScientificName
+#   LineageName
+#
+
+def results_svr1(conn,seqvar_r1):
+    """
+    Output results from stored procedure BGSU.SeqVar_Range1 (test).
+    Not sure which object will contain the results.
+    """
+    for rc in conn:
+        print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (rc['SeqID'],rc['SeqVersion'],rc['CompleteFragment'])
+        print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(rc['SeqID'],rc['SeqVersion'],rc['CompleteFragment'])
+
+    for rp in seqvar_r1:
+        print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (rp['SeqID'],rp['SeqVersion'],rp['CompleteFragment'])
+
+
 
