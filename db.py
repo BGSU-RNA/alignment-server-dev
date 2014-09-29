@@ -33,13 +33,24 @@ def message_handler(message_state, severity, servername, procname, line, message
             "line = %d, message_text = '%s'" % (message_state, severity, procname,
                                                 line, message_text))
 
-#   Sample run
-rcad_connect()
-try:
-    conn.set_msghandler(message_handler) # Install custom handler.
-    conn.execute_non_query("USE crwss") # Gets called here; should fail.
-finally:
-    conn.close()
+def connection_test():
+    #   Sample run
+    rcad_connect()
+    try:
+        conn.set_msghandler(message_handler) # Install custom handler.
+        conn.execute_non_query("USE crwss") # Gets called here; should fail and produce error.
+
+        proc = conn.init_procedure(BGSU.SeqVar_Range1)
+
+        #   Skipping binding values for initial test.  Procedure has defaults set.
+
+        proc.execute()
+
+        for row in conn:
+            print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
+            #   enough for testing -- if this works, we add more
+    finally:
+        conn.close()
 
 def connection_info():
     print("Connected: %s\nCharset: %s\nTDS: %s" % (conn.connected(), conn.charset(), conn.tds_version()))
@@ -62,8 +73,6 @@ def connection_info():
 #       print # something appropriate to results
 #       e.g., print "Firstname: %s, LastName: %s" % (row['firstname'],row['lastname'])
 #   conn.close()
-#
-#   ? do procedure results go to conn or proc?
 #
 
 #
@@ -107,26 +116,18 @@ def seqvar_range_1(conn):
 #   #   Currently has two output sets:  the second contains four additional columns
 #   #   The proc does not yet have logic for selecting between the two output sets
 #   #   How best to turn this into JSON?  Is that conversion necessary?
-#   SeqID
-#   SeqVersion
-#   CompleteFragment
-#   AccessionID
-#   TaxID
-#   ScientificName
-#   LineageName
+#   COMMON:  0) SeqID; 1) SeqVersion; 2) CompleteFragment;
+#   ADDITIONAL:  3) AccessionID; 4) TaxID; 5) ScientificName; 6) LineageName.
 #
 
-def results_svr1(conn,seqvar_r1):
+def results_svr1(conn):
     """
     Output results from stored procedure BGSU.SeqVar_Range1 (test).
-    Not sure which object will contain the results.
     """
-    for rc in conn:
-        print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (rc['SeqID'],rc['SeqVersion'],rc['CompleteFragment'])
-        print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(rc['SeqID'],rc['SeqVersion'],rc['CompleteFragment'])
+    for row in conn:
+        print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
+        print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
 
-    for rp in seqvar_r1:
-        print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (rp['SeqID'],rp['SeqVersion'],rp['CompleteFragment'])
 
 
 
