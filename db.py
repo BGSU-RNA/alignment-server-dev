@@ -1,6 +1,11 @@
 from os import getenv
-#import pymssql # not sure if these routines will also be useful
-import _mssql # stored procedure support
+
+try:
+    #if dbmsName in (DBMS.MSSQL, DBMS.SYBASE)
+    #import pymssql # not sure if these routines will also be useful
+    import _mssql # stored procedure support
+except ImportError:
+    pass
 
 def rcad_connect():
     """Open connection to rCAD @ UT for data retrieval.
@@ -49,7 +54,21 @@ def connection_info():
 #
 #   conn.init_procedure(name)
 #   proc.bind(value,dbtype,name=None,output=False,null=False,max_length=-1)
+#   #   if proc.bind behaves like PHP mssql_bind(), max_length only applies
+#   #   to char/varchar values.
 #   proc.execute()
+#   ??? exactly how to get results?
+
+#
+#   dbtype:  one of (dbtype in CAPS, MS SQL type in parens):
+#       SQLBINARY, SQLBIT (bit), SQLBITN, SQLCHAR (char), SQLDATETIME, SQLDATETIM4, 
+#       SQLDATETIMN, SQLDECIMAL, SQLFLT4, SQLFLT8 (bigint?), SQLFLTN, SQLIMAGE, 
+#       SQLINT1 (tinyint), SQLINT2 (smallint), SQLINT4 (int), SQLINT8, SQLINTN, 
+#       SQLMONEY, SQLMONEY4, SQLMONEYN, SQLNUMERIC, SQLREAL, SQLTEXT (text), 
+#       SQLVARBINARY, SQLVARCHAR (varchar), SQLUUID
+#
+#   see http://msdn.microsoft.com/en-us/library/cc296193.aspx for additional guidelines
+#
 
 #
 #   Current (2014-09-24) stored procedures and parameters:
@@ -62,3 +81,16 @@ def connection_info():
 #       BGSU.SeqVar_Range2
 #           (in transition to using Unit IDs as input)
 #
+
+def seqvar_range_1():
+    """
+    Run stored procedure to collect sequence variants for a single range of positions, defined
+    via the PDB sequence numbering system (using Unit IDs).
+    """
+    conn.init_procedure(seqvar_r1)
+    seqvar_r1.bind(pdbid,'SQLCHAR','PDBID','False','False',4)
+    seqvar_r1.bind(modnum,'SQLINT1','ModNum','False','False')
+    seqvar_r1.bind(chainid,'SQLCHAR','ChainID','False','False',1)
+    seqvar_r1.bind(range1,'SQLCHAR','range1','False','False')
+    seqvar_r1.bind(range2,'SQLCHAR','range2','False','False')
+
