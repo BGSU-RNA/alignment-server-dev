@@ -121,7 +121,7 @@ def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
         @range1     int     # lower boundary of range, in PDB numbering (default = 887)
         @range2     int     # upper boundary of range, in PDB numbering (default = 894)
     """
-    proc = conn.init_procedure('SeqVar_Range1')
+    proc = conn.init_procedure('BGSU.SeqVar_Range1')
 
     proc.bind(pdbid, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
               max_length=4)
