@@ -40,14 +40,18 @@ def connection_test():
     #   Sample run
     rcad_connect()
     try:
+        connection_info()
         conn.set_msghandler(message_handler) # Install custom handler.
         conn.execute_non_query("USE crwss") # Gets called here; should fail and produce error.
 
-        proc = conn.init_procedure(BGSU.SeqVar_Range1)
+         #   Manually binding the default values for initial test.
+        pdbid   = "2AW7"
+        modnum  = "1"
+        chainid = "A"
+        range1  = "887"
+        range2  = "894"
 
-        #   Skipping binding values for initial test.  Procedure has defaults set.
-
-        proc.execute()
+        seqvar_range_1(conn)
 
         for row in conn:
             print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
@@ -55,8 +59,21 @@ def connection_test():
     finally:
         conn.close()
 
-def connection_info():
-    print("Connected: %s\nCharset: %s\nTDS: %s" % (conn.connected(), conn.charset(), conn.tds_version()))
+def connection_info(conn):
+    """
+    Output information about the current Microsoft SQL Server database connection.
+
+    Available fields:
+        connected
+        charset
+        identity
+        query_timeout
+        rows_affected
+        debug_queries
+        tds_version
+    """
+#   print("Connected: %s\nCharset: %s\nTDS: %s" % (conn.connected(), conn.charset(), conn.tds_version()))
+    print "Connected: {}\nCharset: {}\nTDS: {}".format(conn.connected(),conn.charset(),conn.tds_version())
 
 #
 #   the key functions are weakly documented as of September 2014
@@ -90,49 +107,48 @@ def connection_info():
 #
 
 #
-#   Current (2014-09-24) stored procedures and parameters:
-#       BGSU.SeqVar_Range1
-#           @PDBID      char(4) # PDB identifier   (default = 2AW7)
-#           @ModNum     tinyint # model number     (default = 1)
-#           @ChainID    char(1) # chain identifier (default = A)
-#           @range1     int     # lower boundary of range, in PDB numbering
-#           @range2     int     # upper boundary of range, in PDB numbering
-#       BGSU.SeqVar_Range2
-#           (in transition to using Unit IDs as input)
+#   Other (2014-10-01) stored procedures, parameters, and defaults:
+#       BGSU.SeqVar_Range2 (in transition to using Unit IDs as input)
 #
 
 def seqvar_range_1(conn):
     """
     Run stored procedure to collect sequence variants for a single range of positions, defined
     via the PDB sequence numbering system (using Unit IDs).
-    """
-    conn.init_procedure(seqvar_r1)
-    seqvar_r1.bind(pdbid,'SQLCHAR','PDBID','False','False',4)
-    seqvar_r1.bind(modnum,'SQLINT1','ModNum','False','False')
-    seqvar_r1.bind(chainid,'SQLCHAR','ChainID','False','False',1)
-    seqvar_r1.bind(range1,'SQLCHAR','range1','False','False')
-    seqvar_r1.bind(range2,'SQLCHAR','range2','False','False')
-    seqvar_r1.execute()
 
-#
-#   Output from BGSU.SeqVar_Range1 (29 September 2014):
-#   #   Currently has two output sets:  the second contains four additional columns
-#   #   The proc does not yet have logic for selecting between the two output sets
-#   #   How best to turn this into JSON?  Is that conversion necessary?
-#   COMMON:  0) SeqID; 1) SeqVersion; 2) CompleteFragment;
-#   ADDITIONAL:  3) AccessionID; 4) TaxID; 5) ScientificName; 6) LineageName.
-#
+    BGSU.SeqVar_Range1
+        @PDBID      char(4) # PDB identifier   (default = 2AW7)
+        @ModNum     tinyint # model number     (default = 1)
+        @ChainID    char(1) # chain identifier (default = A)
+        @range1     int     # lower boundary of range, in PDB numbering (default = 887)
+        @range2     int     # upper boundary of range, in PDB numbering (default = 894)
+    """
+    conn.init_procedure(SeqVar_Range1)
+
+    SeqVar_Range1.bind(pdbid,'SQLCHAR','PDBID','False','False',4)
+    SeqVar_Range1.bind(modnum,'SQLINT1','ModNum','False','False')
+    SeqVar_Range1.bind(chainid,'SQLCHAR','ChainID','False','False',1)
+    SeqVar_Range1.bind(range1,'SQLCHAR','range1','False','False')
+    SeqVar_Range1.bind(range2,'SQLCHAR','range2','False','False')
+
+    SeqVar_Range1.execute()
 
 def results_svr1(conn):
     """
     Output results from stored procedure BGSU.SeqVar_Range1 (test).
+
+    Currently (2014-10-01) has two output sets:  the second contains four additional columns
+    The proc does not yet have logic for selecting between the two output sets
+    How best to turn this into JSON?  Is that conversion necessary?
+    COMMON:  0) SeqID; 1) SeqVersion; 2) CompleteFragment;
+    ADDITIONAL:  3) AccessionID; 4) TaxID; 5) ScientificName; 6) LineageName.
     """
     for row in conn:
-        #   just grabbing the three key items for now
-        #   second print statement is more modern python
-        print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
+        #   the three key items
+        #print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
         print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
 
+        #   all seven items
         #print "SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, TaxID: {}, Scientific Name: {}, "
         #    "Taxonomic Lineage: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'],row['AccessionID'],
         #    row['TaxID'],row['ScientificName'],row['LineageName'])
