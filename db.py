@@ -123,7 +123,7 @@ def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
     """
     proc = conn.init_procedure('SeqVar_Range1')
 
-     proc.bind(pdbid, 'SQLCHAR', '@PDBID', null=False, output=False,
+    proc.bind(pdbid, 'SQLCHAR', '@PDBID', null=False, output=False,
               max_length=4)
     proc.bind(modnum, 'SQLINT1', '@ModNum', null=False, output=False)
     proc.bind(chainid, 'SQLCHAR', '@ChainID', null=False, output=False,
