@@ -126,8 +126,8 @@ def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
     proc.bind(pdbid, 'SQLCHAR', '@PDBID', 'False', 'False', 4)
     proc.bind(modnum, 'SQLINT1', '@ModNum', 'False', 'False')
     proc.bind(chainid, 'SQLCHAR', '@ChainID', 'False', 'False', 1)
-    proc.bind(range1, 'SQLINT4', '@range1', 'False', 'False')
-    proc.bind(range2, 'SQLINT4', '@range2', 'False', 'False')
+    proc.bind(range1, 'SQLCHAR', '@range1', 'False', 'False')
+    proc.bind(range2, 'SQLCHAR', '@range2', 'False', 'False')
 
     proc.execute()
 
