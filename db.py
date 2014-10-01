@@ -93,9 +93,9 @@ def connection_info(conn):
         connected // charset // identity // query_timeout
         rows_affected // debug_queries // tds_version
     """
-    print("Connected: {}\nCharset: {}\nTDS: {}".format(conn.connected(),
-                                                       conn.charset(),
-                                                       conn.tds_version()))
+    print("Connected: {}\nCharset: {}\nTDS: {}".format(conn.connected,
+                                                       conn.charset,
+                                                       conn.tds_version))
 
 #
 #   NOTES for Parameter Binding:
