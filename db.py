@@ -5,12 +5,30 @@ try:
     #import pymssql # not sure if these routines will also be useful
     import _mssql # stored procedure support
 except ImportError:
-    pass
+    pass # or better to die, since none of the other functions will work?
+
+#
+#   METACODE for a single procedure run (TBD if open/close steps should be included)
+#
+#   (OPEN connection:  rcad.connect())
+#   INITIALIZE the procedure:  conn.init_procedure(name)
+#   BIND parameters:  proc.bind(value,dbtype,name=None,output=False,null=False,max_length=-1)
+#       Note:  if proc.bind behaves like PHP mssql_bind(), max_length only applies to char/varchar values.
+#   EXECUTE procedure:  proc.execute()
+#   OBTAIN results:
+#       for row in conn:
+#           print "Firstname: %s, LastName: %s" % (row['firstname'],row['lastname'])
+#   (CLOSE connection:  conn.close())
+#
+
 
 def rcad_connect():
-    """Open connection to rCAD @ UT for data retrieval.
+    """
+    Open connection to rCAD @ UT for data retrieval.
     """
     #   Credentials:  hostname, username, password
+    #   Refactor this so that the credentials are not hardcoded within the web infrastructure.
+    #       Environment variables should be a viable option.  Others?
     hostname = getenv("RCAD_HOSTNAME") if getenv("RCAD_HOSTNAME") else "crw-rcad.austin.utexas.edu:1433"
     username = getenv("RCAD_USERNAME") if getenv("RCAD_USERNAME") else "BGSU"
     password = getenv("RCAD_PASSWORD") if getenv("RCAD_PASSWORD") else "b1g4s3uDHRuNbA$"
@@ -19,6 +37,7 @@ def rcad_connect():
     #   option:  add 'tds_version="8.0"'
     #   option:  add 'appname="BGSU_Alignment_Server"'
     #   possible:  tinker with conn_properties.  Default looks reasonable.
+    #   consider:  refactor all of these outside the web infrastructure?  (except for any local overrides?)
 
 #def exception_handling_example():
 #   try:
@@ -33,7 +52,7 @@ def message_handler(message_state, severity, servername, procname, line, message
     Prints message to stdout; assembled from information sent by the server.
     """
     print("message_handler: message_state = %d, severity = %d, procname = '%s', "
-            "line = %d, message_text = '%s'" % (message_state, severity, procname,
+            "line = %d, message_text = '%s'" % (message_state, severity, procname, \
                                                 line, message_text))
 
 def connection_test():
@@ -41,8 +60,13 @@ def connection_test():
     rcad_connect()
     try:
         connection_info()
-        conn.set_msghandler(message_handler) # Install custom handler.
-        conn.execute_non_query("USE crwss") # Gets called here; should fail and produce error.
+        
+        conn.set_msghandler(message_handler) # Install custom handler.  Necessary?  Useful?
+        
+        try:
+            conn.execute_non_query("USE crwss") # Gets called here; should fail and produce error.
+        except:
+            raise
 
          #   Manually binding the default values for initial test.
         pdbid   = "2AW7"
@@ -52,10 +76,7 @@ def connection_test():
         range2  = "894"
 
         seqvar_range_1(conn)
-
-        for row in conn:
-            print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
-            #   enough for testing -- if this works, we add more
+        results_svr1(conn)
     finally:
         conn.close()
 
@@ -64,45 +85,20 @@ def connection_info(conn):
     Output information about the current Microsoft SQL Server database connection.
 
     Available fields:
-        connected
-        charset
-        identity
-        query_timeout
-        rows_affected
-        debug_queries
-        tds_version
+        connected // charset // identity // query_timeout
+        rows_affected // debug_queries // tds_version
     """
 #   print("Connected: %s\nCharset: %s\nTDS: %s" % (conn.connected(), conn.charset(), conn.tds_version()))
     print "Connected: {}\nCharset: {}\nTDS: {}".format(conn.connected(),conn.charset(),conn.tds_version())
 
 #
-#   the key functions are weakly documented as of September 2014
-#   will take some trial and error, but fortunately these functions resemble
-#       the PHP PEAR stored procedure functions, which helps A LOT
-#
-#   Currently missing:  a good example of how to parse the results from
-#       a stored procedure
-#
-#   conn.init_procedure(name)
-#   proc.bind(value,dbtype,name=None,output=False,null=False,max_length=-1)
-#   #   if proc.bind behaves like PHP mssql_bind(), max_length only applies
-#   #   to char/varchar values.
-#   proc.execute()
-#   ??? exactly how to get results?
-#   for row in conn:
-#       print # something appropriate to results
-#       e.g., print "Firstname: %s, LastName: %s" % (row['firstname'],row['lastname'])
-#   conn.close()
-#
-
+#   NOTES for Parameter Binding:
 #
 #   dbtype:  one of (dbtype in CAPS, MS SQL type in parens):
-#       SQLBINARY, SQLBIT (bit), SQLBITN, SQLCHAR (char), SQLDATETIME, SQLDATETIM4, 
-#       SQLDATETIMN, SQLDECIMAL, SQLFLT4, SQLFLT8 (bigint?), SQLFLTN, SQLIMAGE, 
-#       SQLINT1 (tinyint), SQLINT2 (smallint), SQLINT4 (int), SQLINT8, SQLINTN, 
-#       SQLMONEY, SQLMONEY4, SQLMONEYN, SQLNUMERIC, SQLREAL, SQLTEXT (text), 
+#       SQLBINARY, SQLBIT (bit), SQLBITN, SQLCHAR (char), SQLDATETIME, SQLDATETIM4, SQLDATETIMN, SQLDECIMAL, 
+#       SQLFLT4, SQLFLT8 (bigint?), SQLFLTN, SQLIMAGE, SQLINT1 (tinyint), SQLINT2 (smallint), SQLINT4 (int), 
+#       SQLINT8, SQLINTN, SQLMONEY, SQLMONEY4, SQLMONEYN, SQLNUMERIC, SQLREAL, SQLTEXT (text), 
 #       SQLVARBINARY, SQLVARCHAR (varchar), SQLUUID
-#
 #   see http://msdn.microsoft.com/en-us/library/cc296193.aspx for additional guidelines
 #
 
@@ -143,15 +139,20 @@ def results_svr1(conn):
     COMMON:  0) SeqID; 1) SeqVersion; 2) CompleteFragment;
     ADDITIONAL:  3) AccessionID; 4) TaxID; 5) ScientificName; 6) LineageName.
     """
-    for row in conn:
+
+    res1 = [ row for row in conn ] # first result set (three common columns)
+    res2 = [ row for row in conn ] # second result set (all seven columns)
+
+    for row in res1:
         #   the three key items
         #print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
         print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
 
+    for row in res2:
         #   all seven items
-        #print "SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, TaxID: {}, Scientific Name: {}, "
-        #    "Taxonomic Lineage: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'],row['AccessionID'],
-        #    row['TaxID'],row['ScientificName'],row['LineageName'])
+        print "SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, TaxID: {}, Scientific Name: {}, "
+            "Taxonomic Lineage: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'], \
+            row['AccessionID'],row['TaxID'],row['ScientificName'],row['LineageName'])
 
 
 
