@@ -60,7 +60,7 @@ def connection_test():
     #   Sample run
     conn = rcad_connect()
     try:
-        connection_info()
+        connection_info(conn)
 
         conn.set_msghandler(message_handler) # Install custom handler.  Necessary?  Useful?
 
@@ -76,7 +76,7 @@ def connection_test():
         range1  = "887"
         range2  = "894"
 
-        seqvar_range_1(conn)
+        seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2)
         results_svr1(conn)
     finally:
         conn.close()
@@ -108,7 +108,7 @@ def connection_info(conn):
 #       BGSU.SeqVar_Range2 (in transition to using Unit IDs as input)
 #
 
-def seqvar_range_1(conn):
+def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
     """
     Run stored procedure to collect sequence variants for a single range of positions, defined
     via the PDB sequence numbering system (using Unit IDs).
