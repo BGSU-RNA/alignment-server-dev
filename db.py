@@ -48,13 +48,16 @@ def rcad_connect():
 #   finally:
 #       conn.close()
 
-def message_handler(message_state, severity, servername, procname, line, message_text):
+
+def message_handler(message_state, severity, servername, procname, line,
+                    message_text):
     """
     Prints message to stdout; assembled from information sent by the server.
     """
-    print("message_handler: message_state = %d, severity = %d, procname = '%s', "
-            "line = %d, message_text = '%s'" % (message_state, severity, procname, \
-                                                line, message_text))
+    print("message_handler: message_state = %d, severity = %d, procname = '%s', ",
+          "line = %d, message_text = '%s'" % (message_state, severity, procname,
+                                              line, message_text))
+
 
 def connection_test():
     #   Sample run
@@ -69,7 +72,7 @@ def connection_test():
         except:
             raise
 
-         #   Manually binding the default values for initial test.
+        #   Manually binding the default values for initial test.
         pdbid   = "2AW7"
         modnum  = "1"
         chainid = "A"
@@ -81,6 +84,7 @@ def connection_test():
     finally:
         conn.close()
 
+
 def connection_info(conn):
     """
     Output information about the current Microsoft SQL Server database connection.
@@ -89,8 +93,9 @@ def connection_info(conn):
         connected // charset // identity // query_timeout
         rows_affected // debug_queries // tds_version
     """
-#   print("Connected: %s\nCharset: %s\nTDS: %s" % (conn.connected(), conn.charset(), conn.tds_version()))
-    print "Connected: {}\nCharset: {}\nTDS: {}".format(conn.connected(),conn.charset(),conn.tds_version())
+    print("Connected: {}\nCharset: {}\nTDS: {}".format(conn.connected(),
+                                                       conn.charset(),
+                                                       conn.tds_version()))
 
 #
 #   NOTES for Parameter Binding:
@@ -107,6 +112,7 @@ def connection_info(conn):
 #   Other (2014-10-01) stored procedures, parameters, and defaults:
 #       BGSU.SeqVar_Range2 (in transition to using Unit IDs as input)
 #
+
 
 def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
     """
@@ -130,6 +136,7 @@ def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
 
     SeqVar_Range1.execute()
 
+
 def results_svr1(conn):
     """
     Output results from stored procedure BGSU.SeqVar_Range1 (test).
@@ -141,16 +148,19 @@ def results_svr1(conn):
     ADDITIONAL:  3) AccessionID; 4) TaxID; 5) ScientificName; 6) LineageName.
     """
 
-    res1 = [ row for row in conn ] # first result set (three common columns)
-    res2 = [ row for row in conn ] # second result set (all seven columns)
+    res1 = [row for row in conn]  # first result set (three common columns)
+    res2 = [row for row in conn]  # second result set (all seven columns)
 
     for row in res1:
         #   the three key items
-        #print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
-        print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
+        print("SeqID.SeqVersion: {}.{}, Sequence: {}".format(
+            row['SeqID'], row['SeqVersion'], row['CompleteFragment']))
 
     for row in res2:
         #   all seven items
         print("SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, TaxID: {}, Scientific Name: {}, ",
-              "Taxonomic Lineage: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'], \
-                                             row['AccessionID'],row['TaxID'],row['ScientificName'],row['LineageName']))
+              "Taxonomic Lineage: {}".format(row['SeqID'], row['SeqVersion'],
+                                             row['CompleteFragment'],
+                                             row['AccessionID'], row['TaxID'],
+                                             row['ScientificName'],
+                                             row['LineageName']))
