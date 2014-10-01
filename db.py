@@ -16,6 +16,9 @@ def rcad_connect():
     password = getenv("RCAD_PASSWORD") if getenv("RCAD_PASSWORD") else "b1g4s3uDHRuNbA$"
 
     conn = _mssql.connect(server='hostname',user='username',password='password',database="crwdb")
+    #   option:  add 'tds_version="8.0"'
+    #   option:  add 'appname="BGSU_Alignment_Server"'
+    #   possible:  tinker with conn_properties.  Default looks reasonable.
 
 #def exception_handling_example():
 #   try:
@@ -56,7 +59,7 @@ def connection_info():
     print("Connected: %s\nCharset: %s\nTDS: %s" % (conn.connected(), conn.charset(), conn.tds_version()))
 
 #
-#   the key functions are poorly documented as of September 2014
+#   the key functions are weakly documented as of September 2014
 #   will take some trial and error, but fortunately these functions resemble
 #       the PHP PEAR stored procedure functions, which helps A LOT
 #
@@ -125,8 +128,14 @@ def results_svr1(conn):
     Output results from stored procedure BGSU.SeqVar_Range1 (test).
     """
     for row in conn:
+        #   just grabbing the three key items for now
+        #   second print statement is more modern python
         print "SeqID.SeqVersion: %d.%d, Sequence: %s" % (row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
         print "SeqID.SeqVersion: {}.{}, Sequence: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'])
+
+        #print "SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, TaxID: {}, Scientific Name: {}, "
+        #    "Taxonomic Lineage: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'],row['AccessionID'],
+        #    row['TaxID'],row['ScientificName'],row['LineageName'])
 
 
 
