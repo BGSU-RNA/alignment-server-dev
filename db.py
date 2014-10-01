@@ -33,7 +33,7 @@ def rcad_connect():
     username = getenv("RCAD_USERNAME") if getenv("RCAD_USERNAME") else "BGSU"
     password = getenv("RCAD_PASSWORD") if getenv("RCAD_PASSWORD") else "b1g4s3uDHRuNbA$"
 
-    conn = _mssql.connect(server=hostname, user=username, password=password,
+    return _mssql.connect(server=hostname, user=username, password=password,
                           database="crwdb")
     #   option:  add 'tds_version="8.0"'
     #   option:  add 'appname="BGSU_Alignment_Server"'
@@ -58,7 +58,7 @@ def message_handler(message_state, severity, servername, procname, line, message
 
 def connection_test():
     #   Sample run
-    rcad_connect()
+    conn = rcad_connect()
     try:
         connection_info()
 
