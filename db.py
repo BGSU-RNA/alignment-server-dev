@@ -7,6 +7,7 @@ try:
 except ImportError:
     pass # or better to die, since none of the other functions will work?
 
+
 #
 #   METACODE for a single procedure run (TBD if open/close steps should be included)
 #
@@ -40,32 +41,12 @@ def rcad_connect():
     #   possible:  tinker with conn_properties.  Default looks reasonable.
     #   consider:  refactor all of these outside the web infrastructure?  (except for any local overrides?)
 
-#def exception_handling_example():
-#   try:
-#       conn.execute_non_query('CREATE TABLE munge(id INT, name VARCHAR(50))')
-#   except:
-#       raise
-#   finally:
-#       conn.close()
-
-
-def message_handler(message_state, severity, servername, procname, line,
-                    message_text):
-    """
-    Prints message to stdout; assembled from information sent by the server.
-    """
-    print("message_handler: message_state = %d, severity = %d, procname = '%s', ",
-          "line = %d, message_text = '%s'" % (message_state, severity, procname,
-                                              line, message_text))
-
 
 def connection_test():
     #   Sample run
     conn = rcad_connect()
     try:
         connection_info(conn)
-
-        # conn.set_msghandler(message_handler) # Install custom handler.  Necessary?  Useful?
 
         #   Manually binding the default values for initial test.
         pdbid   = "2AW7"
@@ -91,6 +72,7 @@ def connection_info(conn):
     print("Connected: {}\nCharset: {}\nTDS: {}".format(conn.connected,
                                                        conn.charset,
                                                        conn.tds_version))
+
 
 #
 #   NOTES for Parameter Binding:
