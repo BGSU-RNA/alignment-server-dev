@@ -60,9 +60,9 @@ def connection_test():
     rcad_connect()
     try:
         connection_info()
-        
+
         conn.set_msghandler(message_handler) # Install custom handler.  Necessary?  Useful?
-        
+
         try:
             conn.execute_non_query("USE crwss") # Gets called here; should fail and produce error.
         except:
@@ -95,9 +95,9 @@ def connection_info(conn):
 #   NOTES for Parameter Binding:
 #
 #   dbtype:  one of (dbtype in CAPS, MS SQL type in parens):
-#       SQLBINARY, SQLBIT (bit), SQLBITN, SQLCHAR (char), SQLDATETIME, SQLDATETIM4, SQLDATETIMN, SQLDECIMAL, 
-#       SQLFLT4, SQLFLT8 (bigint?), SQLFLTN, SQLIMAGE, SQLINT1 (tinyint), SQLINT2 (smallint), SQLINT4 (int), 
-#       SQLINT8, SQLINTN, SQLMONEY, SQLMONEY4, SQLMONEYN, SQLNUMERIC, SQLREAL, SQLTEXT (text), 
+#       SQLBINARY, SQLBIT (bit), SQLBITN, SQLCHAR (char), SQLDATETIME, SQLDATETIM4, SQLDATETIMN, SQLDECIMAL,
+#       SQLFLT4, SQLFLT8 (bigint?), SQLFLTN, SQLIMAGE, SQLINT1 (tinyint), SQLINT2 (smallint), SQLINT4 (int),
+#       SQLINT8, SQLINTN, SQLMONEY, SQLMONEY4, SQLMONEYN, SQLNUMERIC, SQLREAL, SQLTEXT (text),
 #       SQLVARBINARY, SQLVARCHAR (varchar), SQLUUID
 #   see http://msdn.microsoft.com/en-us/library/cc296193.aspx for additional guidelines
 #
@@ -150,10 +150,6 @@ def results_svr1(conn):
 
     for row in res2:
         #   all seven items
-        print "SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, TaxID: {}, Scientific Name: {}, "
-            "Taxonomic Lineage: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'], \
-            row['AccessionID'],row['TaxID'],row['ScientificName'],row['LineageName'])
-
-
-
-
+        print("SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, TaxID: {}, Scientific Name: {}, ",
+              "Taxonomic Lineage: {}".format(row['SeqID'],row['SeqVersion'],row['CompleteFragment'], \
+                                             row['AccessionID'],row['TaxID'],row['ScientificName'],row['LineageName']))
