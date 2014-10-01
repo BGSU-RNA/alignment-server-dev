@@ -128,8 +128,8 @@ def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
     proc.bind(modnum, _mssql.SQLINT1, '@ModNum', null=False, output=False)
     proc.bind(chainid, _mssql.SQLCHAR, '@ChainID', null=False, output=False,
               max_length=1)
-    proc.bind(range1, _mssql.SQLCHAR, '@range1', null=False, output=False)
-    proc.bind(range2, _mssql.SQLCHAR, '@range2', null=False, output=False)
+    proc.bind(range1, _mssql.SQLINT4, '@range1', null=False, output=False)
+    proc.bind(range2, _mssql.SQLINT4, '@range2', null=False, output=False)
 
     proc.execute()
 
