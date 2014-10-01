@@ -65,7 +65,7 @@ def connection_test():
     try:
         connection_info(conn)
 
-        conn.set_msghandler(message_handler) # Install custom handler.  Necessary?  Useful?
+        # conn.set_msghandler(message_handler) # Install custom handler.  Necessary?  Useful?
 
         try:
             conn.execute_non_query("USE crwss") # Gets called here; should fail and produce error.
@@ -126,15 +126,15 @@ def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
         @range1     int     # lower boundary of range, in PDB numbering (default = 887)
         @range2     int     # upper boundary of range, in PDB numbering (default = 894)
     """
-    conn.init_procedure(SeqVar_Range1)
+    proc = conn.init_procedure('SeqVar_Range1')
 
-    SeqVar_Range1.bind(pdbid,'SQLCHAR','PDBID','False','False',4)
-    SeqVar_Range1.bind(modnum,'SQLINT1','ModNum','False','False')
-    SeqVar_Range1.bind(chainid,'SQLCHAR','ChainID','False','False',1)
-    SeqVar_Range1.bind(range1,'SQLCHAR','range1','False','False')
-    SeqVar_Range1.bind(range2,'SQLCHAR','range2','False','False')
+    proc.bind(pdbid, 'SQLCHAR', 'PDBID', 'False', 'False', 4)
+    proc.bind(modnum, 'SQLINT1', 'ModNum', 'False', 'False')
+    proc.bind(chainid, 'SQLCHAR', 'ChainID', 'False', 'False', 1)
+    proc.bind(range1, 'SQLCHAR', 'range1', 'False', 'False')
+    proc.bind(range2, 'SQLCHAR', 'range2', 'False', 'False')
 
-    SeqVar_Range1.execute()
+    proc.execute()
 
 
 def results_svr1(conn):
