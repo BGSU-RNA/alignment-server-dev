@@ -91,6 +91,11 @@ def connection_info(conn):
 #       BGSU.SeqVar_Range2 (in transition to using Unit IDs as input)
 #
 
+#
+#   TODO:  for each range (range1:range2), ensure that range1 <= range 2.
+#   Swap values if reversed.  Proc fails if range1 > range2 (BETWEEN keyword).
+#
+
 def seqvar(db, pdb, model, chain, *ranges):
     if 2 <= len(ranges) <= 5:
         name = 'BGSU.SeqVar_Range%s' % (len(ranges) - 1)
