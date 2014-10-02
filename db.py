@@ -1,4 +1,5 @@
 from os import getenv
+import itertools as it
 
 try:
     #if dbmsName in (DBMS.MSSQL, DBMS.SYBASE)
@@ -89,6 +90,31 @@ def connection_info(conn):
 #   Other (2014-10-01) stored procedures, parameters, and defaults:
 #       BGSU.SeqVar_Range2 (in transition to using Unit IDs as input)
 #
+
+def seqvar(db, pdb, model, chain, *ranges):
+    if 2 <= len(ranges) <= 5:
+        name = 'BGSU.SeqVar_Range%s' % (len(ranges) - 1)
+    else:
+        raise ValueError("Invalid range length")
+
+    proc = db.init_procedure(name)
+
+    proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
+              max_length=4)
+    proc.bind(model, _mssql.SQLINT1, '@ModNum', null=False, output=False)
+    proc.bind(chain, _mssql.SQLCHAR, '@ChainID', null=False, output=False,
+              max_length=1)
+    for index, value in enumerate(ranges):
+        name = '@range%s' % (index + 1)
+        proc.bind(value, _mssql.SQLINT4, name, null=False, output=False)
+
+    proc.execute()
+
+    # Probably not needed to copy into a new dict
+    # TODO: What to do with second, more informative result?
+    #  I would not have the first result at all and always return the second I
+    #  suppose. What is the performance of that like?
+    return [dict(row) for row in db]
 
 
 def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
