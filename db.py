@@ -153,16 +153,9 @@ def results_svr1(conn):
     ADDITIONAL:  3) AccessionID; 4) TaxID; 5) ScientificName; 6) LineageName.
     """
 
-    res1 = [row for row in conn]  # first result set (three common columns)
-    res2 = [row for row in conn]  # second result set (all seven columns)
+    res = [row for row in conn]
 
-    for row in res1:
-        #   the three key items
-        print("SeqID.SeqVersion: {}.{}, Sequence: {}".format(
-            row['SeqID'], row['SeqVersion'], row['CompleteFragment']))
-
-    for row in res2:
-        #   all seven items
+    for row in res:
         print("SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, TaxID: {}, Scientific Name: {}, ",
               "Taxonomic Lineage: {}".format(row['SeqID'], row['SeqVersion'],
                                              row['CompleteFragment'],
