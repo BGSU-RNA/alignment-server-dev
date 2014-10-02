@@ -1,6 +1,8 @@
 from flask import g
 from flask import abort
 
+RANGE_LIMIT = 50
+
 
 def parse_units(raw):
     """Given a raw string of comma separated unit ids or unit id ranges this
