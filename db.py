@@ -210,3 +210,32 @@ def results_svr1(conn):
                                              row['AccessionID'], row['TaxID'],
                                              row['ScientificName'],
                                              row['LineageName']))
+
+
+def list_options(conn):
+    """
+    Contact rCAD for the list of available structure-alignment mappings and
+    return the list.
+
+    No input parameters required.
+
+    Returns four columns per entry:  PDBID (char(4)), ModelNumber (tinyint),
+    ChainID (char(1)), Description (varchar(100)).
+    """
+
+    #   TODO:  identify any missing elements and add them.
+    
+    proc = conn.init_procedure('BGSU.ListAlnServerOptions')
+    proc.execute()
+
+    res = [row for row in conn]
+
+    #   sample output
+    for row in res:
+        print("PDBID: {}, ModelNumber: {}, ChainID: {}, ",
+              "Description: {}".format(row['PDBID'], row['ModelNumber'],
+                                       row['ChainID'],row['Description']))
+
+
+
+
