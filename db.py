@@ -98,15 +98,50 @@ def connection_info(conn):
 #   additional info: http://msdn.microsoft.com/en-us/library/cc296193.aspx
 #       
 
-#
-#   Other (2014-10-01) stored procedures, parameters, and defaults:
-#       BGSU.SeqVar_Range2 (in transition to using Unit IDs as input)
-#
 
 #
-#   TODO:  for each range (range1:range2), ensure that range1 <= range 2.
-#   Swap values if reversed.  Proc fails if range1 > range2 (BETWEEN keyword).
+#   TODO:  build against new stored procedure (BGSU.SeqVar)
 #
+#   Parameters (database type):
+#       @PDBID (char(4))
+#       @ModNum (tinyint)
+#       (five sets of, where 1 <= N <= 5)
+#           @ChainN (char(1))
+#           @rangeNa (int)
+#           @rangeNb (int)
+#
+#   Results (database type):
+#       SeqID (int)
+#       SeqVersion (tinyint)
+#       CompleteFragment (varchar(2504))
+#       AccessionID (varchar(50))
+#       TaxID (int)
+#       ScientificName (varchar(8000))
+#       LineageName (varchar(8000))
+#
+#   For ranges 2-5, @ChainN defaults to NULL, and @rangeNa and @rangeNb default
+#       to 0.  The procedure attempts to process multiple ranges only when
+#       @ChainN is not NULL and both @rangeNa and @rangeNb are greater than 0.
+#
+#   Other defaults (which may need to change):
+#       @PDBID:  '2AW7'
+#       @ModNum:  1
+#       @Chain1:  'A'
+#       @range1a:  887
+#       @range1b:  894
+#
+#   TODO:  for each range (rangeNa:rangeNb), ensure that rangeNa <= rangeNb.
+#       Swap values if reversed.  Proc fails if range1 > range2 (BETWEEN 
+#       keyword).
+#
+#   TODO:  ensure that ranges are filled in order.  If range 2 is empty and 
+#       range 3 is occupied, only range 1 will be displayed.
+#
+#   N.B.  Ranges do not need to occur in order; i.e., range 1 may be 235-240
+#       while range 2 is 115-135.  (Gives the user some flexibility in how
+#       their selections will be displayed.)
+#
+
 
 def seqvar(db, pdb, model, chain, *ranges):
     if 2 <= len(ranges) <= 5:
