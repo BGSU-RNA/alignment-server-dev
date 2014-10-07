@@ -47,7 +47,7 @@ def get_html():
 @app.route('/', methods=['POST'])
 def post_json():
     data = request.get_json() or request.form
-    return json.dumps(ut.compute_variations(data))
+    return json.dumps(ut.compute_variation(data))
 
 
 @mimetype('text/html')
