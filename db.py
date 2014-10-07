@@ -10,14 +10,14 @@ except ImportError:
 
 
 #
-#   METACODE for a single procedure run 
+#   METACODE for a single procedure run
 #   (TBD if open/close steps should be included)
 #
 #   (OPEN connection:  rcad.connect())
 #   INITIALIZE the procedure:  conn.init_procedure(name)
 #   BIND parameters:  proc.bind(value,dbtype,name=None,output=False,null=False,
 #       max_length=-1)
-#       Note:  if proc.bind behaves like PHP mssql_bind(), max_length only 
+#       Note:  if proc.bind behaves like PHP mssql_bind(), max_length only
 #       applies to char/varchar values.
 #   EXECUTE procedure:  proc.execute()
 #   OBTAIN results:
@@ -32,8 +32,8 @@ def rcad_connect():
     Open connection to rCAD @ UT for data retrieval.
     """
     #   Credentials:  hostname, username, password
-    #   Refactor this so that the credentials are not hardcoded within the web 
-    #       infrastructure.  Environment variables should be a viable option.  
+    #   Refactor this so that the credentials are not hardcoded within the web
+    #       infrastructure.  Environment variables should be a viable option.
     #       Others?
     hostname = getenv("RCAD_HOSTNAME") if getenv("RCAD_HOSTNAME") \
         else "crw-rcad.austin.utexas.edu:1433"
@@ -46,7 +46,7 @@ def rcad_connect():
     #   option:  add 'tds_version="8.0"'
     #   option:  add 'appname="BGSU_Alignment_Server"'
     #   possible:  tinker with conn_properties.  Default looks reasonable.
-    #   consider:  refactor all of these outside the web infrastructure?  
+    #   consider:  refactor all of these outside the web infrastructure?
     #       (except for any local overrides?)
 
 
@@ -73,7 +73,7 @@ def connection_test():
 
 def connection_info(conn):
     """
-    Output information about the current Microsoft SQL Server database 
+    Output information about the current Microsoft SQL Server database
     connection.
 
     Available fields:
@@ -89,14 +89,14 @@ def connection_info(conn):
 #   NOTES for Parameter Binding:
 #
 #   dbtype:  one of (dbtype in CAPS, MS SQL type in parens):
-#       SQLBINARY, SQLBIT (bit), SQLBITN, SQLCHAR (char), SQLDATETIME, 
-#       SQLDATETIM4, SQLDATETIMN, SQLDECIMAL, SQLFLT4, SQLFLT8 (bigint?), 
-#       SQLFLTN, SQLIMAGE, SQLINT1 (tinyint), SQLINT2 (smallint), 
-#       SQLINT4 (int), SQLINT8, SQLINTN, SQLMONEY, SQLMONEY4, SQLMONEYN, 
-#       SQLNUMERIC, SQLREAL, SQLTEXT (text), SQLVARBINARY, 
+#       SQLBINARY, SQLBIT (bit), SQLBITN, SQLCHAR (char), SQLDATETIME,
+#       SQLDATETIM4, SQLDATETIMN, SQLDECIMAL, SQLFLT4, SQLFLT8 (bigint?),
+#       SQLFLTN, SQLIMAGE, SQLINT1 (tinyint), SQLINT2 (smallint),
+#       SQLINT4 (int), SQLINT8, SQLINTN, SQLMONEY, SQLMONEY4, SQLMONEYN,
+#       SQLNUMERIC, SQLREAL, SQLTEXT (text), SQLVARBINARY,
 #       SQLVARCHAR (varchar), SQLUUID
 #   additional info: http://msdn.microsoft.com/en-us/library/cc296193.aspx
-#       
+#
 
 
 #
@@ -131,10 +131,10 @@ def connection_info(conn):
 #       @range1b:  894
 #
 #   TODO:  for each range (rangeNa:rangeNb), ensure that rangeNa <= rangeNb.
-#       Swap values if reversed.  Proc fails if range1 > range2 (BETWEEN 
+#       Swap values if reversed.  Proc fails if range1 > range2 (BETWEEN
 #       keyword).
 #
-#   TODO:  ensure that ranges are filled in order.  If range 2 is empty and 
+#   TODO:  ensure that ranges are filled in order.  If range 2 is empty and
 #       range 3 is occupied, only range 1 will be displayed.
 #
 #   N.B.  Ranges do not need to occur in order; i.e., range 1 may be 235-240
@@ -168,7 +168,7 @@ def seqvar(db, pdb, model, chain, *ranges):
 
 def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
     """
-    Run stored procedure to collect sequence variants for a single range of 
+    Run stored procedure to collect sequence variants for a single range of
     positions, defined via the PDB sequence numbering system (using Unit IDs).
 
     BGSU.SeqVar_Range1 (defaults)
@@ -196,21 +196,11 @@ def results_svr1(conn):
     Output results from stored procedure BGSU.SeqVar_Range1.
 
     How best to turn this into JSON?  Is that conversion necessary?
-    FIELDS:  0) SeqID; 1) SeqVersion; 2) CompleteFragment; 3) AccessionID; 
+    FIELDS:  0) SeqID; 1) SeqVersion; 2) CompleteFragment; 3) AccessionID;
         4) TaxID; 5) ScientificName; 6) LineageName.
     """
 
-    res = [row for row in conn]
-
-    for row in res:
-        print("SeqID.SeqVersion: {}.{}, Sequence: {}, Accession: {}, ",
-              "TaxID: {}, Scientific Name: {}, ",
-              "Taxonomic Lineage: {}".format(row['SeqID'], row['SeqVersion'],
-                                             row['CompleteFragment'],
-                                             row['AccessionID'], row['TaxID'],
-                                             row['ScientificName'],
-                                             row['LineageName']))
-
+    return [row for row in conn]
 
 def list_options(conn):
     """
@@ -224,18 +214,8 @@ def list_options(conn):
     """
 
     #   TODO:  identify any missing elements and add them.
-    
+
     proc = conn.init_procedure('BGSU.ListAlnServerOptions')
     proc.execute()
 
-    res = [row for row in conn]
-
-    #   sample output
-    for row in res:
-        print("PDBID: {}, ModelNumber: {}, ChainID: {}, ",
-              "Description: {}".format(row['PDBID'], row['ModelNumber'],
-                                       row['ChainID'],row['Description']))
-
-
-
-
+    return [row for row in conn]
