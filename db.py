@@ -143,22 +143,26 @@ def connection_info(conn):
 #
 
 
-def seqvar(db, pdb, model, chain, *ranges):
+def seqvar(db, pdb, model, ranges):
     if 2 <= len(ranges) <= 5:
-        name = 'BGSU.SeqVar_Range%s' % (len(ranges) - 1)
-    else:
         raise ValueError("Invalid range length")
 
-    proc = db.init_procedure(name)
+    proc = db.init_procedure('BGSU.SeqVar')
 
     proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
               max_length=4)
     proc.bind(model, _mssql.SQLINT1, '@ModNum', null=False, output=False)
-    proc.bind(chain, _mssql.SQLCHAR, '@ChainID', null=False, output=False,
-              max_length=1)
-    for index, value in enumerate(ranges):
+
+    all_ranges = list(ranges)
+    all_ranges.extend([(None, None, None)] * 5 - len(ranges))
+
+    for index, (chain, start, stop) in enumerate(all_ranges):
         name = '@range%s' % (index + 1)
-        proc.bind(value, _mssql.SQLINT4, name, null=False, output=False)
+        chain_name = '@Chain%s' % (index + 1)
+        proc.bind(chain, _mssql.SQLCHAR, chain_name, null=False, output=False,
+                  max_length=1)
+        proc.bind(start, _mssql.SQLINT4, name + 'a', null=False, output=False)
+        proc.bind(stop, _mssql.SQLINT4, name + 'b', null=False, output=False)
 
     proc.execute()
 
