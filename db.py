@@ -154,7 +154,7 @@ def seqvar(db, pdb, model, ranges):
     proc.bind(model, _mssql.SQLINT1, '@ModNum', null=False, output=False)
 
     all_ranges = list(ranges)
-    all_ranges.extend([(None, None, None)] * 5 - len(ranges))
+    all_ranges.extend([(None, None, None)] * (5 - len(ranges)))
 
     for index, (chain, start, stop) in enumerate(all_ranges):
         name = '@range%s' % (index + 1)
