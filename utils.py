@@ -1,6 +1,8 @@
 from flask import g
 from flask import abort
 
+import db
+
 RANGE_LIMIT = 50
 
 
@@ -37,21 +39,28 @@ def full_range(start, end):
     return [start, end]
 
 
-def get_sequences(units, sequences):
+def get_sequences(units):
     # TODO: Implement this.
-    return 'sequences are great!'
+    pdb = '2AW7'
+    model = 1
+    chain = 'A'
+    ranges = units
+    ranges = (887, 894)
+    return db.seqvar(g.seq_db, pdb, model, chain, *ranges)
 
 
-def compute_variation(raw_units, sequences):
+def compute_variation(data):
+    if 'units' not in data:
+        abort(400)
+    raw_units = data['units']
     units = parse_units(raw_units)
-    sequencs = sequences.split(',')
     variations = []
     for unit_range in units:
         full = full_range(*unit_range)
-        variations = get_sequences(full, sequences)
+        variations = get_sequences(full)
         variations.append({
             'units': full,
             'range': unit_range,
-            'sequences': get_sequences(units, sequences)
+            'sequences': get_sequences(units)
         })
     return variations
