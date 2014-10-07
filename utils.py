@@ -43,10 +43,9 @@ def get_sequences(units):
     # TODO: Implement this.
     pdb = '2AW7'
     model = 1
-    chain = 'A'
     ranges = units
-    ranges = (887, 894)
-    return db.seqvar(g.seq_db, pdb, model, chain, *ranges)
+    ranges = [('A', 887, 894)]
+    return db.seqvar(g.seq_db, pdb, model, ranges)
 
 
 def compute_variation(data):
