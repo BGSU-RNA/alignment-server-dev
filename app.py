@@ -37,7 +37,7 @@ def get_json():
 def get_html():
     if 'units' in request.args:
         return render_template('results.html',
-                               **ut.compute_variation(request.args))
+                               data=ut.compute_variation(request.args))
     pdbs = []
     # pdbs = db.list_options(g.seq_db)
     return render_template('form.html', pdbs=pdbs)
@@ -55,7 +55,7 @@ def post_json():
 def post_html():
     data = request.get_json() or request.form
     return render_template('results.html',
-                           **ut.compute_variation(data))
+                           data=ut.compute_variation(data))
 
 
 if __name__ == '__main__':
