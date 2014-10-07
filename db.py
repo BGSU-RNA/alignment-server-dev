@@ -166,8 +166,20 @@ def seqvar(db, pdb, model, ranges):
 
     proc.execute()
 
-    # Probably not needed to copy into a new dict
-    return [dict(row) for row in db]
+    # This copying is done because result dict also allows access by index, we
+    # only want the entries with keys.
+    data = []
+    for row in db:
+        data.append({
+            'SeqID': row['SeqID'],
+            'SeqVersion': row['SeqVersion'],
+            'CompleteFragment': row['CompleteFragment'],
+            'AccessionID': row['AccessionID'],
+            'TaxID': row['TaxID'],
+            'ScientificName': row['ScientificName'],
+            'LineageName': row['LineageName'],
+        })
+    return data
 
 
 def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
