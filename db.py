@@ -225,8 +225,8 @@ def list_options(conn):
 
     No input parameters required.
 
-    Returns four columns per entry:  PDBID (char(4)), ModelNumber (tinyint),
-    ChainID (char(1)), Description (varchar(100)).
+    Returns five columns per entry:  PDBID (char(4)), ModelNumber (tinyint),
+    ChainID (char(1)), Requires_Translation (bit), Description (varchar(100)).
     """
 
     #   TODO:  identify any missing elements and add them.
