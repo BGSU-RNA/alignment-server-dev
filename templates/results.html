@@ -7,5 +7,41 @@
 
 <body>
 <p>Results!</p>
+<table border="1" width="100%">
+	<thead>
+		<tr>
+			<th>Test1</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Results!</td>
+		</tr>
+	</tbody>
+</table>
+{#
+<hr/>
+<table border="1" width="100%">
+	<thead>
+		{% block results_header %}
+		<tr>
+			<th>SeqID</th>
+			<th>SeqVersion</th>
+			<th>CompleteFragment</th>
+			<th>AccessionID</th>
+		    <th>TaxID</th>
+		    <th>ScientificName</th>
+		    <th>LineageName</th>
+		</tr>
+		{% endblock results_header %}
+	</thead>
+	<tbody>
+		{# Iterate over data.  Consider putting another copy of results_header every n rows. #}
+	</tbody>
+	<tfoot>
+		{{ self.results_header() }}
+	</tfoot>
+</table>
+#}
 </body>
 </html>
