@@ -218,6 +218,41 @@ def results_svr1(conn):
 
     return [row for row in conn]
 
+
+def get_translation(conn):
+    """
+    Contact rCAD for the translation table (to account for insertion codes in
+    the PDB file) for a given PDBID, model, and chain.
+
+    As presently written (2014-10-09), only operates on one chain at a time, so
+    would need to be called multiple times if multiple chains are being queried.
+
+    In current form (2014-10-09), returns the "chain number" (the sequence
+    number used in PDB ATOM records), the "chain insertion code" (a single
+    alphanumeric character; a dash is stored in rCAD for entries with no
+    insertion code to enforce NOT NULL on the column and allow for key
+    creation), and the "natural number" (the sequence numbering, from 1 to n,
+    based upon the PDB SEQRES records).
+
+    #   TODO:  consider merging chain number/insertion code (with NULL passed
+    #   for positions with no insertion code)?
+    #
+    #   TODO:  consider revising to accept multiple (up to five, for
+    #   consistency with BGSU.SeqVar) ChainID values.  Could require dynamic
+    #   SQL approach (more involved, worth effort?).
+    #
+    """
+    proc = conn.init_procedure('BGSU.GetPDBTranslation')
+    proc.bind(pdbid, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
+              max_length=4)
+    proc.bind(modnum, _mssql.SQLINT1, '@ModNum', null=False, output=False)
+    proc.bind(chainid, _mssql.SQLCHAR, '@ChainID', null=False, output=False,
+              max_length=1)
+    proc.execute()
+
+    return [row for row in conn]
+
+
 def list_options(conn):
     """
     Contact rCAD for the list of available structure-alignment mappings and
