@@ -1,8 +1,14 @@
+import logging
+
 from flask import abort
 
-import db
+import rnastructure.util.unit_ids as uid
 
 RANGE_LIMIT = 50
+
+PARSER = uid.UnitIdParser()
+
+logger = logging.getLogger(__name__)
 
 
 def parse_units(raw):
@@ -32,31 +38,55 @@ def parse_units(raw):
     return processed
 
 
-def full_range(start, end):
-    # TODO: Implement me
-    # TODO: Limit size of the range?
-    return [start, end]
+def validate_pair(start, stop):
+    """Process the start and stop endpoints into a tuple sutable for use by
+    db.seqvar.
+    """
+    start_data = PARSER(start)
+    stop_data = PARSER(stop)
+
+    same = ['pdb', 'model', 'chain']
+    for key in same:
+        if start_data[key] != stop_data[key]:
+            abort(400)
+        if not start_data[key]:
+            abort(400)
+
+    if not start_data['number'] or not stop_data['number']:
+        abort(400)
+
+    try:
+        model = int(start_data['model'])
+        start_num = int(start_data['number'])
+        stop_num = int(stop_data['number'])
+    except:
+        abort(400)
+
+    return (start_data['pdb'], model,
+            (start_data['chain'], start_num, stop_num))
 
 
-def get_sequences(rcad, units):
-    # TODO: Implement this.
-    pdb = '2AW7'
-    model = 1
-    ranges = units
-    ranges = [('A', 887, 894)]
-    return db.seqvar(rcad, pdb, model, ranges)
-
-
-def compute_variation(rcad, data):
+def ranges(data):
     if 'units' not in data:
         abort(400)
     raw_units = data['units']
     units = parse_units(raw_units)
-    variations = []
+    pdb = None
+    model = None
+    ranges = []
+
     for (start, stop) in units:
-        full = full_range(start, stop)
-        variations.append({
-            'range': [start, stop],
-            'sequences': get_sequences(rcad, full)
-        })
-    return variations
+        data = validate_pair(start, stop)
+        if pdb is None:
+            pdb = data[0]
+            model = data[1]
+
+        if data[0] != pdb:
+            abort(400)
+
+        if data[1] != model:
+            abort(400)
+
+        ranges.append(data[2])
+
+    return pdb, model, ranges
