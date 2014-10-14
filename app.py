@@ -3,6 +3,7 @@ import simplejson as json
 from flask import g
 from flask import Flask
 from flask import request
+from flask import Response
 from flask import render_template
 
 from flask_mime import Mime
@@ -32,7 +33,8 @@ def variations(data):
 
 
 def as_json(data):
-    return json.dumps(variations(data))
+    return Response(json.dumps(variations(data)),
+                    mimetype='application/json; charset=utf-8')
 
 
 def as_html(data):
