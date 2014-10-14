@@ -1,4 +1,3 @@
-from flask import g
 from flask import abort
 
 import db
@@ -39,27 +38,25 @@ def full_range(start, end):
     return [start, end]
 
 
-def get_sequences(units):
+def get_sequences(rcad, units):
     # TODO: Implement this.
     pdb = '2AW7'
     model = 1
     ranges = units
     ranges = [('A', 887, 894)]
-    return db.seqvar(g.seq_db, pdb, model, ranges)
+    return db.seqvar(rcad, pdb, model, ranges)
 
 
-def compute_variation(data):
+def compute_variation(rcad, data):
     if 'units' not in data:
         abort(400)
     raw_units = data['units']
     units = parse_units(raw_units)
     variations = []
-    for unit_range in units:
-        full = full_range(*unit_range)
-        variations = get_sequences(full)
+    for (start, stop) in units:
+        full = full_range(start, stop)
         variations.append({
-            'units': full,
-            'range': unit_range,
-            'sequences': get_sequences(units)
+            'range': [start, stop],
+            'sequences': get_sequences(rcad, full)
         })
     return variations
