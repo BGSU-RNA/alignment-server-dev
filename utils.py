@@ -1,6 +1,6 @@
 import logging
 
-from flask import abort
+from werkzeug.exceptions import BadRequest
 
 import rnastructure.util.unit_ids as uid
 
@@ -23,7 +23,7 @@ def parse_units(raw):
     """
     parts = raw.split(',')
     if len(parts) == 0 or len(parts) > 5:
-        abort(400)
+        raise BadRequest("Must give 1 to 5 parts in a collection")
 
     processed = []
     for part in parts:
@@ -33,7 +33,7 @@ def parse_units(raw):
         elif len(units) == 2:
             processed.append(tuple(units))
         else:
-            abort(400)
+            raise BadRequest("Range should must have 1 or 2 endpoints")
 
     return processed
 
@@ -48,19 +48,23 @@ def validate_pair(start, stop):
     same = ['pdb', 'model', 'chain']
     for key in same:
         if start_data[key] != stop_data[key]:
-            abort(400)
+            raise BadRequest("Pairs must have same %s" % key)
         if not start_data[key]:
-            abort(400)
-
-    if not start_data['number'] or not stop_data['number']:
-        abort(400)
+            raise BadRequest("Pairs must have a non empty %s" % key)
 
     try:
         model = int(start_data['model'])
+    except:
+        raise BadRequest("Invalid model number")
+
+    if not start_data['number'] or not stop_data['number']:
+        raise BadRequest("Endpoints must have a number")
+
+    try:
         start_num = int(start_data['number'])
         stop_num = int(stop_data['number'])
     except:
-        abort(400)
+        raise BadRequest("Invalid endpoint number")
 
     return (start_data['pdb'], model,
             (start_data['chain'], start_num, stop_num))
@@ -68,7 +72,7 @@ def validate_pair(start, stop):
 
 def ranges(data):
     if 'units' not in data:
-        abort(400)
+        raise BadRequest("Must specify units to use")
     raw_units = data['units']
     units = parse_units(raw_units)
     pdb = None
@@ -82,10 +86,10 @@ def ranges(data):
             model = data[1]
 
         if data[0] != pdb:
-            abort(400)
+            raise BadRequest("All parts of a collection must have same pdb")
 
         if data[1] != model:
-            abort(400)
+            raise BadRequest("All parts of a collection must have same model")
 
         ranges.append(data[2])
 
