@@ -21,6 +21,7 @@
 		</tr>
 		{% endblock results_header %}
 	</thead>
+	{#
 	<tbody>
 		{# Iterate over data.  Consider putting another copy of results_header every n rows. #}
 		{% for row in data %}
@@ -45,6 +46,7 @@
 	<tfoot>
 		{{ self.results_header() }}
 	</tfoot>
+	#}
 </table>
 </body>
 </html>
