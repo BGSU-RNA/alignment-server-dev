@@ -196,7 +196,7 @@ def list_options(conn):
     proc = conn.init_procedure('BGSU.ListAlnServerOptions')
     proc.execute()
 
-    data = {}
+    data = []
     for row in conn:
         data.append({
             'pdb': row['PDBID'],
