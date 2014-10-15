@@ -29,6 +29,8 @@ def teardown_request(exception):
 
 def variations(data):
     pdb, model, ranges = ut.ranges(data)
+    known = db.list_options(g.rcad)
+    ut.validate_ranges(pdb, model, ranges, known)
     return db.seqvar(g.rcad, pdb, model, ranges)
 
 
