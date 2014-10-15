@@ -1,4 +1,5 @@
 import logging
+import collections as coll
 
 from werkzeug.exceptions import BadRequest
 
@@ -94,3 +95,21 @@ def ranges(data):
         ranges.append(data[2])
 
     return pdb, model, ranges
+
+
+def validate_ranges(pdb, model, ranges, known):
+    mapping = coll.defaultdict(lambda: coll.defaultdict(set))
+    for entry in known:
+        mapping[entry['pdb']][entry['model_number']].add(entry['chain_id'])
+
+    if pdb not in mapping:
+        raise BadRequest("Unmapped PDB %s" % pdb)
+
+    if model not in mapping[pdb]:
+        raise BadRequest("Unmapped model %s for %s" % (model, pdb))
+
+    for (chain, _, _) in ranges:
+        if chain not in mapping[pdb][model]:
+            raise BadRequest("Unmapped chain %s for pdb %s, model %s" %
+                             (chain, pdb, model))
+    return True

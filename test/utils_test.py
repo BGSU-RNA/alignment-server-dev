@@ -78,3 +78,29 @@ class RangesTest(ut.TestCase):
         self.assertRaises(HTTPException, u.ranges, {
             'units': '2GOZ|1|C|A|3:2GOZ|1|A|A|5,2GOZ|1|A|A|8:2GOZ|1|A|A|50'
         })
+
+
+class ValidateRangesTest(ut.TestCase):
+    def setUp(self):
+        self.known = [
+            {'pdb': '1S72', 'model_number': 1, 'chain_id': 'A'},
+            {'pdb': '2AW7', 'model_number': 1, 'chain_id': 'A'},
+            {'pdb': '2AW7', 'model_number': 3, 'chain_id': 'A'},
+        ]
+
+    def test_can_accept_valid_range(self):
+        val = u.validate_ranges('2AW7', 1, [('A', 1, 10)],
+                                self.known)
+        self.assertTrue(val)
+
+    def test_fails_with_bad_pdb(self):
+        self.assertRaises(HTTPException, u.validate_ranges, '2AJ7', 1,
+                          [('A', 1, 10)], self.known)
+
+    def test_fails_with_bad_model(self):
+        self.assertRaises(HTTPException, u.validate_ranges, '2AW7', 2,
+                          [('A', 1, 10)], self.known)
+
+    def test_fails_with_bad_chain(self):
+        self.assertRaises(HTTPException, u.validate_ranges, '2AW7', 1,
+                          [('Z', 1, 10)], self.known)
