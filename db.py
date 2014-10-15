@@ -146,7 +146,7 @@ def seqvar(db, pdb, model, ranges):
     return data
 
 
-def get_translation(conn):
+def get_translation(conn, pdb, model, chain):
     """
     Contact rCAD for the translation table (to account for insertion codes in
     the PDB file) for a given PDBID, model, and chain.
@@ -170,10 +170,10 @@ def get_translation(conn):
     #
     """
     proc = conn.init_procedure('BGSU.GetPDBTranslation')
-    proc.bind(pdbid, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
+    proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
               max_length=4)
-    proc.bind(modnum, _mssql.SQLINT1, '@ModNum', null=False, output=False)
-    proc.bind(chainid, _mssql.SQLCHAR, '@ChainID', null=False, output=False,
+    proc.bind(model, _mssql.SQLINT1, '@ModNum', null=False, output=False)
+    proc.bind(chain, _mssql.SQLCHAR, '@ChainID', null=False, output=False,
               max_length=1)
     proc.execute()
 
