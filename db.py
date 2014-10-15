@@ -269,4 +269,13 @@ def list_options(conn):
     proc = conn.init_procedure('BGSU.ListAlnServerOptions')
     proc.execute()
 
-    return [row for row in conn]
+    data = {}
+    for row in conn:
+        data.append({
+            'pdb': row['PDBID'],
+            'model_number': row['ModelNumber'],
+            'chain_id': row['ChainID'],
+            'description': row['Description'],
+            'requires_translation': row['Requires_Translation']
+        })
+    return data
