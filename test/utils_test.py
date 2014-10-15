@@ -33,6 +33,22 @@ class ParseUnitsTest(ut.TestCase):
         self.assertRaises(HTTPException, u.parse_units,
                           'a,a,a,2GOZ|1|A|A|3:2GOZ|1|A|A|5,2GOZ|1|A|A|12,2GOZ|1|A|A|3:2GOZ|1|A|A|30')
 
+    def test_parse_missing_entry(self):
+        self.assertRaises(HTTPException, u.parse_units,
+                          '2GOZ|1|A|A|3:2GOZ|1|A|A|5,,2GOZ|1|A|A|12,2GOZ|1|A|A|3:2GOZ|1|A|A|30')
+
+    def test_parse_missing_range(self):
+        self.assertRaises(HTTPException, u.parse_units,
+                          '2GOZ|1|A|A|3:2GOZ|1|A|A|5,:,2GOZ|1|A|A|12,2GOZ|1|A|A|3:2GOZ|1|A|A|30')
+
+    def test_parse_missing_end_of_range(self):
+        self.assertRaises(HTTPException, u.parse_units,
+                          '2GOZ|1|A|A|3:,2GOZ|1|A|A|12,2GOZ|1|A|A|3:2GOZ|1|A|A|30')
+
+    def test_parse_missing_start_of_range(self):
+        self.assertRaises(HTTPException, u.parse_units,
+                          ':2GOZ|1|A|A|5,2GOZ|1|A|A|12,2GOZ|1|A|A|3:2GOZ|1|A|A|30')
+
     def test_parse_invalid_range(self):
         self.assertRaises(HTTPException, u.parse_units,
                           '2GOZ|1|A|A|3:2GOZ|1|A|A|5:2GOZ|1|A|A|12,2GOZ|1|A|A|3:2GOZ|1|A|A|30')

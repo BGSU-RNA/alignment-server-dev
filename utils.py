@@ -28,10 +28,16 @@ def parse_units(raw):
 
     processed = []
     for part in parts:
+        if not part:
+            raise BadRequest("Cannot give empty part of a list")
         units = part.split(':')
         if len(units) == 1:
+            if not units[0]:
+                raise BadRequest("Cannot give empty unit")
             processed.append(tuple([units[0], units[0]]))
         elif len(units) == 2:
+            if not units[0] or not units[1]:
+                raise BadRequest("Both units in range must exist")
             processed.append(tuple(units))
         else:
             raise BadRequest("Range should must have 1 or 2 endpoints")
