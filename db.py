@@ -1,5 +1,4 @@
 from os import getenv
-import itertools as it
 
 try:
     #if dbmsName in (DBMS.MSSQL, DBMS.SYBASE)
@@ -48,41 +47,6 @@ def rcad_connect():
     #   possible:  tinker with conn_properties.  Default looks reasonable.
     #   consider:  refactor all of these outside the web infrastructure?
     #       (except for any local overrides?)
-
-
-def connection_test():
-    """
-    Sample run.  Test key components with default-ish values.
-    """
-    conn = rcad_connect()
-    try:
-        connection_info(conn)
-
-        #   Manually binding the default values for initial test.
-        pdbid   = "2AW7"
-        modnum  = 1
-        chainid = "A"
-        range1  = 887
-        range2  = 894
-
-        seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2)
-        results_svr1(conn)
-    finally:
-        conn.close()
-
-
-def connection_info(conn):
-    """
-    Output information about the current Microsoft SQL Server database
-    connection.
-
-    Available fields:
-        connected // charset // identity // query_timeout
-        rows_affected // debug_queries // tds_version
-    """
-    print("Connected: {}\nCharset: {}\nTDS: {}".format(conn.connected,
-                                                       conn.charset,
-                                                       conn.tds_version))
 
 
 #
@@ -180,43 +144,6 @@ def seqvar(db, pdb, model, ranges):
             'LineageName': row['LineageName'],
         })
     return data
-
-
-def seqvar_range_1(conn, pdbid, modnum, chainid, range1, range2):
-    """
-    Run stored procedure to collect sequence variants for a single range of
-    positions, defined via the PDB sequence numbering system (using Unit IDs).
-
-    BGSU.SeqVar_Range1 (defaults)
-        @PDBID      char(4) # PDB identifier (2AW7)
-        @ModNum     tinyint # model number (1)
-        @ChainID    char(1) # chain identifier (A)
-        @range1     int     # lower boundary of range, in PDB numbering (887)
-        @range2     int     # upper boundary of range, in PDB numbering (894)
-    """
-    proc = conn.init_procedure('BGSU.SeqVar_Range1')
-
-    proc.bind(pdbid, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
-              max_length=4)
-    proc.bind(modnum, _mssql.SQLINT1, '@ModNum', null=False, output=False)
-    proc.bind(chainid, _mssql.SQLCHAR, '@ChainID', null=False, output=False,
-              max_length=1)
-    proc.bind(range1, _mssql.SQLINT4, '@range1', null=False, output=False)
-    proc.bind(range2, _mssql.SQLINT4, '@range2', null=False, output=False)
-
-    proc.execute()
-
-
-def results_svr1(conn):
-    """
-    Output results from stored procedure BGSU.SeqVar_Range1.
-
-    How best to turn this into JSON?  Is that conversion necessary?
-    FIELDS:  0) SeqID; 1) SeqVersion; 2) CompleteFragment; 3) AccessionID;
-        4) TaxID; 5) ScientificName; 6) LineageName.
-    """
-
-    return [row for row in conn]
 
 
 def get_translation(conn):
