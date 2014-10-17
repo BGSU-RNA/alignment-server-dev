@@ -108,9 +108,6 @@ def rcad_connect():
 
 
 def seqvar(db, pdb, model, ranges):
-    if 2 <= len(ranges) <= 5:
-        raise ValueError("Invalid range length")
-
     proc = db.init_procedure('BGSU.SeqVar')
 
     proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
