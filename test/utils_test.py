@@ -133,6 +133,11 @@ class ValidateRangesTest(ut.TestCase):
         self.assertRaises(HTTPException, u.validate, '2AW7', 1, self.ranges,
                           self.known)
 
+    def test_fails_with_backwards_residues(self):
+        self.ranges[0] = (self.ranges[0][1], self.ranges[0][0])
+        self.assertRaises(HTTPException, u.validate, '2AW7', 1, self.ranges,
+                          self.known)
+
 
 class TranslateTest(ut.TestCase):
     def setUp(self):
@@ -158,3 +163,9 @@ class TranslateTest(ut.TestCase):
             {'chain': 'A', 'number': 5}
         )]
         self.assertEqual(ans, val)
+
+    def test_fails_for_too_large_a_range(self):
+        self.assertRaises(HTTPException, u.translate, self.no, [
+            ({'chain': 'A', 'number': 1}, {'chain': 'A', 'number': 200})
+        ])
+

@@ -123,6 +123,8 @@ def validate(pdb, model, ranges, known):
         if stop['chain'] not in valid:
             raise BadRequest("Unmapped chain %s for pdb %s, model %s" %
                              (stop['chain'], pdb, model))
+        if stop['number'] < start['number']:
+            raise BadRequest("Must request ranges 5' to 3'")
     return True
 
 
@@ -141,5 +143,9 @@ def translate(translator, ranges):
 
         start['number'] = number(start)
         stop['number'] = number(stop)
+
+        if stop['number'] - start['number'] > RANGE_LIMIT:
+            raise BadRequest("Ranges must be less than %s large", RANGE_LIMIT)
+
         translated.append((start, stop))
     return translated
