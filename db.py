@@ -1,11 +1,11 @@
 from os import getenv
 
 try:
-    #if dbmsName in (DBMS.MSSQL, DBMS.SYBASE)
-    #import pymssql # not sure if these routines will also be useful
-    import _mssql # stored procedure support
+    # if dbmsName in (DBMS.MSSQL, DBMS.SYBASE)
+    # import pymssql # not sure if these routines will also be useful
+    import _mssql  # stored procedure support
 except ImportError:
-    pass # or better to die, since none of the other functions will work?
+    pass  # or better to die, since none of the other functions will work?
 
 
 #
@@ -120,13 +120,16 @@ def seqvar(db, pdb, model, ranges):
     all_ranges = list(ranges)
     all_ranges.extend([('', False, False)] * (5 - len(ranges)))
 
-    for index, (chain, start, stop) in enumerate(all_ranges):
+    for index, (start, stop) in enumerate(all_ranges):
+        chain = start['chain']
         name = '@range%s' % (index + 1)
         chain_name = '@Chain%s' % (index + 1)
         proc.bind(chain, _mssql.SQLCHAR, chain_name, null=False, output=False,
                   max_length=1)
-        proc.bind(start, _mssql.SQLINT4, name + 'a', null=False, output=False)
-        proc.bind(stop, _mssql.SQLINT4, name + 'b', null=False, output=False)
+        proc.bind(start['number'], _mssql.SQLINT4, name + 'a', null=False,
+                  output=False)
+        proc.bind(stop['number'], _mssql.SQLINT4, name + 'b', null=False,
+                  output=False)
 
     proc.execute()
 
@@ -152,7 +155,8 @@ def get_translation(conn, pdb, model, chain):
     the PDB file) for a given PDBID, model, and chain.
 
     As presently written (2014-10-09), only operates on one chain at a time, so
-    would need to be called multiple times if multiple chains are being queried.
+    would need to be called multiple times if multiple chains are being
+    queried.
 
     In current form (2014-10-09), returns the "chain number" (the sequence
     number used in PDB ATOM records), the "chain insertion code" (a single
@@ -177,7 +181,13 @@ def get_translation(conn, pdb, model, chain):
               max_length=1)
     proc.execute()
 
-    return [row for row in conn]
+    translation = {}
+    for row in conn:
+        ins_code = row['ChainNumberIC']
+        if ins_code == '-':
+            ins_code = None
+        translation[(row['ChainNumber'], ins_code)] = row['NaturalNumber']
+    return translation
 
 
 def list_options(conn):

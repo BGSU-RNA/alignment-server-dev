@@ -6,13 +6,14 @@ from werkzeug.exceptions import BadRequest
 import rnastructure.util.unit_ids as uid
 
 RANGE_LIMIT = 50
+PARTS_LIMIT = 5
 
 PARSER = uid.UnitIdParser()
 
 logger = logging.getLogger(__name__)
 
 
-def parse_units(raw):
+def split(raw):
     """Given a raw string of comma separated unit ids or unit id ranges this
     returns a list of tuples that represent that requested ranges. In the case
     where a range is only a single unit we return a tuple of the form (unit,
@@ -23,8 +24,9 @@ def parse_units(raw):
     :returns: A list of tuples of the requested ranges.
     """
     parts = raw.split(',')
-    if len(parts) == 0 or len(parts) > 5:
-        raise BadRequest("Must give 1 to 5 parts in a collection")
+    if len(parts) == 0 or len(parts) > PARTS_LIMIT:
+        raise BadRequest("Must give 1 to %s parts in a collection" %
+                         PARTS_LIMIT)
 
     processed = []
     for part in parts:
@@ -60,7 +62,8 @@ def validate_pair(start, stop):
             raise BadRequest("Pairs must have a non empty %s" % key)
 
     try:
-        model = int(start_data['model'])
+        start_data['model'] = int(start_data['model'])
+        stop_data['model'] = int(stop_data['model'])
     except:
         raise BadRequest("Invalid model number")
 
@@ -68,42 +71,40 @@ def validate_pair(start, stop):
         raise BadRequest("Endpoints must have a number")
 
     try:
-        start_num = int(start_data['number'])
-        stop_num = int(stop_data['number'])
+        start_data['number'] = int(start_data['number'])
+        stop_data['number'] = int(stop_data['number'])
     except:
         raise BadRequest("Invalid endpoint number")
 
-    return (start_data['pdb'], model,
-            (start_data['chain'], start_num, stop_num))
+    return (start_data, stop_data)
 
 
 def ranges(data):
     if 'units' not in data:
         raise BadRequest("Must specify units to use")
-    raw_units = data['units']
-    units = parse_units(raw_units)
+
     pdb = None
     model = None
     ranges = []
 
-    for (start, stop) in units:
+    for (start, stop) in split(data['units']):
         data = validate_pair(start, stop)
         if pdb is None:
-            pdb = data[0]
-            model = data[1]
+            pdb = data[0]['pdb']
+            model = data[0]['model']
 
-        if data[0] != pdb:
+        if data[0]['pdb'] != pdb:
             raise BadRequest("All parts of a collection must have same pdb")
 
-        if data[1] != model:
+        if data[0]['model'] != model:
             raise BadRequest("All parts of a collection must have same model")
 
-        ranges.append(data[2])
+        ranges.append(data)
 
     return pdb, model, ranges
 
 
-def validate_ranges(pdb, model, ranges, known):
+def validate(pdb, model, ranges, known):
     mapping = coll.defaultdict(lambda: coll.defaultdict(set))
     for entry in known:
         mapping[entry['pdb']][entry['model_number']].add(entry['chain_id'])
@@ -114,8 +115,31 @@ def validate_ranges(pdb, model, ranges, known):
     if model not in mapping[pdb]:
         raise BadRequest("Unmapped model %s for %s" % (model, pdb))
 
-    for (chain, _, _) in ranges:
-        if chain not in mapping[pdb][model]:
+    for (start, stop) in ranges:
+        valid = mapping[pdb][model]
+        if start['chain'] not in valid:
             raise BadRequest("Unmapped chain %s for pdb %s, model %s" %
-                             (chain, pdb, model))
+                             (start['chain'], pdb, model))
+        if stop['chain'] not in valid:
+            raise BadRequest("Unmapped chain %s for pdb %s, model %s" %
+                             (stop['chain'], pdb, model))
     return True
+
+
+def translate(translator, ranges):
+    mappings = coll.defaultdict(dict)
+
+    def number(data):
+        key = (data['number'], data.get('insertion_code', None))
+        return mappings[data['chain']].get(key, data['number'])
+
+    translated = []
+    for (start, stop) in ranges:
+        chain = start['chain']
+        if chain not in mappings:
+            mappings[chain] = translator(chain)
+
+        start['number'] = number(start)
+        stop['number'] = number(stop)
+        translated.append((start, stop))
+    return translated
