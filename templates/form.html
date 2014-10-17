@@ -7,9 +7,26 @@
 
 <body>
 <form action="{{ url }}" method="post">
-  <select name="pdb">
-    <option value="2AW7">2AW7</option>
-  </select>
+	<select name="pdb">
+    	<option value="2AW7">2AW7</option>
+	</select>
+	<p>Display contents of dict "pdbs":</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Key</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for key, value in pdbs.iteritems() %}
+			<tr>
+				<td>{{ key }}</td>
+				<td>{{ value }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 </form>
 </body>
 </html>
