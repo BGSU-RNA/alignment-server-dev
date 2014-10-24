@@ -10,19 +10,26 @@
 	<select name="pdb">
     	<option value="2AW7">2AW7</option>
 	</select>
-	<p>Display contents of dict "pdbs":</p>
-	<table>
+	<p>Display contents of list-of-dicts "pdbs":</p>
+	<table width="100%" border="1">
+		<caption>"Requires Translation" does not need to be exposed to the user.  Here for debugging purposes.</caption>
 		<thead>
 			<tr>
-				<th>Key</th>
-				<th>Value</th>
+				<th>PDB ID</th>
+				<th>Model #</th>
+				<th>Chain ID</th>
+				<th>Description</th>
+            	<th>Requires Translation</th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for key, value in pdbs.iteritems() %}
+			{% for entry in pdbs %}
 			<tr>
-				<td>{{ key }}</td>
-				<td>{{ value }}</td>
+				<td>{{ entry['pdb'] }}</td>
+				<td>{{ entry['model_number']}}</td>
+				<td>{{ entry['chain_id']}}</td>
+				<td>{{ entry['description']}}</td>
+				<td>{{ entry['requires_translation']}}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
