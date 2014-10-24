@@ -30,8 +30,13 @@ def teardown_request(exception):
 def variations(data):
     pdb, model, ranges = ut.ranges(data)
     known = db.list_options(g.rcad)
-    ut.validate_ranges(pdb, model, ranges, known)
-    return db.seqvar(g.rcad, pdb, model, ranges)
+    ut.validate(pdb, model, ranges, known)
+
+    def translator(chain):
+        return db.get_translation(g.rcad, pdb, model, chain)
+
+    translated = ut.translate(translator, ranges)
+    return db.seqvar(g.rcad, pdb, model, translated)
 
 
 def as_json(data):
