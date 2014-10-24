@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
+{% extends "layout.html" %}
+{% block title %}
 <title>Sequence Variation Server</title>
-</head>
-
-<body>
+{% endblock title %}
+{% block body %}
 <form action="{{ url }}" method="post">
 	<select name="pdb">
     	<option value="2AW7">2AW7</option>
 	</select>
-	<p>Display contents of list-of-dicts "pdbs":</p>
+	<p>DEBUGGING:  Display contents of list-of-dicts "pdbs":</p>
 	<table width="100%" border="1">
 		<caption>"Requires Translation" does not need to be exposed to the user.  Here for debugging purposes.</caption>
 		<thead>
@@ -35,5 +32,4 @@
 		</tbody>
 	</table>
 </form>
-</body>
-</html>
+{% endblock body %}

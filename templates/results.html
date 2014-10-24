@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
+{% extends "layout.html" %}
+{% block title %}
 <title>Sequence Variation Results</title>
-</head>
-
-<body>
+{% endblock title %}
+{% block body %}
 <p>Results!</p>
 <table border="1" width="100%">
 	<thead>
@@ -50,5 +47,4 @@
 	</tfoot>
 	#}
 </table>
-</body>
-</html>
+{% endblock body %}
