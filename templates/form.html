@@ -20,13 +20,13 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for entry in pdbs %}
+			{% for row in pdbs %}
 			<tr>
-				<td>{{ entry['pdb'] }}</td>
-				<td>{{ entry['model_number']}}</td>
-				<td>{{ entry['chain_id']}}</td>
-				<td>{{ entry['description']}}</td>
-				<td>{{ entry['requires_translation']}}</td>
+				<td>{{ row['pdb'] }}</td>
+				<td>{{ row['model_number'] }}</td>
+				<td>{{ row['chain_id'] }}</td>
+				<td>{{ row['description'] }}</td>
+				<td>{{ row['requires_translation'] }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
