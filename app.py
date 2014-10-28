@@ -60,12 +60,7 @@ def get_html():
     if 'units' in request.args:
         return as_html(request.args)
     pdbs = []
-    pdbs = [ { 'pdb': '2AW7',
-                'model_number': 1,
-                'chain_id': 'A',
-                'description': 'Escherichia coli SSU rRNA (Bacterial SSU rRNA Seed Alignment)',
-                'requires_translation': 0 } ]
-    # pdbs = db.list_options(g.rcad)
+    pdbs = db.list_options(g.rcad)
     return render_template('form.html', pdbs=pdbs)
 
 
