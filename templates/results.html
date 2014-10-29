@@ -50,7 +50,7 @@
 		    <td>{{ row['ScientificName'] }}</td>
 		    <td>{{ row['LineageName'] }}</td>
 		</tr>
-		{% if loop.revindex % 20 = 0 %}
+		{% if loop.revindex is divisibleby(20) %}
 	</tbody>
 	<tbody>
 		{{ self.results_header() }}
