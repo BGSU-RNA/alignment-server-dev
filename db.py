@@ -117,6 +117,13 @@ def seqvar(db, pdb, model, ranges):
     #       (except that i don't see the error raised)
     #   ?units=2AW7|1|A|A|887:2AW7|1|A|A|894 : stops at DEBUG 90
     #
+    #   Question:  why do the single range queries stop at DEBUG 90?
+    #   Should they not continue to reach at least DEBUG 100?  Or is
+    #   something amiss with the enumerate option?
+    #
+    #   Optional:  add the "start=1" option to the enumerate command,
+    #   and we should be able to dispense with multiple "index + 1" in
+    #   the code below.
     #
     print "DEBUG 10: entering seqvar()"
     if 2 <= len(ranges) <= 5:
