@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 {% block title %}
-<title>Sequence Variation Results</title>
+<title>{% block titletext %}Sequence Variation Results{% endblock titletext %}</title>
 {% endblock title %}
 {% block body %}
+<h2>{{ self.titletext() }}</h2>
 <p>Results!</p>
 <table border="1" width="100%">
 	<caption>DEBUGGING: Including a row of bogus sample data and a row of real sample data for layout design purposes.</caption>
@@ -50,7 +51,7 @@
 		    <td>{{ row['ScientificName'] }}</td>
 		    <td>{{ row['LineageName'] }}</td>
 		</tr>
-		{% if loop.revindex is divisibleby(20) %}
+		{% if data.revindex is divisibleby(20) %}
 	</tbody>
 	<tbody>
 		{{ self.results_header() }}
