@@ -10,6 +10,7 @@ from flask_mime import Mime
 
 import db
 import utils as ut
+from dummy_data import DATA
 
 app = Flask(__name__)
 mimetype = Mime(app)
@@ -28,7 +29,9 @@ def teardown_request(exception):
 
 
 def variations(data):
-    print "DEBUG: entering variations()"
+    if app.debug:
+        return DATA
+
     pdb, model, ranges = ut.ranges(data)
     known = db.list_options(g.rcad)
     ut.validate(pdb, model, ranges, known)
@@ -37,7 +40,6 @@ def variations(data):
         return db.get_translation(g.rcad, pdb, model, chain)
 
     translated = ut.translate(translator, ranges)
-    print "DEBUG: about to return from variations()" # passes this point
     return db.seqvar(g.rcad, pdb, model, translated)
 
 
@@ -81,4 +83,4 @@ def post_html():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
