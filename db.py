@@ -137,12 +137,12 @@ def seqvar(db, pdb, model, ranges):
     print "DEBUG 30: pdb and model parameters bound"
 
     all_ranges = list(ranges)
-    all_ranges.extend([('', False, False)] * (5 - len(ranges)))
+    all_ranges.extend([({}, {})] * (5 - len(ranges)))
 
     print "DEBUG 40: all_ranges defined and extended"
 
     for index, (start, stop) in enumerate(all_ranges):
-        chain = start['chain']
+        chain = start.get('chain', '')
         name = '@range%s' % (index + 1)
 
         print "DEBUG 50:  chain: %s // name: %s" % (chain, name)
@@ -154,11 +154,11 @@ def seqvar(db, pdb, model, ranges):
         proc.bind(chain, _mssql.SQLCHAR, chain_name, null=False, output=False,
                   max_length=1)
         print "DEBUG 70: chain bound"
-        proc.bind(start['number'], _mssql.SQLINT4, name + 'a', null=False,
-                  output=False)
+        proc.bind(start.get('number', False), _mssql.SQLINT4, name + 'a',
+                  null=False, output=False)
         print "DEBUG 80: start bound"
-        proc.bind(stop['number'], _mssql.SQLINT4, name + 'b', null=False,
-                  output=False)
+        proc.bind(stop.get('number', False), _mssql.SQLINT4, name + 'b',
+                  null=False, output=False)
         print "DEBUG 90: stop bound"
 
     print "DEBUG 100: other parameters bound"
