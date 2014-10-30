@@ -108,27 +108,64 @@ def rcad_connect():
 
 
 def seqvar(db, pdb, model, ranges):
+    #
+    #   DEBUGGING NOTES (JJC, 29 October 2014)
+    #
+    #   ?units=2AW7|1|A|A|887                : stops at DEBUG 90
+    #   ?units=2AW7|1|A|A|887,2AW7|1|A|A|894 : stops at DEBUG 10
+    #       (consistent with "if 2 <= len(ranges) <= 5")
+    #       (except that i don't see the error raised)
+    #   ?units=2AW7|1|A|A|887:2AW7|1|A|A|894 : stops at DEBUG 90
+    #
+    #   Question:  why do the single range queries stop at DEBUG 90?
+    #   Should they not continue to reach at least DEBUG 100?  Or is
+    #   something amiss with the enumerate option?
+    #
+    #   Optional:  add the "start=1" option to the enumerate command,
+    #   and we should be able to dispense with multiple "index + 1" in
+    #   the code below.
+    #
+    print "DEBUG 10: entering seqvar()"
+
+    print "DEBUG 20: about to init_procedure BGSU.SeqVar"
     proc = db.init_procedure('BGSU.SeqVar')
 
     proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
               max_length=4)
     proc.bind(model, _mssql.SQLINT1, '@ModNum', null=False, output=False)
 
+    print "DEBUG 30: pdb and model parameters bound"
+
     all_ranges = list(ranges)
     all_ranges.extend([('', False, False)] * (5 - len(ranges)))
+
+    print "DEBUG 40: all_ranges defined and extended"
 
     for index, (start, stop) in enumerate(all_ranges):
         chain = start['chain']
         name = '@range%s' % (index + 1)
+
+        print "DEBUG 50:  chain: %s // name: %s" % (chain, name)
+
         chain_name = '@Chain%s' % (index + 1)
+
+        print "DEBUG 60:  chain_name: %s" % (chain_name)
+
         proc.bind(chain, _mssql.SQLCHAR, chain_name, null=False, output=False,
                   max_length=1)
+        print "DEBUG 70: chain bound"
         proc.bind(start['number'], _mssql.SQLINT4, name + 'a', null=False,
                   output=False)
+        print "DEBUG 80: start bound"
         proc.bind(stop['number'], _mssql.SQLINT4, name + 'b', null=False,
                   output=False)
+        print "DEBUG 90: stop bound"
+
+    print "DEBUG 100: other parameters bound"
 
     proc.execute()
+
+    print "DEBUG 200:  procedure executed"
 
     # This copying is done because result dict also allows access by index, we
     # only want the entries with keys.
@@ -143,6 +180,7 @@ def seqvar(db, pdb, model, ranges):
             'ScientificName': row['ScientificName'],
             'LineageName': row['LineageName'],
         })
+    print "DEBUG 1000: about to exit seqvar()"
     return data
 
 

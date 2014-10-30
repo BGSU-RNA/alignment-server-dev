@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Sequence Variation Results</title>
-</head>
-
-<body>
+{% extends "layout.html" %}
+{% block title %}
+<title>{% block titletext %}Sequence Variation Results{% endblock titletext %}</title>
+{% endblock title %}
+{% block body %}
+<h2>{{ self.titletext() }}</h2>
 <p>Results!</p>
 <table border="1" width="100%">
+	<caption>DEBUGGING: Including a row of bogus sample data and a row of real sample data for layout design purposes.</caption>
 	<thead>
 		{% block results_header %}
 		<tr>
@@ -21,22 +20,38 @@
 		</tr>
 		{% endblock results_header %}
 	</thead>
-	{#
 	<tbody>
-	#}
-		{# Iterate over data.  Consider putting another copy of results_header every n rows. #}
+		<tr>
+			<td>12345</td>
+			<td>1</td>
+			<td>GUAGGA,--GUCUC,----A,-GA-CGA-UCCUG-AGCU,--AA---CGA</td>
+			<td>GB123456</td>
+			<td>12345</td>
+			<td><em>Testus testus</em></td>
+			<td>Undefined \ Testus testus</td>
+		</tr>
+		<tr>
+			<td>2188</td>
+			<td>1</td>
+			<td>G-G-------------------------A-G--U-A-C-G</td>
+			<td>X74066</td>
+			<td>435</td>
+			<td>Acetobacter aceti</td>
+			<td>root \ cellular organisms \ Bacteria \ Proteobacteria \ Alphaproteobacteria \ Rhodospirillales \ Acetobacteraceae \ Acetobacter \ Acetobacter subgen. Acetobacter \ Acetobacter aceti \</td>
+		</tr>
+		{# Iterate over data.  Consider putting another copy of results_header every n rows.  What value of n? #}
 	{#
 		{% for row in data %}
 		<tr>
-			<td>{{row['SeqID']}}</td>
-			<td>{{row['SeqVersion']}}</td>
-			<td>{{row['CompleteFragment']}}</td>
-			<td>{{row['AccessionID']}}</td>
-		    <td>{{row['TaxID']}}</td>
-		    <td>{{row['ScientificName']}}</td>
-		    <td>{{row['LineageName']}}</td>
+			<td>{{ row['SeqID'] }}</td>
+			<td>{{ row['SeqVersion'] }}</td>
+			<td>{{ row['CompleteFragment'] }}</td>
+			<td>{{ row['AccessionID'] }}</td>
+		    <td>{{ row['TaxID'] }}</td>
+		    <td>{{ row['ScientificName'] }}</td>
+		    <td>{{ row['LineageName'] }}</td>
 		</tr>
-		{% if loop.revindex % 20 = 0 %}
+		{% if data.revindex is divisibleby(20) %}
 	</tbody>
 	<tbody>
 		{{ self.results_header() }}
@@ -45,10 +60,9 @@
 		{% endif %}
 		{% endfor %}
 	</tbody>
+	#}
 	<tfoot>
 		{{ self.results_header() }}
 	</tfoot>
-	#}
 </table>
-</body>
-</html>
+{% endblock body %}

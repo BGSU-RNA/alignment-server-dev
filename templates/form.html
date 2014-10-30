@@ -1,32 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
+{% extends "layout.html" %}
+{% block title %}
 <title>Sequence Variation Server</title>
-</head>
-
-<body>
+{% endblock title %}
+{% block body %}
 <form action="{{ url }}" method="post">
-	<select name="pdb">
-    	<option value="2AW7">2AW7</option>
-	</select>
-	<p>Display contents of dict "pdbs":</p>
-	<table>
+	<p>DEBUGGING:  Display contents of list-of-dicts "pdbs":</p>
+	<table width="100%" border="1">
+		<caption>"Requires Translation" does not need to be exposed to the user.  Here for debugging purposes.</caption>
 		<thead>
 			<tr>
-				<th>Key</th>
-				<th>Value</th>
+				<th>PDB ID</th>
+				<th>Model #</th>
+				<th>Chain ID</th>
+				<th>Description</th>
+            	<th>Requires Translation</th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for key, value in pdbs.iteritems() %}
+			{% for row in pdbs %}
 			<tr>
-				<td>{{ key }}</td>
-				<td>{{ value }}</td>
+				<td>{{ row['pdb'] }}</td>
+				<td>{{ row['model_number'] }}</td>
+				<td>{{ row['chain_id'] }}</td>
+				<td>{{ row['description'] }}</td>
+				<td>{{ row['requires_translation'] }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
+	<hr>
+	<select name="pdb">
+    	<option value="2AW7">2AW7</option>
+	</select>
+	<hr>
+	<p>TESTING:  auto-generate the select list.</p>
+	<select name="autopdb">
+		<option value="" disabled="disabled">Choose an option...</option>
+		{% for row in pdbs %}
+		{% set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
+		<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
+		{% endfor %}
+	</select>
 </form>
-</body>
-</html>
+{% endblock body %}
