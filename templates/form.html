@@ -4,6 +4,25 @@
 {% endblock title %}
 {% block body %}
 <form action="{{ url }}" method="post">
+	<p>DEBUGGING:  Display contents of list-of-dicts "mods":</p>
+	<table width="100%" border="1">
+		<thead>
+			<tr>
+				<th>PDB ID</th>
+				<th>Model #</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in mods %}
+			<tr>
+				<td>{{ row['pdb'] }}</td>
+				<td>{{ row['model_number'] }}</td>
+				<td>{{ row['description'] }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 	<p>DEBUGGING:  Display contents of list-of-dicts "pdbs":</p>
 	<table width="100%" border="1">
 		<caption>"Requires Translation" does not need to be exposed to the user.  Here for debugging purposes.</caption>
@@ -29,10 +48,6 @@
 		</tbody>
 	</table>
 	<hr>
-	<select name="pdb">
-    	<option value="2AW7">2AW7</option>
-	</select>
-	<hr>
 	<p>TESTING:  auto-generate the select list.</p>
 	<select name="autopdb">
 		<option value="" disabled="disabled">Choose an option...</option>
@@ -43,9 +58,9 @@
 	</select>
 	<select name="pdbmod">
 		<option value="" disabled="disabled">Choose an option...</option>
-		{% for row in pdbs %}
+		{% for row in mods %}
 		{% set pdbmod = [row['pdb'],row['model_number']]|join('|') %}
-		<option value="{{ pdbmod }}">{{ pdbmod }}: DEVELOP ME!</option>
+		<option value="{{ pdbmod }}">{{ pdbmod }}: {{row['description']}}</option>
 		{% endfor %}
 	</select>
 </form>
