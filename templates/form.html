@@ -41,5 +41,12 @@
 		<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
 		{% endfor %}
 	</select>
+	<select name="pdbmod">
+		<option value="" disabled="disabled">Choose an option...</option>
+		{% for row in pdbs %}
+		{% set pdbmod = [row['pdb'],row['model_number']]|join('|') %}
+		<option value="{{ pdbmod }}">{{ pdbmod }}: DEVELOP ME!</option>
+		{% endfor %}
+	</select>
 </form>
 {% endblock body %}
