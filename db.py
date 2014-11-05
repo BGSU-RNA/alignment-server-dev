@@ -232,8 +232,9 @@ def list_options(conn):
 
     No input parameters required (beyond connection).
 
-    Returns five columns per entry:  PDBID (char(4)), ModelNumber (tinyint),
-    ChainID (char(1)), Requires_Translation (bit), Description (varchar(100)).
+    Returns six columns per entry:  PDBID (char(4)), ModelNumber (tinyint),
+    ChainID (char(1)), Map3DAlnID (tinyint), Requires_Translation (bit),
+    Description (varchar(100)).
     """
 
     #   TODO:  identify any missing elements and add them.
@@ -247,6 +248,7 @@ def list_options(conn):
             'pdb': row['PDBID'],
             'model_number': row['ModelNumber'],
             'chain_id': row['ChainID'],
+            'option': row['Map3DAlnID'],
             'description': row['Description'],
             'requires_translation': row['Requires_Translation']
         })
