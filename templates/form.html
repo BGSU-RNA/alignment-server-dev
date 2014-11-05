@@ -2,66 +2,114 @@
 {% block title %}
 <title>Sequence Variation Server</title>
 {% endblock title %}
-{% block body %}
-<form action="{{ url }}" method="post">
-	<p>DEBUGGING:  Display contents of list-of-dicts "mods":</p>
-	<table width="100%" border="1">
-		<thead>
-			<tr>
-				<th>PDB ID</th>
-				<th>Model #</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for row in mods %}
-			<tr>
-				<td>{{ row['pdb'] }}</td>
-				<td>{{ row['model_number'] }}</td>
-				<td>{{ row['description'] }}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	<p>DEBUGGING:  Display contents of list-of-dicts "pdbs":</p>
-	<table width="100%" border="1">
-		<caption>"Requires Translation" does not need to be exposed to the user.  Here for debugging purposes.</caption>
-		<thead>
-			<tr>
-				<th>PDB ID</th>
-				<th>Model #</th>
-				<th>Chain ID</th>
-				<th>Description</th>
-            	<th>Requires Translation</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for row in pdbs %}
-			<tr>
-				<td>{{ row['pdb'] }}</td>
-				<td>{{ row['model_number'] }}</td>
-				<td>{{ row['chain_id'] }}</td>
-				<td>{{ row['description'] }}</td>
-				<td>{{ row['requires_translation'] }}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	<hr>
-	<p>TESTING:  auto-generate the select list.</p>
-	<select name="autopdb">
-		<option value="" disabled="disabled">Choose an option...</option>
-		{% for row in pdbs %}
-		{% set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
-		<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
-		{% endfor %}
-	</select>
-	<select name="pdbmod">
-		<option value="" disabled="disabled">Choose an option...</option>
-		{% for row in mods %}
-		{% set pdbmod = [row['pdb'],row['model_number']]|join('|') %}
-		<option value="{{ pdbmod }}">{{ pdbmod }}: {{row['description']}}</option>
-		{% endfor %}
-	</select>
-</form>
+{% macro null_option() -%}
+<option value="" disabled="disabled">Choose an option...</option>
+{%- endmacro -%}
+{% macro textinput(name, len=10) -%}
+<input type="text" name="{{ name }}" id="{{ name }}" maxlength="{{ len }}">
+{%- endmacro -%}
+	{% block body %}
+	<form action="{{ url }}" method="post">
+		<p>DEBUGGING:  Display contents of list-of-dicts "mods":</p>
+		<table width="100%" border="1">
+			<thead>
+				<tr>
+					<th>PDB ID</th>
+					<th>Model #</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in mods -%}
+				<tr>
+					<td>{{ row['pdb'] }}</td>
+					<td>{{ row['model_number'] }}</td>
+					<td>{{ row['description'] }}</td>
+				</tr>
+				{% endfor -%}
+			</tbody>
+		</table>
+		<p>DEBUGGING:  Display contents of list-of-dicts "pdbs":</p>
+		<table width="100%" border="1">
+			<caption>"Requires Translation" does not need to be exposed to the user.
+				Here for debugging purposes.</caption>
+			<thead>
+				<tr>
+					<th>PDB ID</th>
+					<th>Model #</th>
+					<th>Chain ID</th>
+					<th>Option</th>
+					<th>Description</th>
+					<th>Requires Translation</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in pdbs -%}
+				<tr>
+					<td>{{ row['pdb'] }}</td>
+					<td>{{ row['model_number'] }}</td>
+					<td>{{ row['chain_id'] }}</td>
+					<td>{{ row['option'] }}</td>
+					<td>{{ row['description'] }}</td>
+					<td>{{ row['requires_translation'] }}</td>
+				</tr>
+				{% endfor -%}
+			</tbody>
+		</table>
+		<hr>
+		<p>TESTING:  auto-generate the select list for PDB/model.</p>
+		<select name="pdbmod">
+			{{ null_option() }}
+			{%- for row in mods -%}
+			{%- set pdbmod = [row['pdb'],row['model_number']]|join('|') %}
+			<option value="{{ pdbmod }}">{{ pdbmod }}: {{row['description']}}</option>
+			{%- endfor %}
+		</select>
+		<hr>
+		<p>How best to extend this selection to limiting the chain options?
+			(Or shall we only check for consistency when submitting the form?)</p>
+		<select name="autopdb">
+			{{ null_option() }}
+			{%- for row in pdbs -%}
+			{%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
+			<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
+			{%- endfor %}
+		</select>
+		<hr>
+		<table border="1">
+			<caption>It would be slick to add additional selectors only when the
+				previous one is filled...
+				<br><br>
+				For positions which have insertion codes, please enter the 
+				positions in the format:  123|A
+			</caption>
+			<thead>
+				<tr>
+					<th>Range #</th>
+					<th>Chain</th>
+					<th>Range Start</th>
+					<th>&lt;</th>
+					<th>Range End</th>
+				</tr>
+			</thead>
+			<tbody>
+				{%- for count in [1,2,3,4,5] -%}
+				{%- set chain = ['chain',count]|join() %}
+				{%- set beg = ['beg',count]|join() %}
+				{%- set end = ['end',count]|join() %}
+				<tr>
+					<td align="center">{{ count }}</td>
+					<td>
+						<select name="{{chain}}">
+							{{ null_option() }}
+						</select>
+					</td>
+					<td>{{ textinput(beg) }}</td>
+					<td align="center">&lt;</td>
+					<td>{{ textinput(end) }}</td>
+				</tr>
+				{%- endfor %}
+			</tbody>
+		</table>
+	</form>
 {% endblock body %}
