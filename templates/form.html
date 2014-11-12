@@ -10,7 +10,14 @@
 {%- endmacro -%}
 	{% block body %}
 	<script type="text/javascript">
-		return true;
+		function show_block(id) {
+			var e = document.getElementById(id);
+			if(e != null) { // prevent bugs in IE
+				if(e.style.display == 'none') {
+					e.style.display = 'block';
+				}
+			}
+		}
 	</script>
 	<form action="{{ url }}" method="post">
 		<p>DEBUGGING:  Display contents of list-of-dicts "mods":</p>
