@@ -3,7 +3,7 @@
 <title>Sequence Variation Server</title>
 {% endblock title %}
 {% macro null_option() -%}
-<option value="" disabled="disabled">Choose an option...</option>
+<option value="" disabled="disabled" selected="selected">Choose an option...</option>
 {%- endmacro -%}
 {% macro textinput(name, len=10) -%}
 <input type="text" name="{{ name }}" id="{{ name }}" maxlength="{{ len }}">
