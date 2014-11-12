@@ -57,8 +57,8 @@
 			</tbody>
 		</table>
 		<hr>
-		<p>TESTING:  auto-generate the select list for PDB/model.</p>
-		<select name="pdbmod">
+		<p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
+		<select id="pdbmod" name="pdbmod">
 			{{ null_option() }}
 			{%- for row in mods -%}
 			{%- set pdbmod = [row['pdb'],row['model_number']]|join('|') %}
@@ -66,9 +66,13 @@
 			{%- endfor %}
 		</select>
 		<hr>
+		<div id="jquery_test">
+			<p>Selected PDB:</p>
+			<p>Selected Model:</p>
+		</div>
 		<p>How best to extend this selection to limiting the chain options?
 			(Or shall we only check for consistency when submitting the form?)</p>
-		<select name="autopdb">
+		<select id="autopdb" name="autopdb">
 			{{ null_option() }}
 			{%- for row in pdbs -%}
 			{%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
