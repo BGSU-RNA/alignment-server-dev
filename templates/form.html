@@ -9,6 +9,9 @@
 <input type="text" name="{{ name }}" id="{{ name }}" maxlength="{{ len }}">
 {%- endmacro -%}
 	{% block body %}
+	<script type="text/javascript">
+		return true;
+	</script>
 	<form action="{{ url }}" method="post">
 		<p>DEBUGGING:  Display contents of list-of-dicts "mods":</p>
 		<table width="100%" border="1">
@@ -69,17 +72,18 @@
 		<div id="jquery_test">
 			<p>Selected PDB: <input type="text" size="10" id="selected_pdb" name="selected_pdb"></p>
 			<p>Selected Model: <input type="text" size="10" id="selected_mod" name="selected_mod"></p>
-		</div>
-		<p>How best to extend this selection to limiting the chain options?
-			(Or shall we only check for consistency when submitting the form?)</p>
-		<select id="autopdb" name="autopdb">
-			{{ null_option() }}
-			{%- for row in pdbs -%}
-			{%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
-			<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
-			{%- endfor %}
-		</select>
-		<hr>
+			<hr>
+			<p>How best to extend this selection to limiting the chain options?
+				(Or shall we only check for consistency when submitting the form?)</p>
+			<select id="autopdb" name="autopdb">
+				{{ null_option() }}
+				{%- for row in pdbs -%}
+				{%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
+				<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
+				{%- endfor %}
+			</select>
+			<hr>
+		</div> <!-- jquery_test -->
 		<table border="1">
 			<caption>It would be slick to add additional selectors only when the
 				previous one is filled...
