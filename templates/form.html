@@ -11,6 +11,7 @@
 <input type="text" name="{{ name }}" id="{{ name }}" maxlength="{{ len }}">
 {%- endmacro -%}
 	{% block body %}
+	<!--<script src="{#{{ url_for('static', filename='jquery.min.js') }}#}"></script>-->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script type="text/javascript">
 		$SCRIPT_ROOT = {{ request.script_root|tojson| safe }};
@@ -100,8 +101,10 @@
 			<p>Selected PDB: <input type="text" size="10" id="selected_pdb" name="selected_pdb"></p>
 			<p>Selected Model: <input type="text" size="10" id="selected_mod" name="selected_mod"></p>
 			<hr>
-			<p>How best to extend this selection to limiting the chain options?
+			<p>Q: How best to extend this selection to limiting the chain options?
 				(Or shall we only check for consistency when submitting the form?)</p>
+			<p>A: Read this JSON into javascript and build the options from that.</p>
+			<p>{{ jch }}</p>
 			<select id="autopdb" name="autopdb">
 				{{ null_option() }}
 				{%- for row in pdbs -%}
@@ -113,7 +116,9 @@
 		</div> <!-- jquery_test -->
 		<table border="1">
 			<caption>It would be slick to add additional selectors only when the
-				previous one is filled...
+				previous one is filled... (Now possible by extending the 
+				show_block logic; will need corresponding hide_block as well, or
+				combine as toggle_block -- see Appsoma code.)
 				<br><br>
 				For positions which have insertion codes, please enter the 
 				positions in the format:  123|A
@@ -146,8 +151,5 @@
 				{%- endfor %}
 			</tbody>
 		</table>
-		<p>
-			{{ jch }}
-		</p>
 	</form>
 {% endblock body %}
