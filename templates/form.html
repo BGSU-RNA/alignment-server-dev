@@ -2,6 +2,8 @@
 {% block title %}
 <title>Sequence Variation Server</title>
 {% endblock title %}
+{% block head %}
+{% endblock head %}
 {% macro null_option() -%}
 <option value="" disabled="disabled" selected="selected">Choose an option...</option>
 {%- endmacro -%}
@@ -9,7 +11,25 @@
 <input type="text" name="{{ name }}" id="{{ name }}" maxlength="{{ len }}">
 {%- endmacro -%}
 	{% block body %}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script type="text/javascript">
+		$SCRIPT_ROOT = {{ request.script_root|tojson| safe }};
+
+		$(function () {
+			$("#pdbmod").change(function() {
+				var pdbmod = $("#pdbmod").val();
+				var arrpdbmod = pdbmod.split("|");
+				var pdb = arrpdbmod[0];
+				var mod = arrpdbmod[1];
+				$("input[name=selected_pdb]").val(pdb);
+				$("input[name=selected_mod]").val(mod);
+				alert( "pdbmod new value: " + pdbmod + "\npdb: " + pdb + "\nmod: " + mod );
+				var select = $("#autopdb");
+				select.empty().append('<option value="" disabled="disabled" selected="selected">Choose an option...</option>');
+				show_block("jquery_test")
+			});
+		});
+
 		function show_block(id) {
 			var e = document.getElementById(id);
 			if(e != null) { // prevent bugs in IE
@@ -76,7 +96,7 @@
 			{%- endfor %}
 		</select>
 		<hr>
-		<div id="jquery_test">
+		<div id="jquery_test" style="display:none">
 			<p>Selected PDB: <input type="text" size="10" id="selected_pdb" name="selected_pdb"></p>
 			<p>Selected Model: <input type="text" size="10" id="selected_mod" name="selected_mod"></p>
 			<hr>
