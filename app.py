@@ -66,8 +66,7 @@ def get_html():
     pdbs = db.list_options(g.rcad)
     mods = []
     mods = db.list_structures(g.rcad)
-    return render_template('form.html', pdbs=pdbs, mods=mods,
-                            jch=json.dumps(pdbs))
+    return render_template('form.html', pdbs=pdbs, mods=mods)
 
 
 @mimetype('application/json')
