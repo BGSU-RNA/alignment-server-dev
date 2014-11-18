@@ -273,6 +273,8 @@ def list_structures(conn):
         data.append({
             'pdb': row['PDBID'],
             'model_number': row['ModelNumber'],
-            'description': row['Description']
+            'organism': row['Description_Organism'],
+            'taxonomy': row['Description_Taxonomy'],
+            'contents': row['Description_Contents']
         })
     return data

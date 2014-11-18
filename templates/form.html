@@ -74,10 +74,10 @@
 		}
 	</script>
 	<p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
-	<p>TO DO:  split description into fields for greater visibility.</p>
-	<p>TO DO:  add major taxonomic domain field to description.</p>
+	<p>DONE:  split description into fields for greater visibility.</p>
+	<p>DONE:  add major taxonomic domain field to description.</p>
 	<p>TO DO:  use a fixed-width font for the selector to streamline the field presentation.</p>
-	<p>TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</p>
+	<p>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</p>
 	<form action="{{ url }}" method="post">
 		<div id="dict_debug" style="display:none">
 			<p>DEBUGGING:  Display contents of list-of-dicts "mods":</p>
@@ -131,8 +131,9 @@
 		<select id="pdbmod" name="pdbmod">
 			{{ null_option() }}
 			{%- for row in mods -%}
-			{%- set pdbmod = [row['pdb'],row['model_number']]|join('|') %}
-			<option value="{{ pdbmod }}">{{ pdbmod }}: {{row['description']}}</option>
+			{%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
+			{%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('|') %}
+			<option style="font-face: Consolas" value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
 			{%- endfor %}
 		</select>
 		<hr>
