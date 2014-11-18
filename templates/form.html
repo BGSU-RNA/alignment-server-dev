@@ -37,19 +37,28 @@
 				$("input[name=selected_pdb]").val(pdb);
 				$("input[name=selected_mod]").val(mod);
 				//alert( "pdbmod new value: " + pdbmod + "\npdb: " + pdb + "\nmod: " + mod ); // DEBUG
-				var select = $("#autopdb");
-				select.empty().append('<option value="" disabled="disabled" selected="selected">Choose an option...</option>');
+				//var select = $("#autopdb");
+				//select.empty().append('<option value="" disabled="disabled" selected="selected">Choose an option...</option>');
 
-				// build new options here
-				for ( var j = 0; j < y.length; j++ ){
-					if ( y[j] == "" ) continue; // default case handled above
-					var arrx = x[j].split("|");
-					if ( arrx[0] == pdb && arrx[1] == mod ){
-						console.log(x[j]);
-						//alert("j: " + j + " re: " + pdbmod + " // x: " + x[j]); // DEBUG
-						select.append('<option value="' + x[j] + '">' + y[j] + '</option>');
+				// iterate change for all chain selectors
+				var chainsel = [ "#autopdb", "#chain1", "#chain2", "#chain3", "#chain4", "#chain5" ];
+				for ( var k = 0; k < chainsel.length; k++ ) {
+					var select = $(chainsel[k]);
+					
+					select.empty().append('{{ null_option() }}}');
+
+					for ( var j = 0; j < y.length; j++ ){
+						if ( y[j] == "" ) continue; // default case handled above
+						
+						var arrx = x[j].split("|");
+						
+						if ( arrx[0] == pdb && arrx[1] == mod ){
+							select.append('<option value="' + x[j] + '">' + y[j] + '</option>');
+						}
 					}
 				}
+
+				// build new options here
 
 				show_block("jquery_test")
 			});
@@ -64,6 +73,11 @@
 			}
 		}
 	</script>
+	<p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
+	<p>TO DO:  split description into fields for greater visibility.</p>
+	<p>TO DO:  add major taxonomic domain field to description.</p>
+	<p>TO DO:  use a fixed-width font for the selector to streamline the field presentation.</p>
+	<p>TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</p>
 	<form action="{{ url }}" method="post">
 		<div id="dict_debug" style="display:none">
 			<p>DEBUGGING:  Display contents of list-of-dicts "mods":</p>
@@ -114,11 +128,6 @@
 			</table>
 			<hr>
 		</div> <!-- dict_debug -->
-		<p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
-		<p>TO DO:  split description into fields for greater visibility.</p>
-		<p>TO DO:  add major taxonomic domain field to description.</p>
-		<p>TO DO:  use a fixed-width font for the selector to streamline the field presentation.</p>
-		<p>TO DO:  add buttons to toggle hidden debugging elements.</p>
 		<select id="pdbmod" name="pdbmod">
 			{{ null_option() }}
 			{%- for row in mods -%}
@@ -128,8 +137,6 @@
 		</select>
 		<hr>
 		<div id="jquery_test" style="display:none">
-			<p>Selected PDB: <input type="text" size="10" id="selected_pdb" name="selected_pdb"></p>
-			<p>Selected Model: <input type="text" size="10" id="selected_mod" name="selected_mod"></p>
 			<select id="autopdb" name="autopdb">
 				{{ null_option() }}
 				{%- for row in pdbs -%}
@@ -164,7 +171,7 @@
 					<tr>
 						<td align="center">{{ count }}</td>
 						<td>
-							<select name="{{chain}}">
+							<select id="{{chain}}" name="{{chain}}">
 								{{ null_option() }}
 							</select>
 						</td>
