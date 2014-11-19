@@ -2,44 +2,187 @@
 {% block title %}
 <title>Sequence Variation Server</title>
 {% endblock title %}
-{% block body %}
-<form action="{{ url }}" method="post">
-	<p>DEBUGGING:  Display contents of list-of-dicts "pdbs":</p>
-	<table width="100%" border="1">
-		<caption>"Requires Translation" does not need to be exposed to the user.  Here for debugging purposes.</caption>
-		<thead>
-			<tr>
-				<th>PDB ID</th>
-				<th>Model #</th>
-				<th>Chain ID</th>
-				<th>Description</th>
-            	<th>Requires Translation</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for row in pdbs %}
-			<tr>
-				<td>{{ row['pdb'] }}</td>
-				<td>{{ row['model_number'] }}</td>
-				<td>{{ row['chain_id'] }}</td>
-				<td>{{ row['description'] }}</td>
-				<td>{{ row['requires_translation'] }}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	<hr>
-	<select name="pdb">
-    	<option value="2AW7">2AW7</option>
-	</select>
-	<hr>
-	<p>TESTING:  auto-generate the select list.</p>
-	<select name="autopdb">
-		<option value="" disabled="disabled">Choose an option...</option>
-		{% for row in pdbs %}
-		{% set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
-		<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
-		{% endfor %}
-	</select>
-</form>
+{% block head %}
+{% endblock head %}
+{% macro null_option() -%}
+<option value="" disabled="disabled" selected="selected">Choose an option...</option>
+{%- endmacro -%}
+{% macro textinput(name, len=10) -%}
+<input type="text" name="{{ name }}" id="{{ name }}" maxlength="{{ len }}">
+{%- endmacro -%}
+	{% block body %}
+	<!--<script src="{#{{ url_for('static', filename='jquery.min.js') }}#}"></script>-->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		$SCRIPT_ROOT = {{ request.script_root|tojson| safe }};
+
+		$(function () {
+			var apdb = document.getElementById("autopdb")
+			var x = [];
+			var y = [];
+
+			for ( var i = 0; i < apdb.options.length; i++ )
+			{
+				x[i] = apdb.options[i].value;
+				if ( x[i] == "" ) continue;
+				y[i] = apdb.options[i].text;
+				//alert("(i: " + i + ") " + x[i] + " keys " + y[i]); // DEBUG
+			}
+
+			$("#pdbmod").change(function() {
+				var pdbmod = $("#pdbmod").val();
+				var arrpdbmod = pdbmod.split("|");
+				var pdb = arrpdbmod[0];
+				var mod = arrpdbmod[1];
+				$("input[name=selected_pdb]").val(pdb);
+				$("input[name=selected_mod]").val(mod);
+				//alert( "pdbmod new value: " + pdbmod + "\npdb: " + pdb + "\nmod: " + mod ); // DEBUG
+				//var select = $("#autopdb");
+				//select.empty().append('<option value="" disabled="disabled" selected="selected">Choose an option...</option>');
+
+				// iterate change for all chain selectors
+				var chainsel = [ "#autopdb", "#chain1", "#chain2", "#chain3", "#chain4", "#chain5" ];
+				for ( var k = 0; k < chainsel.length; k++ ) {
+					var select = $(chainsel[k]);
+					
+					select.empty().append('{{ null_option() }}}');
+
+					for ( var j = 0; j < y.length; j++ ){
+						if ( y[j] == "" ) continue; // default case handled above
+						
+						var arrx = x[j].split("|");
+						
+						if ( arrx[0] == pdb && arrx[1] == mod ){
+							select.append('<option value="' + x[j] + '">' + y[j] + '</option>');
+						}
+					}
+				}
+
+				// build new options here
+
+				show_block("jquery_test")
+			});
+		});
+
+		function show_block(id) {
+			var e = document.getElementById(id);
+			if(e != null) { // prevent bugs in IE
+				if(e.style.display == 'none') {
+					e.style.display = 'block';
+				}
+			}
+		}
+	</script>
+	<p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
+	<p>DONE:  split description into fields for greater visibility.</p>
+	<p>DONE:  add major taxonomic domain field to description.</p>
+	<p>TO DO:  use a fixed-width font for the selector to streamline the field presentation.</p>
+	<p>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</p>
+	<form action="{{ url }}" method="post">
+		<div id="dict_debug" style="display:none">
+			<p>DEBUGGING:  Display contents of list-of-dicts "mods":</p>
+			<table width="100%" border="1">
+				<thead>
+					<tr>
+						<th>PDB ID</th>
+						<th>Model #</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for row in mods -%}
+					<tr>
+						<td>{{ row['pdb'] }}</td>
+						<td>{{ row['model_number'] }}</td>
+						<td>{{ row['description'] }}</td>
+					</tr>
+					{% endfor -%}
+				</tbody>
+			</table>
+			<p>DEBUGGING:  Display contents of list-of-dicts "pdbs":</p>
+			<table width="100%" border="1">
+				<caption>"Requires Translation" does not need to be exposed to the user.
+					Here for debugging purposes.</caption>
+				<thead>
+					<tr>
+						<th>PDB ID</th>
+						<th>Model #</th>
+						<th>Chain ID</th>
+						<th>Option</th>
+						<th>Description</th>
+						<th>Requires Translation</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for row in pdbs -%}
+					<tr>
+						<td>{{ row['pdb'] }}</td>
+						<td>{{ row['model_number'] }}</td>
+						<td>{{ row['chain_id'] }}</td>
+						<td>{{ row['option'] }}</td>
+						<td>{{ row['description'] }}</td>
+						<td>{{ row['requires_translation'] }}</td>
+					</tr>
+					{% endfor -%}
+				</tbody>
+			</table>
+			<hr>
+		</div> <!-- dict_debug -->
+		<select id="pdbmod" name="pdbmod">
+			{{ null_option() }}
+			{%- for row in mods -%}
+			{%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
+			{%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('|') %}
+			<option style="font-face: Consolas" value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
+			{%- endfor %}
+		</select>
+		<hr>
+		<div id="jquery_test" style="display:none">
+			<select id="autopdb" name="autopdb">
+				{{ null_option() }}
+				{%- for row in pdbs -%}
+				{%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
+				<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
+				{%- endfor %}
+			</select>
+			<hr>
+			<table border="1">
+				<caption>It would be slick to add additional selectors only when the
+					previous one is filled... (Now possible by extending the 
+					show_block logic; will need corresponding hide_block as well, or
+					combine as toggle_block -- see Appsoma code.)
+					<br><br>
+					For positions which have insertion codes, please enter the 
+					positions in the format:  123|A
+				</caption>
+				<thead>
+					<tr>
+						<th>Range #</th>
+						<th>Chain</th>
+						<th>Range Start</th>
+						<th>&lt;</th>
+						<th>Range End</th>
+					</tr>
+				</thead>
+				<tbody>
+					{%- for count in [1,2,3,4,5] -%}
+					{%- set chain = ['chain',count]|join() %}
+					{%- set beg = ['beg',count]|join() %}
+					{%- set end = ['end',count]|join() %}
+					<tr>
+						<td align="center">{{ count }}</td>
+						<td>
+							<select id="{{chain}}" name="{{chain}}">
+								{{ null_option() }}
+							</select>
+						</td>
+						<td>{{ textinput(beg) }}</td>
+						<td align="center">&lt;</td>
+						<td>{{ textinput(end) }}</td>
+					</tr>
+					{%- endfor %}
+				</tbody>
+			</table>
+		</div> <!-- jquery_test -->
+	</form>
 {% endblock body %}

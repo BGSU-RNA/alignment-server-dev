@@ -5,6 +5,7 @@ from flask import Flask
 from flask import request
 from flask import Response
 from flask import render_template
+from flask import url_for
 
 from flask_mime import Mime
 
@@ -65,7 +66,9 @@ def get_html():
         return as_html(request.args)
     pdbs = []
     pdbs = db.list_options(g.rcad)
-    return render_template('form.html', pdbs=pdbs)
+    mods = []
+    mods = db.list_structures(g.rcad)
+    return render_template('form.html', pdbs=pdbs, mods=mods)
 
 
 @mimetype('application/json')

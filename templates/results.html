@@ -4,9 +4,11 @@
 {% endblock title %}
 {% block body %}
 <h2>{{ self.titletext() }}</h2>
-<p>Results!</p>
+<p>TO DO:  add a summary table here.  Sequence + count; prioritize the 
+	sequence from the input PDB file (separate tbody with custom format?).</p>
+<hr>
 <table border="1" width="100%">
-	<caption>DEBUGGING: Including a row of bogus sample data and a row of real sample data for layout design purposes.</caption>
+	<caption>Real data from rCAD; header repeated every 20 rows.</caption>
 	<thead>
 		{% block results_header %}
 		<tr>
@@ -21,26 +23,8 @@
 		{% endblock results_header %}
 	</thead>
 	<tbody>
-		<tr>
-			<td>12345</td>
-			<td>1</td>
-			<td>GUAGGA,--GUCUC,----A,-GA-CGA-UCCUG-AGCU,--AA---CGA</td>
-			<td>GB123456</td>
-			<td>12345</td>
-			<td><em>Testus testus</em></td>
-			<td>Undefined \ Testus testus</td>
-		</tr>
-		<tr>
-			<td>2188</td>
-			<td>1</td>
-			<td>G-G-------------------------A-G--U-A-C-G</td>
-			<td>X74066</td>
-			<td>435</td>
-			<td>Acetobacter aceti</td>
-			<td>root \ cellular organisms \ Bacteria \ Proteobacteria \ Alphaproteobacteria \ Rhodospirillales \ Acetobacteraceae \ Acetobacter \ Acetobacter subgen. Acetobacter \ Acetobacter aceti \</td>
-		</tr>
-		{# Iterate over data.  Consider putting another copy of results_header every n rows.  What value of n? #}
-	{#
+		{# Iterate over data.  Put another copy of results_header every n rows.
+			What value of n (trying 20)? #}
 		{% for row in data %}
 		<tr>
 			<td>{{ row['SeqID'] }}</td>
@@ -51,16 +35,15 @@
 		    <td>{{ row['ScientificName'] }}</td>
 		    <td>{{ row['LineageName'] }}</td>
 		</tr>
-		{% if data.revindex is divisibleby(20) %}
+			{% if loop.index is divisibleby(20) %}
 	</tbody>
 	<tbody>
 		{{ self.results_header() }}
 	</tbody>
 	<tbody>
-		{% endif %}
+			{% endif %}
 		{% endfor %}
 	</tbody>
-	#}
 	<tfoot>
 		{{ self.results_header() }}
 	</tfoot>

@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-{% block title %} {% endblock title %}
-</head>
+	<head>
+		<meta charset="UTF-8">
+		{%- block title -%} {% endblock title -%}
+		{% block head -%}
+		{% endblock head -%}
+	</head>
 
-<body>
-	<h1>BGSU-CRW Sequence Alignment Variation Server</h1>
-	<p>DEBUGGING:  Use this space to test other title variants.</p>
-	<hr>
-{% block body %}
-{% endblock body %}
-</body>
+	<body>
+		<h1>BGSU-CRW Sequence Alignment Variation Server</h1>
+		<p>DEBUGGING:  Use this space to test other title variants.</p>
+		<hr>
+		{% block body -%}
+		{% endblock body -%}
+		<!-- 500 Internal Server Error, recommended in Flask Docs
+		<script type="text/javascript" src="{#{{ url_for('static', filename='jquery.min.js') }}#}"></script>
+		-->
+		<!--
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		-->
+		<!-- 500 Internal Server Error, recommended in Flask Docs
+		<script type="text/javascript">
+			window.jQuery || document.write('<script src="{#{{ url_for('static', filename='jquery.min.js') }}#}"></script>')
+		</script>
+		-->
+	</body>
 </html>

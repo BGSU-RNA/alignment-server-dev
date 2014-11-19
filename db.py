@@ -230,10 +230,11 @@ def list_options(conn):
     Contact rCAD for the list of available structure-alignment mappings and
     return the list.
 
-    No input parameters required.
+    No input parameters required (beyond connection).
 
-    Returns five columns per entry:  PDBID (char(4)), ModelNumber (tinyint),
-    ChainID (char(1)), Requires_Translation (bit), Description (varchar(100)).
+    Returns six columns per entry:  PDBID (char(4)), ModelNumber (tinyint),
+    ChainID (char(1)), Map3DAlnID (tinyint), Requires_Translation (bit),
+    Description (varchar(100)).
     """
 
     #   TODO:  identify any missing elements and add them.
@@ -247,7 +248,33 @@ def list_options(conn):
             'pdb': row['PDBID'],
             'model_number': row['ModelNumber'],
             'chain_id': row['ChainID'],
+            'option': row['Map3DAlnID'],
             'description': row['Description'],
             'requires_translation': row['Requires_Translation']
+        })
+    return data
+
+
+def list_structures(conn):
+    """
+    Contact rCAD for the list of available structures (PDB + model).
+
+    Necessary to split like this to handle queries between chains within
+    a model.
+ 
+    No input parameters required (beyond connection).
+    """
+
+    proc = conn.init_procedure('BGSU.ListAlnServerStructures')
+    proc.execute()
+
+    data = []
+    for row in conn:
+        data.append({
+            'pdb': row['PDBID'],
+            'model_number': row['ModelNumber'],
+            'organism': row['Description_Organism'],
+            'taxonomy': row['Description_Taxonomy'],
+            'contents': row['Description_Contents']
         })
     return data
