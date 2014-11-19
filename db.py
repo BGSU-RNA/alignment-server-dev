@@ -1,39 +1,15 @@
 from os import getenv
 
 try:
-    # if dbmsName in (DBMS.MSSQL, DBMS.SYBASE)
-    # import pymssql # not sure if these routines will also be useful
     import _mssql  # stored procedure support
 except ImportError:
     pass  # or better to die, since none of the other functions will work?
-
-
-#
-#   METACODE for a single procedure run
-#   (TBD if open/close steps should be included)
-#
-#   (OPEN connection:  rcad.connect())
-#   INITIALIZE the procedure:  conn.init_procedure(name)
-#   BIND parameters:  proc.bind(value,dbtype,name=None,output=False,null=False,
-#       max_length=-1)
-#       Note:  if proc.bind behaves like PHP mssql_bind(), max_length only
-#       applies to char/varchar values.
-#   EXECUTE procedure:  proc.execute()
-#   OBTAIN results:
-#       for row in conn:
-#           print "Firstname: %s, LastName: %s" % (row['fname'],row['lname'])
-#   (CLOSE connection:  conn.close())
-#
 
 
 def rcad_connect():
     """
     Open connection to rCAD @ UT for data retrieval.
     """
-    #   Credentials:  hostname, username, password
-    #   Refactor this so that the credentials are not hardcoded within the web
-    #       infrastructure.  Environment variables should be a viable option.
-    #       Others?
     hostname = getenv("RCAD_HOSTNAME") if getenv("RCAD_HOSTNAME") \
         else "crw-rcad.austin.utexas.edu:1433"
     username = getenv("RCAD_USERNAME") if getenv("RCAD_USERNAME") else "BGSU"
@@ -42,95 +18,17 @@ def rcad_connect():
 
     return _mssql.connect(server=hostname, user=username, password=password,
                           database="crwdb")
-    #   option:  add 'tds_version="8.0"'
-    #   option:  add 'appname="BGSU_Alignment_Server"'
-    #   possible:  tinker with conn_properties.  Default looks reasonable.
-    #   consider:  refactor all of these outside the web infrastructure?
-    #       (except for any local overrides?)
-
-
-#
-#   NOTES for Parameter Binding:
-#
-#   dbtype:  one of (dbtype in CAPS, MS SQL type in parens):
-#       SQLBINARY, SQLBIT (bit), SQLBITN, SQLCHAR (char), SQLDATETIME,
-#       SQLDATETIM4, SQLDATETIMN, SQLDECIMAL, SQLFLT4, SQLFLT8 (bigint?),
-#       SQLFLTN, SQLIMAGE, SQLINT1 (tinyint), SQLINT2 (smallint),
-#       SQLINT4 (int), SQLINT8, SQLINTN, SQLMONEY, SQLMONEY4, SQLMONEYN,
-#       SQLNUMERIC, SQLREAL, SQLTEXT (text), SQLVARBINARY,
-#       SQLVARCHAR (varchar), SQLUUID
-#   additional info: http://msdn.microsoft.com/en-us/library/cc296193.aspx
-#
-
-
-#
-#   TODO:  build against new stored procedure (BGSU.SeqVar)
-#
-#   Parameters (database type):
-#       @PDBID (char(4))
-#       @ModNum (tinyint)
-#       (five sets of, where 1 <= N <= 5)
-#           @ChainN (char(1))
-#           @rangeNa (int)
-#           @rangeNb (int)
-#
-#   Results (database type):
-#       SeqID (int)
-#       SeqVersion (tinyint)
-#       CompleteFragment (varchar(2504))
-#       AccessionID (varchar(50))
-#       TaxID (int)
-#       ScientificName (varchar(8000))
-#       LineageName (varchar(8000))
-#
-#   For ranges 2-5, @ChainN defaults to NULL, and @rangeNa and @rangeNb default
-#       to 0.  The procedure attempts to process multiple ranges only when
-#       @ChainN is not NULL and both @rangeNa and @rangeNb are greater than 0.
-#
-#   Other defaults (which may need to change):
-#       @PDBID:  '2AW7'
-#       @ModNum:  1
-#       @Chain1:  'A'
-#       @range1a:  887
-#       @range1b:  894
-#
-#   TODO:  for each range (rangeNa:rangeNb), ensure that rangeNa <= rangeNb.
-#       Swap values if reversed.  Proc fails if range1 > range2 (BETWEEN
-#       keyword).
-#
-#   TODO:  ensure that ranges are filled in order.  If range 2 is empty and
-#       range 3 is occupied, only range 1 will be displayed.
-#
-#   N.B.  Ranges do not need to occur in order; i.e., range 1 may be 235-240
-#       while range 2 is 115-135.  (Gives the user some flexibility in how
-#       their selections will be displayed.)
-#
 
 
 def seqvar(db, pdb, model, ranges):
-    #
-    #   DEBUGGING NOTES (JJC, 29 October 2014)
-    #
-    #   ?units=2AW7|1|A|A|887                : stops at DEBUG 90
-    #   ?units=2AW7|1|A|A|887,2AW7|1|A|A|894 : stops at DEBUG 10
-    #       (consistent with "if 2 <= len(ranges) <= 5")
-    #       (except that i don't see the error raised)
-    #   ?units=2AW7|1|A|A|887:2AW7|1|A|A|894 : stops at DEBUG 90
-    #
-    #   Question:  why do the single range queries stop at DEBUG 90?
-    #   Should they not continue to reach at least DEBUG 100?  Or is
-    #   something amiss with the enumerate option?
-    #
-    #   Optional:  add the "start=1" option to the enumerate command,
-    #   and we should be able to dispense with multiple "index + 1" in
-    #   the code below.
-    #
     proc = db.init_procedure('BGSU.SeqVar')
 
     proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
               max_length=4)
     proc.bind(model, _mssql.SQLINT1, '@ModNum', null=False, output=False)
 
+    # This copies the list of ranges to a new list and then appends as many
+    # empty default valuse as needed.
     all_ranges = list(ranges)
     all_ranges.extend([({}, {})] * (5 - len(ranges)))
 
