@@ -3,18 +3,19 @@ import simplejson as json
 from flask import g
 from flask import Flask
 from flask import request
-from flask import Response
 from flask import render_template
-from flask import url_for
-
-from flask_mime import Mime
 
 import db
 import utils as ut
 from dummy_data import DATA
 
+import mimerender
+
 app = Flask(__name__)
-mimetype = Mime(app)
+mimerender = mimerender.FlaskMimeRender()
+
+render_json = lambda template, **kwargs: json.dumps(kwargs)
+render_html = lambda template, **kwargs: render_template(template, **kwargs)
 
 
 @app.before_request
@@ -44,45 +45,29 @@ def variations(data):
     return db.seqvar(g.rcad, pdb, model, translated)
 
 
-def as_json(data):
-    return Response(json.dumps(variations(data)),
-                    mimetype='application/json; charset=utf-8')
-
-
-def as_html(data):
-    return render_template('results.html', data=variations(data))
-
-
-@mimetype('application/json')
 @app.route('/', methods=['GET'])
-def get_json():
-    return as_json(request.args)
-
-
-@mimetype('text/html')
-@app.route('/', methods=['GET'])
+@mimerender(
+    json=render_json,
+    html=render_html
+)
 def get_html():
     if 'units' in request.args:
-        return as_html(request.args)
+        return {'template': 'results.html', 'data': variations(request.args)}
     pdbs = []
-    pdbs = db.list_options(g.rcad)
+    # pdbs = db.list_options(g.rcad)
     mods = []
-    mods = db.list_structures(g.rcad)
-    return render_template('form.html', pdbs=pdbs, mods=mods)
+    # mods = db.list_structures(g.rcad)
+    return {'template': 'form.html', 'pdbs': pdbs, 'mods': mods}
 
 
-@mimetype('application/json')
 @app.route('/', methods=['POST'])
-def post_json():
-    data = request.get_json() or request.form
-    return as_json(data)
-
-
-@mimetype('text/html')
-@app.route('/', methods=['POST'])
+@mimerender(
+    json=render_json,
+    html=render_html,
+)
 def post_html():
     data = request.get_json() or request.form
-    return as_html(data)
+    return {'template': 'results.html', 'data': variations(data)}
 
 
 if __name__ == '__main__':
