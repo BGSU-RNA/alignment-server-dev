@@ -10,22 +10,16 @@
 	</head>
 
 	<body>
-		<h1>BGSU-CRW Sequence Alignment Variation Server</h1>
-		<p>DEBUGGING:  Use this space to test other title variants.</p>
-		<hr>
-		{% block body -%}
-		{% endblock body -%}
-		<!-- 500 Internal Server Error, recommended in Flask Docs
-		<script type="text/javascript" src="{#{{ url_for('static', filename='jquery.min.js') }}#}"></script>
-		-->
-		<!--
+    <div class="container">
+      <div class="jumbotron">
+        <h1>BGSU-CRW Sequence Alignment Variation Server</h1>
+        <p>DEBUGGING:  Use this space to test other title variants.</p>
+      </div>
+      {% block body -%}
+      {% endblock body -%}
+    </div>
+
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		-->
-		<!-- 500 Internal Server Error, recommended in Flask Docs
-		<script type="text/javascript">
-			window.jQuery || document.write('<script src="{#{{ url_for('static', filename='jquery.min.js') }}#}"></script>')
-		</script>
-		-->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	</body>
 </html>
