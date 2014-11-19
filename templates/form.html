@@ -27,23 +27,28 @@
 
       <div class="form-group">
 
-        <label for="pdbmod" class="col-sm-1 control-label">Structure</label>
+        <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
         <div class="col-sm-5">
-          <select class="form-control" id="pdbmod" name="pdbmod">
+          <select class="form-control" id="pdb-model" name="pdb-model">
             {{ null_option() }}
             {%- for row in mods -%}
             {%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
             {%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('| ') %}
-            <option style="font-face: Consolas" value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
+            <option value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
             {% endfor %}
           </select>
 
         </div>
 
-        <label for="pdb-chain" class="col-sm-1 control-label" disabled>Chain</label>
-        <div class="col-sm-2">
+        {# This block needs to be both present and not displayed. #}
+        <label for="pdb-chain" class="col-sm-1 control-label" style="display:none" disabled>Chain</label>
+        <div class="col-sm-2" style="display:none">
           <select class="form-control" id="pdb-chain" name="pdb-chain" disabled>
             {{ null_option() }}
+            {%- for row in pdbs -%}
+			{%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
+			<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
+			{%- endfor %}
           </select>
         </div>
 
@@ -51,7 +56,7 @@
 
       <hr>
 
-        <table>
+        <table style="cellPadding: 2; cellSpacing: 2">
           <caption>It would be slick to add additional selectors only when the
             previous one is filled... (Now possible by extending the 
             show_block logic; will need corresponding hide_block as well, or
@@ -65,7 +70,7 @@
           </caption>
           <thead>
             <tr>
-              <th>Range #</th>
+              <th>Range&nbsp;#</th>
               <th>Chain</th>
               <th>Range Start</th>
               <th>&lt;</th>

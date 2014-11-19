@@ -1,7 +1,8 @@
-$(function () {
+//$( document ).ready(function () {
+$( window ).load(function() {
   'use strict';
 
-  var apdb = document.getElementById("autopdb");
+  var apdb = document.getElementById("pdb-chain");
   var x = [];
   var y = [];
 
@@ -13,8 +14,8 @@ $(function () {
     //alert("(i: " + i + ") " + x[i] + " keys " + y[i]); // DEBUG
   }
 
-  $("#pdbmod").change(function() {
-    var pdbmod = $("#pdbmod").val();
+  $("#pdb-model").change(function() {
+    var pdbmod = $("#pdb-model").val();
     var arrpdbmod = pdbmod.split("|");
     var pdb = arrpdbmod[0];
     var mod = arrpdbmod[1];
@@ -23,10 +24,11 @@ $(function () {
     //alert( "pdbmod new value: " + pdbmod + "\npdb: " + pdb + "\nmod: " + mod ); // DEBUG
 
     // iterate change for all chain selectors
-    var chainsel = [ "#autopdb", "#chain1", "#chain2", "#chain3", "#chain4", "#chain5" ];
+    var chainsel = [ "#pdb-chain", "#chain1", "#chain2", "#chain3", "#chain4", "#chain5" ];
     for ( var k = 0; k < chainsel.length; k++ ) {
       var select = $(chainsel[k]);
       
+      select.disabled = false;
       select.empty().append('{{ null_option() }}}');
 
       for ( var j = 0; j < y.length; j++ ){
@@ -46,11 +48,12 @@ $(function () {
   });
 });
 
-function show_block(id) {
-  var e = document.getElementById(id);
-  if(e != null) { // prevent bugs in IE
-    if(e.style.display == 'none') {
-      e.style.display = 'block';
-    }
-  }
-}
+//function show_block(id) {
+//  var e = document.getElementById(id);
+//  if(e != null) { // prevent bugs in IE
+//    if(e.style.display == 'none') {
+//      e.style.display = 'block';
+//    }
+//  }
+//}
+//
