@@ -20,7 +20,9 @@ render_html = lambda template, **kwargs: render_template(template, **kwargs)
 
 @app.before_request
 def before_request():
-    g.rcad = db.rcad_connect()
+    g.rcad = None
+    if not app.debug:
+        g.rcad = db.rcad_connect(app.config)
 
 
 @app.teardown_request
@@ -53,10 +55,8 @@ def variations(data):
 def get_html():
     if 'units' in request.args:
         return {'template': 'results.html', 'data': variations(request.args)}
-    pdbs = []
-    # pdbs = db.list_options(g.rcad)
-    mods = []
-    # mods = db.list_structures(g.rcad)
+    pdbs = db.list_options(g.rcad)
+    mods = db.list_structures(g.rcad)
     return {'template': 'form.html', 'pdbs': pdbs, 'mods': mods}
 
 

@@ -1,20 +1,17 @@
-from os import getenv
-
 try:
     import _mssql  # stored procedure support
 except ImportError:
     pass  # or better to die, since none of the other functions will work?
 
 
-def rcad_connect():
+def rcad_connect(config):
     """
     Open connection to rCAD @ UT for data retrieval.
     """
-    hostname = getenv("RCAD_HOSTNAME") if getenv("RCAD_HOSTNAME") \
-        else "crw-rcad.austin.utexas.edu:1433"
-    username = getenv("RCAD_USERNAME") if getenv("RCAD_USERNAME") else "BGSU"
-    password = getenv("RCAD_PASSWORD") if getenv("RCAD_PASSWORD") \
-        else "b1g4s3uDHRuNbA$"
+    hostname = config.get("RCAD_HOSTNAME", "crw-rcad.austin.utexas.edu:1433")
+    username = config.get("RCAD_USERNAME", "BGSU")
+    username = config.get("RCAD_USERNAME", "BGSU")
+    password = config.get("RCAD_PASSWORD", "b1g4s3uDHRuNbA$")
 
     return _mssql.connect(server=hostname, user=username, password=password,
                           database="crwdb")
