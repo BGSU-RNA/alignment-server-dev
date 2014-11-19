@@ -17,74 +17,84 @@
 
 {% block body %}
 
-	<h2>Work in progress/staged:</h2>
-	<p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
-	<p>DONE:  split description into fields for greater visibility.</p>
-	<p>DONE:  add major taxonomic domain field to description.</p>
-	<p>TO DO:  use a fixed-width font for the selector to streamline the field presentation.</p>
-	<p>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</p>
+  <div class="row">
+    <h2>Work in progress/staged:</h2>
+    <p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
+    <p>TO DO:  use a fixed-width font for the selector to streamline the field presentation.</p>
+    <p>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</p>
 
-	<form action="{{ url }}" method="post">
-		<select id="pdbmod" name="pdbmod">
-			{{ null_option() }}
-			{%- for row in mods -%}
-			{%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
-			{%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('|') %}
-			<option style="font-face: Consolas" value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
-			{%- endfor %}
-		</select>
-		<hr>
-		<div id="jquery_test" style="display:none">
-			<select id="autopdb" name="autopdb">
-				{{ null_option() }}
-				{%- for row in pdbs -%}
-				{%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
-				<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
-				{%- endfor %}
-			</select>
-			<hr>
-			<table border="1">
-				<caption>It would be slick to add additional selectors only when the
-					previous one is filled... (Now possible by extending the 
-					show_block logic; will need corresponding hide_block as well, or
-					combine as toggle_block -- see Appsoma code.)
-					<br><br>
-					Ranges do not need to be entered in numerical order; the
-					start and stop values within a range must be in numerical order.
-					<br><br>
-					For positions which have insertion codes, please enter the 
-					positions in the format:  123|A
-				</caption>
-				<thead>
-					<tr>
-						<th>Range #</th>
-						<th>Chain</th>
-						<th>Range Start</th>
-						<th>&lt;</th>
-						<th>Range End</th>
-					</tr>
-				</thead>
-				<tbody>
-					{%- for count in [1,2,3,4,5] -%}
-					{%- set chain = ['chain',count]|join() %}
-					{%- set beg = ['beg',count]|join() %}
-					{%- set end = ['end',count]|join() %}
-					<tr>
-						<td align="center">{{ count }}</td>
-						<td>
-							<select id="{{chain}}" name="{{chain}}">
-								{{ null_option() }}
-							</select>
-						</td>
-						<td>{{ textinput(beg) }}</td>
-						<td align="center">&lt;</td>
-						<td>{{ textinput(end) }}</td>
-					</tr>
-					{%- endfor %}
-				</tbody>
-			</table>
-		</div> <!-- jquery_test -->
-	</form>
+    <form class="form-horizontal" action="{{ url }}" method="post">
+
+      <div class="form-group">
+
+        <label for="pdbmod" class="col-sm-1 control-label">Structure</label>
+        <div class="col-sm-5">
+          <select class="form-control" id="pdbmod" name="pdbmod">
+            {{ null_option() }}
+            {%- for row in mods -%}
+            {%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
+            {%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('| ') %}
+            <option style="font-face: Consolas" value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
+            {% endfor %}
+          </select>
+
+        </div>
+
+        <label for="pdb-chain" class="col-sm-1 control-label" disabled>Chain</label>
+        <div class="col-sm-2">
+          <select class="form-control" id="pdb-chain" name="pdb-chain" disabled>
+            {{ null_option() }}
+          </select>
+        </div>
+
+      </div>
+
+      <hr>
+
+        <table>
+          <caption>It would be slick to add additional selectors only when the
+            previous one is filled... (Now possible by extending the 
+            show_block logic; will need corresponding hide_block as well, or
+            combine as toggle_block -- see Appsoma code.)
+            <br><br>
+            Ranges do not need to be entered in numerical order; the
+            start and stop values within a range must be in numerical order.
+            <br><br>
+            For positions which have insertion codes, please enter the 
+            positions in the format:  123|A
+          </caption>
+          <thead>
+            <tr>
+              <th>Range #</th>
+              <th>Chain</th>
+              <th>Range Start</th>
+              <th>&lt;</th>
+              <th>Range End</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {%- for count in [1,2,3,4,5] -%}
+            {%- set chain = ['chain',count]|join() %}
+            {%- set beg = ['beg',count]|join() %}
+            {%- set end = ['end',count]|join() %}
+            <tr>
+              <td align="center">{{ count }}</td>
+              <td>
+                <select id="{{chain}}" name="{{chain}}">
+                  {{ null_option() }}
+                </select>
+              </td>
+              <td>{{ textinput(beg) }}</td>
+              <td align="center">&lt;</td>
+              <td>{{ textinput(end) }}</td>
+            </tr>
+            {%- endfor %}
+          </tbody>
+        </table>
+
+    </form>
+  </div>
 {% endblock body %}
 
 {% block page_specific_js %}
