@@ -7,7 +7,7 @@ from flask import render_template
 
 import db
 import utils as ut
-from dummy_data import DATA
+import dummy_data as dd
 
 import mimerender
 
@@ -34,7 +34,7 @@ def teardown_request(exception):
 
 def variations(data):
     if app.debug:
-        return DATA
+        return dd.DATA
 
     pdb, model, ranges = ut.ranges(data)
     known = db.list_options(g.rcad)
@@ -47,6 +47,18 @@ def variations(data):
     return db.seqvar(g.rcad, pdb, model, translated)
 
 
+def options():
+    if app.debug:
+        return dd.LIST_OPTIONS
+    return db.list_options(g.rcad)
+
+
+def structures():
+    if app.debug:
+        return dd.LIST_STRUCTURES
+    return db.list_structures(g.rcad)
+
+
 @app.route('/', methods=['GET'])
 @mimerender(
     json=render_json,
@@ -55,8 +67,8 @@ def variations(data):
 def get_html():
     if 'units' in request.args:
         return {'template': 'results.html', 'data': variations(request.args)}
-    pdbs = db.list_options(g.rcad)
-    mods = db.list_structures(g.rcad)
+    pdbs = options()
+    mods = structures()
     return {'template': 'form.html', 'pdbs': pdbs, 'mods': mods}
 
 
