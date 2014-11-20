@@ -90,19 +90,23 @@
           </div>
 
           <div class="col-sm-2">
-            <button type="button add-range range-control" class="btn btn-default" disabled>
+            <button type="button" class="btn btn-default add-range range-control" disabled>
               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
             </button>
 
           {% if count != 1 %}
-              <button type="button remove-range range-control" class="btn btn-default" disabled>
+              <button type="button" class="btn btn-default remove-range range-control" disabled>
                 <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
               </button>
           {% endif %}
+
           </div>
         </div>
       {% endfor %}
 
+      <button type="button" class="btn btn-lg btn-primary remove-range range-control" disabled>
+        Submit
+      </button>
     </form>
   </div>
 {% endblock body %}
