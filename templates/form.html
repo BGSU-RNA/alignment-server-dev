@@ -85,25 +85,25 @@
           </div>
 
           <div class="col-sm-3">
-            <select class="form-control" id={{chain}} name={{chain}} disabled>
+            <select class="form-control range-control" id={{chain}} name={{chain}} disabled>
             </select>
           </div>
 
           <div class="col-sm-3">
-            <input class="form-control" type="text" placeholder="Start" disabled>
+            <input class="form-control range-control" type="text" placeholder="Start" disabled>
           </div>
 
           <div class="col-sm-3">
-            <input class="form-control" type="text" placeholder="Stop" disabled>
+            <input class="form-control range-control" type="text" placeholder="Stop" disabled>
           </div>
 
           <div class="col-sm-2">
-            <button type="button add-range" class="btn btn-default" disabled>
+            <button type="button add-range range-control" class="btn btn-default" disabled>
               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
             </button>
 
           {% if count != 1 %}
-              <button type="button remove-range" class="btn btn-default" disabled>
+              <button type="button remove-range range-control" class="btn btn-default" disabled>
                 <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
               </button>
           {% endif %}
