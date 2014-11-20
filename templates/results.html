@@ -7,13 +7,16 @@
 <p>TO DO:
 	<ul>
 		<li>add a summary table here.  Sequence + count; prioritize the sequence from the input PDB file (separate tbody with custom format?).</li>
+		<li>display the ranges that created the output</li>
+		<li>"download as text" button option (tab-separated)</li>
+		<li>filter box (see the Non-Redundant Sets and Motif Atlas pages</li>
 		<li>consider making the header repetition interval user-selectable (an additional variable at submission time, and minor retooling)</li>
 		<li>consider making the "Lineage Name" a mouseover (or similar construct) associated with the "Scientific Name" (to conserve a great deal of space per row of the table; may need the header repeats less often then)</li>
 	</ul>
 </p>
 <hr>
 <table border="1" width="100%">
-	<caption>Real data from rCAD (unless run in debug mode, with two lines of sample data); header repeated every 20 rows.</caption>
+	<caption>Real data from rCAD (unless run in debug mode, with two lines of sample data); header repeated every 20 rows.  Multiple ranges (if requested) are separated by commas.</caption>
 	<thead>
 		{% block results_header %}
 		<tr>

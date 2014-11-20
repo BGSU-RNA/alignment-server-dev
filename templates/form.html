@@ -19,9 +19,15 @@
 
   <div class="row">
     <h2>Work in progress/staged:</h2>
-    <p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
-    <p>TO DO:  use a fixed-width font for the selector to streamline the field presentation.</p>
-    <p>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</p>
+    <ul>
+	    <li>DONE:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</li>
+	    <li>TO DO:  help text to explain the fields listed in the Structure SELECTor</li>
+	    <li>TO DO:  help text indicating that ranges may define a single position</li>
+	    <li>TO DO:  help text indicating that only one range is required for the server</li>
+	    <li>TO DO:  help text indicating that multiple ranges must be filled in order (may not be necessary if we implement a hidden element scheme)</li>
+	    <li>MAYBE TO DO:  use a fixed-width font for the selector to streamline the field presentation.</li>
+	    <li>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</li>
+    </ul>
 
     <form class="form-horizontal" action="{{ url }}" method="post">
 
@@ -66,7 +72,7 @@
             start and stop values within a range must be in numerical order.
             <br><br>
             For positions which have insertion codes, please enter the 
-            positions in the format:  123|A
+            positions in the format:  190|L
           </caption>
           <thead>
             <tr>
