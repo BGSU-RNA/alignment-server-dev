@@ -56,47 +56,60 @@
 
       <hr>
 
-        <table style="cellPadding: 2; cellSpacing: 2">
-          <caption>It would be slick to add additional selectors only when the
-            previous one is filled... (Now possible by extending the 
-            show_block logic; will need corresponding hide_block as well, or
-            combine as toggle_block -- see Appsoma code.)
-            <br><br>
-            Ranges do not need to be entered in numerical order; the
-            start and stop values within a range must be in numerical order.
-            <br><br>
-            For positions which have insertion codes, please enter the 
-            positions in the format:  123|A
-          </caption>
-          <thead>
-            <tr>
-              <th>Range&nbsp;#</th>
-              <th>Chain</th>
-              <th>Range Start</th>
-              <th>&lt;</th>
-              <th>Range End</th>
-            </tr>
-          </thead>
+      <div class='form-group'>
+        <div class="col-sm-1">
+          <strong>Range</strong>
+        </div>
 
-          <tbody>
-            {%- for count in [1,2,3,4,5] -%}
-            {%- set chain = ['chain',count]|join() %}
-            {%- set beg = ['beg',count]|join() %}
-            {%- set end = ['end',count]|join() %}
-            <tr>
-              <td align="center">{{ count }}</td>
-              <td>
-                <select id="{{chain}}" name="{{chain}}">
-                  {{ null_option() }}
-                </select>
-              </td>
-              <td>{{ textinput(beg) }}</td>
-              <td align="center">&lt;</td>
-              <td>{{ textinput(end) }}</td>
-            </tr>
-            {%- endfor %}
-          </tbody>
-        </table>
+        <div class="col-sm-3">
+          <strong>Chain</strong>
+        </div>
+
+        <div class="col-sm-3">
+          <strong>Start</strong>
+        </div>
+
+        <div class="col-sm-3">
+          <strong>Stop</strong>
+        </div>
+      </div>
+
+      {%- for count in [1,2,3,4,5] -%}
+        {%- set chain = ['chain',count]|join() %}
+        {%- set beg = ['beg',count]|join() %}
+        {%- set end = ['end',count]|join() %}
+
+        <div class='form-group'>
+          <div class="col-sm-1">
+            {{count}}
+          </div>
+
+          <div class="col-sm-3">
+            <select class="form-control" id={{chain}} name={{chain}} disabled>
+            </select>
+          </div>
+
+          <div class="col-sm-3">
+            <input class="form-control" type="text" placeholder="Start" disabled>
+          </div>
+
+          <div class="col-sm-3">
+            <input class="form-control" type="text" placeholder="Stop" disabled>
+          </div>
+
+          <div class="col-sm-2">
+            <button type="button add-range" class="btn btn-default" disabled>
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+
+          {% if count != 1 %}
+              <button type="button remove-range" class="btn btn-default" disabled>
+                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+              </button>
+          {% endif %}
+          </div>
+        </div>
+      {% endfor %}
 
     </form>
   </div>
