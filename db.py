@@ -46,9 +46,15 @@ def seqvar(db, pdb, model, ranges):
 
     # This copying is done because result dict also allows access by index, we
     # only want the entries with keys.
-    data = []
-    for row in db:
-        data.append({
+    res1 = [row for row in db]
+    res2 = [row for row in db]
+    res3 = [row for row in db]
+
+    full = []
+    for row in res1:
+        print("SeqID.SeqVersion: {}.{}, Sequence: {}".format(
+            row['SeqID'], row['SeqVersion'], row['CompleteFragment']))
+        full.append({
             'SeqID': row['SeqID'],
             'SeqVersion': row['SeqVersion'],
             'CompleteFragment': row['CompleteFragment'],
@@ -57,7 +63,21 @@ def seqvar(db, pdb, model, ranges):
             'ScientificName': row['ScientificName'],
             'LineageName': row['LineageName'],
         })
-    return data
+
+    summ = []
+    for row in res2:
+        summ.append({
+            'CompleteFragment': row['CompleteFragment'],
+            'NumberOfAppearances': row['NumberOfAppearances']
+        })
+
+    reqs = []
+    for row in res3:
+        reqs.append({
+            'CompleteFragment': row['CompleteFragment']
+        })
+
+    return full, summ, reqs
 
 
 def get_translation(conn, pdb, model, chain):

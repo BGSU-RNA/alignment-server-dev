@@ -2,58 +2,105 @@
 {% block title %}
 <title>{% block titletext %}Sequence Variation Results{% endblock titletext %}</title>
 {% endblock title %}
+{% block head %}
+<style type="text/css">
+.sequence {
+  font-family: monospace;
+}
+.right {
+  text-align: right;
+}
+.requested {
+  background-color: #ccffcc;
+}
+</style>
+{% endblock head %}
 {% block body %}
 <h2>{{ self.titletext() }}</h2>
-<p>TO DO:
-	<ul>
-		<li>add a summary table here.  Sequence + count; prioritize the sequence from the input PDB file (separate tbody with custom format?).</li>
-		<li>display the ranges that created the output</li>
-		<li>"download as text" button option (tab-separated)</li>
-		<li>filter box (see the Non-Redundant Sets and Motif Atlas pages</li>
-		<li>consider making the header repetition interval user-selectable (an additional variable at submission time, and minor retooling)</li>
-		<li>consider making the "Lineage Name" a mouseover (or similar construct) associated with the "Scientific Name" (to conserve a great deal of space per row of the table; may need the header repeats less often then)</li>
-	</ul>
-</p>
+<p>TO DO:</p>
+<ul>
+  <li>add a summary table here.  Sequence + count; prioritize the sequence from the input PDB file (separate tbody with custom format?).</li>
+  <li>display the ranges that created the output</li>
+  <li>"download as text" button option (tab-separated)</li>
+  <li>filter box (see the Non-Redundant Sets and Motif Atlas pages</li>
+  <li>consider making the header repetition interval user-selectable (an additional variable at submission time, and minor retooling)</li>
+  <li>consider making the "Lineage Name" a mouseover (or similar construct) associated with the "Scientific Name" (to conserve a great deal of space per row of the table; may need the header repeats less often then)</li>
+  <li>filter columns that are empty in all sequences from output (database-side issue)</li>
+</ul>
 <hr>
+<h3>Sequence Summary</h3>
+<table border="1">
+  <caption>Green background indicates sequence present in chosen PDB file.</caption>
+  <thead>
+    {%- block summary_header %}
+    <tr>
+      <th>Complete Fragment</th>
+      <th>Number of Appearances</th>
+    </tr>
+    {% endblock summary_header -%}
+  </thead>
+  <tbody>
+    {%- block rowbuild scoped %}
+      {%- for line in reqs %}
+        {% set requested = line['CompleteFragment'] %}
+        {%- for row in summ %}
+          {%- if requested == row['CompleteFragment'] %}
+            {%- set fragclass = 'sequence requested' %}
+            {%- set appsclass = 'right requested' %}
+          {%- else %}
+            {%- set fragclass = 'sequence' %}
+            {%- set appsclass = 'right' %}
+          {%- endif %}
+    <tr>
+      <td class="{{fragclass}}">{{ row['CompleteFragment'] }}</td>
+      <td class="{{appsclass}}">{{ row['NumberOfAppearances'] }}</td>
+    </tr>
+        {%- endfor %}
+      {%- endfor %}
+    {%- endblock rowbuild %}
+  </tbody>
+</table>
+<hr>
+<h3>Sequence Details</h3>
 <table border="1" width="100%">
-	<caption>Real data from rCAD (unless run in debug mode, with two lines of sample data); header repeated every 20 rows.  Multiple ranges (if requested) are separated by commas.</caption>
-	<thead>
-		{% block results_header %}
-		<tr>
-			<th>SeqID</th>
-			<th>SeqVersion</th>
-			<th>CompleteFragment</th>
-			<th>AccessionID</th>
-		    <th>TaxID</th>
-		    <th>ScientificName</th>
-		    <th>LineageName</th>
-		</tr>
-		{% endblock results_header %}
-	</thead>
-	<tbody>
-		{# Iterate over data.  Put another copy of results_header every n rows.
-			What value of n (trying 20)? #}
-		{% for row in data %}
-		<tr>
-			<td>{{ row['SeqID'] }}</td>
-			<td>{{ row['SeqVersion'] }}</td>
-			<td>{{ row['CompleteFragment'] }}</td>
-			<td>{{ row['AccessionID'] }}</td>
-		    <td>{{ row['TaxID'] }}</td>
-		    <td>{{ row['ScientificName'] }}</td>
-		    <td>{{ row['LineageName'] }}</td>
-		</tr>
-			{% if loop.index is divisibleby(20) %}
-	</tbody>
-	<tbody>
-		{{ self.results_header() }}
-	</tbody>
-	<tbody>
-			{% endif %}
-		{% endfor %}
-	</tbody>
-	<tfoot>
-		{{ self.results_header() }}
-	</tfoot>
+    <caption>Real data from rCAD (unless run in debug mode, with two lines of sample data); header repeated every 20 rows.  Multiple ranges (if requested) are separated by commas.</caption>
+    <thead>
+        {% block results_header %}
+        <tr>
+            <th>SeqID</th>
+            <th>SeqVersion</th>
+            <th>CompleteFragment</th>
+            <th>AccessionID</th>
+            <th>TaxID</th>
+            <th>ScientificName</th>
+            <th>LineageName</th>
+        </tr>
+        {% endblock results_header %}
+    </thead>
+    <tbody>
+        {# Iterate over full.  Put another copy of results_header every n rows.
+            What value of n (trying 20)? #}
+        {% for row in full %}
+        <tr>
+            <td>{{ row['SeqID'] }}</td>
+            <td>{{ row['SeqVersion'] }}</td>
+            <td>{{ row['CompleteFragment'] }}</td>
+            <td>{{ row['AccessionID'] }}</td>
+            <td>{{ row['TaxID'] }}</td>
+            <td>{{ row['ScientificName'] }}</td>
+            <td>{{ row['LineageName'] }}</td>
+        </tr>
+            {% if loop.index is divisibleby(20) %}
+    </tbody>
+    <tbody>
+        {{ self.results_header() }}
+    </tbody>
+    <tbody>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        {{ self.results_header() }}
+    </tfoot>
 </table>
 {% endblock body %}

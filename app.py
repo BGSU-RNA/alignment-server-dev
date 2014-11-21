@@ -66,7 +66,8 @@ def structures():
 )
 def get_html():
     if 'units' in request.args:
-        return {'template': 'results.html', 'data': variations(request.args)}
+        full, summ, reqs = variations(request.args)
+        return {'template': 'results.html', 'full': full, 'summ': summ, 'reqs': reqs}
     pdbs = options()
     mods = structures()
     return {'template': 'form.html', 'pdbs': pdbs, 'mods': mods}
@@ -83,4 +84,4 @@ def post_html():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
