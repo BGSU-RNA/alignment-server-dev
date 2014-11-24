@@ -1,7 +1,11 @@
+import logging
+
 try:
     import _mssql  # stored procedure support
 except ImportError:
     pass  # or better to die, since none of the other functions will work?
+
+logger = logging.getLogger(__name__)
 
 
 def rcad_connect(config):
@@ -13,8 +17,14 @@ def rcad_connect(config):
     username = config.get("RCAD_USERNAME", "BGSU")
     password = config.get("RCAD_PASSWORD", "b1g4s3uDHRuNbA$")
 
-    return _mssql.connect(server=hostname, user=username, password=password,
-                          database="crwdb")
+    try:
+        return _mssql.connect(server=hostname, user=username,
+                              password=password, database="crwdb")
+    except Exception as err:
+        logger.error("Failed to connect with %s:%s@%s", username, password,
+                     hostname)
+        logger.exception(err)
+        return None
 
 
 def seqvar(db, pdb, model, ranges):
