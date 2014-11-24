@@ -32,12 +32,11 @@
           <select class="form-control" id="pdb-model" name="pdb-model">
             {{ null_option() }}
             {%- for row in mods -%}
-            {%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
-            {%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('| ') %}
+              {%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
+              {%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('| ') %}
             <option value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
-            {% endfor %}
+            {%- endfor -%}
           </select>
-
         </div>
 
         {# This block needs to be both present and not displayed. #}
@@ -46,9 +45,9 @@
           <select class="form-control" id="pdb-chain" name="pdb-chain" disabled>
             {{ null_option() }}
             {%- for row in pdbs -%}
-			{%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
-			<option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
-			{%- endfor %}
+              {%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
+              <option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
+            {%- endfor -%}
           </select>
         </div>
 
@@ -77,29 +76,38 @@
 
         <div class='form-group'>
           <div class="col-sm-3">
-            <select class="form-control range-control" id={{chain}} name={{chain}} disabled>
+            <select class="form-control range-control" id="{{chain}}" name="{{chain}}" disabled>
             </select>
           </div>
 
           <div class="col-sm-3">
-            <input class="form-control range-control" type="text" placeholder="Start" disabled>
+            <input class="form-control range-control" id="{{beg}}" name="{{beg}}" type="text" placeholder="Start" disabled>
           </div>
 
           <div class="col-sm-3">
-            <input class="form-control range-control" type="text" placeholder="Stop" disabled>
+            <input class="form-control range-control" id="{{end}}" name="{{end}}" type="text" placeholder="Stop" disabled>
           </div>
 
           <div class="col-sm-2">
+          {%- if count != 5 %}
             <button type="button" class="btn btn-default add-range range-control" disabled>
               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
             </button>
+          {%- else %}
+            <button type="button" class="btn btn-default add-range range-control" disabled>
+              <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+            </button>
+          {%- endif %}
 
-          {% if count != 1 %}
-              <button type="button" class="btn btn-default remove-range range-control" disabled>
-                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-              </button>
-          {% endif %}
-
+          {%- if count != 1 %}
+            <button type="button" class="btn btn-default remove-range range-control" disabled>
+              <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+            </button>
+          {%- else %}
+            <button type="button" class="btn btn-default add-range range-control" disabled>
+              <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+            </button>
+          {%- endif %}
           </div>
         </div>
       {% endfor %}
