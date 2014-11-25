@@ -5,7 +5,7 @@
 {% block head %}
 <style type="text/css">
 .sequence {
-  font-family: monospace;
+  font-family: Consolas, monospace;
 }
 .right {
   text-align: right;
@@ -19,18 +19,24 @@
 <h2>{{ self.titletext() }}</h2>
 <p>TO DO:</p>
 <ul>
-  <li>add a summary table here.  Sequence + count; prioritize the sequence from the input PDB file (separate tbody with custom format?).</li>
+  <li>add a summary table here.  Sequence + count; prioritize the sequence
+    from the input PDB file (separate tbody with custom format?).</li>
   <li>display the ranges that created the output</li>
   <li>"download as text" button option (tab-separated)</li>
   <li>filter box (see the Non-Redundant Sets and Motif Atlas pages</li>
-  <li>consider making the header repetition interval user-selectable (an additional variable at submission time, and minor retooling)</li>
-  <li>consider making the "Lineage Name" a mouseover (or similar construct) associated with the "Scientific Name" (to conserve a great deal of space per row of the table; may need the header repeats less often then)</li>
-  <li>filter columns that are empty in all sequences from output (database-side issue)</li>
+  <li>consider making the header repetition interval user-selectable (an
+    additional variable at submission time, and minor retooling)</li>
+  <li>consider making the "Lineage Name" a mouseover (or similar construct)
+    associated with the "Scientific Name" (to conserve a great deal of space
+    per row of the table; may need the header repeats less often then)</li>
+  <li>filter columns that are empty in all sequences from output (database-side
+    issue)</li>
 </ul>
 <hr>
 <h3>Sequence Summary</h3>
 <table border="1">
-  <caption>Green background indicates sequence present in chosen PDB file.</caption>
+  <caption>Green background indicates sequence present in chosen PDB
+    file.</caption>
   <thead>
     {%- block summary_header %}
     <tr>
@@ -59,11 +65,14 @@
       {%- endfor %}
     {%- endblock rowbuild %}
   </tbody>
+  <tfoot>{{ self.summary_header() }}</tfoot>
 </table>
 <hr>
 <h3>Sequence Details</h3>
 <table border="1" width="100%">
-    <caption>Real data from rCAD (unless run in debug mode, with two lines of sample data); header repeated every 20 rows.  Multiple ranges (if requested) are separated by commas.</caption>
+    <caption>Real data from rCAD (unless run in debug mode, with two lines of
+        sample data); header repeated every 20 rows.  Multiple ranges (if
+        requested) are separated by commas.</caption>
     <thead>
         {% block results_header %}
         <tr>
@@ -84,7 +93,7 @@
         <tr>
             <td>{{ row['SeqID'] }}</td>
             <td>{{ row['SeqVersion'] }}</td>
-            <td>{{ row['CompleteFragment'] }}</td>
+            <td class="sequence">{{ row['CompleteFragment'] }}</td>
             <td>{{ row['AccessionID'] }}</td>
             <td>{{ row['TaxID'] }}</td>
             <td>{{ row['ScientificName'] }}</td>
