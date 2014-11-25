@@ -1,4 +1,5 @@
 import logging
+import datetime
 
 try:
     import _mssql  # stored procedure support
@@ -14,15 +15,14 @@ def rcad_connect(config):
     """
     hostname = config.get("RCAD_HOSTNAME", "crw-rcad.austin.utexas.edu:1433")
     username = config.get("RCAD_USERNAME", "BGSU")
-    username = config.get("RCAD_USERNAME", "BGSU")
     password = config.get("RCAD_PASSWORD", "b1g4s3uDHRuNbA$")
 
     try:
         return _mssql.connect(server=hostname, user=username,
                               password=password, database="crwdb")
     except Exception as err:
-        logger.error("Failed to connect with %s:%s@%s", username, password,
-                     hostname)
+        logger.error("Failed to connect with %s:%s@%s on %s", username,
+                     password, hostname, str(datetime.datetime.now()))
         logger.exception(err)
         return None
 
