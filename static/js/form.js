@@ -29,22 +29,33 @@ $( window ).load(function() {
     for ( var k = 0; k < chainsel.length; k++ )
     {
       var select = $(chainsel[k]);
-      
+
       //select.disabled = false;
       select.empty().append('{{ null_option() }}}');
 
       for ( var j = 0; j < y.length; j++ )
       {
         if ( y[j] == "" ) continue; // default case handled above
-        
+
         var arrx = x[j].split("|");
-        
+
         if ( arrx[0] == pdb && arrx[1] == mod )
         {
           select.append('<option value="' + x[j] + '">' + y[j] + '</option>');
         }
       }
     }
+  });
+
+  $("input:submit").click(function(){
+    $("input:submit").attr({
+      disabled: "true"
+      , value: "Submitting..."
+      , style: "color:#ab8b8b; text-shadow: 0px 0px 0px; background-color: #dddddd;"
+      // replace with appropriate Bootstrap styles
+    });
+
+    $("form#alnsrv").submit();
   });
 
 });
