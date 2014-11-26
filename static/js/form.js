@@ -47,15 +47,82 @@ $( window ).load(function() {
     }
   });
 
-  $("input:submit").click(function(){
-    $("input:submit").attr({
-      disabled: "true"
-      , value: "Submitting..."
-      , style: "color:#ab8b8b; text-shadow: 0px 0px 0px; background-color: #dddddd;"
-      // replace with appropriate Bootstrap styles
-    });
+  $("#alnsrv").submit(function(event){
+    var units = "bongo";
 
-    $("form#alnsrv").submit();
+    if ( $("#pdb-model option:selected").val() == "" ){
+      //  NULL if no selection made, otherwise value
+      alert("Structure not selected!");
+      event.preventDefault();
+    } else {
+      var range = [];
+      for ( var i = 1; i <= 5; i++ ){
+        range[i] = false;
+
+        var c = "#chain" + i;
+        var b = "#beg" + i;
+        var e = "#end" + i;
+
+        var cv = $(c).val();
+        var bv = ( jQuery.trim($(b).val()).length == 0 ) ? 0 : $(b).val();
+        var ev = ( jQuery.trim($(e).val()).length == 0 ) ? 0 : $(e).val();
+        //  trim to eliminate whitespace
+
+        //  WORKING ABOVE THIS COMMENT
+
+        //
+        //  This block needs more work.  Won't properly handle insertion codes
+        //  as written.  The fourth element of the conditional is failing (the
+        //  other four parts work together correctly), not sure why.
+        //
+        //  Blake has code that can test this, but only after submission.  When
+        //  is the best time to test these conditions?
+        //
+        //  Split both bv and ev on the '|' character, so then we can cast the
+        //  numerical part of the value to int and range-test it, then
+        //  recombine.
+        //
+        //  Still TO DO:  get this to the point where it will submit the form
+        //  with only the units argument, and not the individual form element
+        //  values (which is what it's doing now, if I weren't suppressing
+        //  the submit behavior).
+        //
+
+        if (
+                ( 0 < bv )
+            &&  ( bv <= ev )
+            &&  ( 0 < ev )
+            &&  ( ev <= ( bv + 50 ) ) // PROBLEM IS HERE
+            &&  ( cv != "" )
+          ) {
+          range[i] = true;
+        }
+
+        alert("Range " + i + " validates " + range[i] + "\nChain: " + cv + "\nStart: " + bv + "\nStop: " + ev);
+      }
+
+      /*
+      $("input#units").value() = "2AW7|1|A|A|887:2AW7|1|A|A|897";
+
+      var url = "?units=" + $("input#units").value();
+
+      $("form#alnsrv").setAttribute('action', url);
+      */
+
+      //  WORKING BELOW THIS COMMENT
+
+      alert("Help!");
+
+      event.preventDefault();
+
+      $("input:submit").attr({
+        //  do this only after validation is complete, so the user can fix any
+        //  errors and still submit the form
+        disabled: "true"
+        , value: "Submitting..."
+        , style: "color:#ab8b8b; text-shadow: 0px 0px 0px; background-color: #dddddd;"
+        // replace with appropriate Bootstrap styles
+      });
+    }
   });
-
 });

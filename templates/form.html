@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 
-{% block title %}
+{%- block title -%}
 	<title>Sequence Variation Server</title>
-{% endblock title %}
+{%- endblock title %}
 
-{% block head %}
-{% endblock head %}
+{%- block head %}
+{% endblock head -%}
 
 {% macro null_option() -%}
 	<option value="" disabled="disabled" selected="selected">Choose an option...</option>
@@ -17,98 +17,101 @@
 
 {% block body %}
 
-  <div class="row">
-    <h2>Work in progress/staged:</h2>
-    <ul>
-	    <li>DONE:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</li>
-	    <li>TO DO:  help text to explain the fields listed in the Structure SELECTor</li>
-	    <li>TO DO:  help text indicating that ranges may define a single position</li>
-	    <li>TO DO:  help text indicating that only one range is required for the server</li>
-	    <li>TO DO:  help text indicating that multiple ranges must be filled in order (may not be necessary if we implement a hidden element scheme)</li>
-	    <li>MAYBE TO DO:  use a fixed-width font for the selector to streamline the field presentation.</li>
-	    <li>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</li>
-    </ul>
+      <div class="row">
+        <h2>Work in progress/staged:</h2>
+        <ul>
+    	    <li>DONE:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</li>
+    	    <li>TO DO:  help text to explain the fields listed in the Structure SELECTor</li>
+    	    <li>TO DO:  help text indicating that ranges may define a single position</li>
+    	    <li>TO DO:  help text indicating that only one range is required for the server</li>
+    	    <li>TO DO:  help text indicating that multiple ranges must be filled in order (may not be necessary if we implement a hidden element scheme)</li>
+    	    <li>MAYBE TO DO:  use a fixed-width font for the selector to streamline the field presentation.</li>
+    	    <li>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</li>
+        </ul>
 
-    <form id="alnsrv" class="form-horizontal" action="{{ url }}" method="post">
+        <form id="alnsrv" class="form-horizontal" action="#" method="GET">
 
-      <div class="form-group">
+          <div class="form-group">
 
-        <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
-        <div class="col-sm-5">
-          <select class="form-control" id="pdb-model" name="pdb-model">
-            {{ null_option() }}
-            {%- for row in mods -%}
-            {%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
-            {%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('| ') %}
-            <option value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        {# This block needs to be both present and not displayed. #}
-        <label for="pdb-chain" class="col-sm-1 control-label" style="display:none" disabled>Chain</label>
-        <div class="col-sm-2" style="display:none">
-          <select class="form-control" id="pdb-chain" name="pdb-chain" disabled>
-            {{ null_option() }}
-            {%- for row in pdbs -%}
-              {%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
-            <option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
-            {%- endfor %}
-          </select>
-        </div>
-      </div>
-
-      <hr>
-
-      <table style="cellPadding: 2; cellSpacing: 2">
-        <caption>It would be slick to add additional selectors only when the
-          previous one is filled... (Now possible by extending the
-          show_block logic; will need corresponding hide_block as well, or
-          combine as toggle_block -- see Appsoma code.)
-          <br><br>
-          Ranges do not need to be entered in numerical order; the
-          start and stop values within a range must be in numerical order.
-          <br><br>
-          For positions which have insertion codes, please enter the
-          positions in the format:  190|L
-        </caption>
-        <thead>
-          <tr>
-            <th>Range&nbsp;#</th>
-            <th>Chain</th>
-            <th>Range Start</th>
-            <th>&lt;</th>
-            <th>Range End</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {%- for count in [1,2,3,4,5] -%}
-          {%- set chain = ['chain',count]|join() %}
-          {%- set beg = ['beg',count]|join() %}
-          {%- set end = ['end',count]|join() %}
-          <tr>
-            <td align="center">{{ count }}</td>
-            <td>
-              <select id="{{chain}}" name="{{chain}}">
+            <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
+            <div class="col-sm-5">
+              <select class="form-control" id="pdb-model" name="pdb-model">
                 {{ null_option() }}
+                {%- for row in mods -%}
+                {%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
+                {%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('| ') %}
+                <option value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
+                {%- endfor %}
               </select>
-            </td>
-            <td>{{ textinput(beg) }}</td>
-            <td align="center">&lt;</td>
-            <td>{{ textinput(end) }}</td>
-          </tr>
-          {%- endfor %}
-        </tbody>
-      </table>
+            </div>
 
-      <button type="button" class="btn btn-lg btn-primary remove-range range-control" disabled>
-        Submit
-      </button>
+            {# This block needs to be both present and not displayed. #}
+            <label for="pdb-chain" class="col-sm-1 control-label" style="display:none" disabled>Chain</label>
+            <div class="col-sm-2" style="display:none">
+              <select class="form-control" id="pdb-chain" name="pdb-chain" disabled>
+                {{ null_option() }}
+                {%- for row in pdbs -%}
+                  {%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
+                <option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
+                {%- endfor %}
+              </select>
+            </div>
+          </div>
 
+          <hr>
 
-    </form>
-  </div>
+          <table style="cellPadding: 2; cellSpacing: 2">
+            <caption>It would be slick to add additional selectors only when the
+              previous one is filled... (Now possible by extending the
+              show_block logic; will need corresponding hide_block as well, or
+              combine as toggle_block -- see Appsoma code.)
+              <br><br>
+              Ranges do not need to be entered in numerical order; the
+              start and stop values within a range must be in numerical order.
+              <br><br>
+              For positions which have insertion codes, please enter the
+              positions in the format:  190|L
+            </caption>
+            <thead>
+              <tr>
+                <th>Range&nbsp;#</th>
+                <th>Chain</th>
+                <th>Range Start</th>
+                <th>&lt;=</th>
+                <th>Range End</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {%- for count in [1,2,3,4,5] -%}
+              {%- set chain = ['chain',count]|join() %}
+              {%- set beg = ['beg',count]|join() %}
+              {%- set end = ['end',count]|join() %}
+              <tr>
+                <td align="center">{{ count }}</td>
+                <td>
+                  <select id="{{chain}}" name="{{chain}}">
+                    {{ null_option() }}
+                  </select>
+                </td>
+                <td>{{ textinput(beg) }}</td>
+                <td align="center">&lt;=</td>
+                <td>{{ textinput(end) }}</td>
+              </tr>
+              {%- endfor %}
+            </tbody>
+          </table>
+
+          <input type="hidden" id="units" value="2AW7|1|A|A|887:2AW7|1|A|A|897" />
+          <input type="submit" id="submit" name="submit" value="Submit"
+            class="btn btn-lg btn-primary remove-range range-control" />
+          {#
+          <button type="button" id="submit" class="btn btn-lg btn-primary remove-range range-control">
+            Submit
+          </button>
+          #}
+        </form>
+      </div>
 {% endblock body %}
 
 {% block page_specific_js %}

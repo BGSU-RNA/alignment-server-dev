@@ -2,35 +2,34 @@
 <html>
   <head>
     <meta charset="UTF-8">
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-      {#
-      <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}"> <!-- Stub for local changes -->
-      #}
-    {%- block title -%} {% endblock title -%}
-    {% block head -%}
-    {% endblock head -%}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    {#
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}"> <!-- Stub for local changes -->
+    #}
+    {%- block title -%} {%- endblock title -%}
+    {%- block head -%}
+    {%- endblock head -%}
   </head>
 
   <body>
-      <div class="container">
-        <div class="jumbotron">
-            <h1>Sequence Alignment Server</h1>
-            <p>A joint project of the BGSU RNA Group and the Comparative RNA Web (CRW) Project</p>
-            <hr/>
-            <p>DEBUGGING:  Use this space to test other title variants.</p>
-            <p>Original:  BGSU-CRW Sequence Alignment Variation Server
-        </div>
-        {% block body -%}
-        {% endblock body -%}
+    <div class="container">
+      <div class="jumbotron">
+          <h1>Sequence Alignment Server</h1>
+          <p>A joint project of the BGSU RNA Group and the Comparative RNA Web (CRW) Project</p>
+          <hr/>
+          <p>DEBUGGING:  Use this space to test other title variants.</p>
+          <p>Original:  BGSU-CRW Sequence Alignment Variation Server
       </div>
+      {% block body -%}
+      {% endblock body -%}
+    </div>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-
     {% block page_specific_js %} {% endblock page_specific_js %}
   </body>
 </html>
 
 {% macro static_jquery() -%}
-<script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"/>
 {%- endmacro -%}
