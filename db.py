@@ -1,5 +1,4 @@
 import logging
-import datetime
 
 try:
     import _mssql  # stored procedure support
@@ -21,8 +20,8 @@ def rcad_connect(config):
         return _mssql.connect(server=hostname, user=username,
                               password=password, database="crwdb")
     except Exception as err:
-        logger.error("Failed to connect with %s:%s@%s on %s", username,
-                     password, hostname, str(datetime.datetime.now()))
+        logger.error("Failed to connect with %s:%s@%s", username, password,
+                     hostname)
         logger.exception(err)
         return None
 
@@ -62,8 +61,6 @@ def seqvar(db, pdb, model, ranges):
 
     full = []
     for row in res1:
-        print("SeqID.SeqVersion: {}.{}, Sequence: {}".format(
-            row['SeqID'], row['SeqVersion'], row['CompleteFragment']))
         full.append({
             'SeqID': row['SeqID'],
             'SeqVersion': row['SeqVersion'],
