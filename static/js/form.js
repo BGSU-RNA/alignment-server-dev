@@ -48,7 +48,8 @@ $( window ).load(function() {
   });
 
   $("#alnsrv").submit(function(event){
-    var units = "bongo";
+    var units = "";
+
 
     if ( $("#pdb-model option:selected").val() == "" ){
       //  NULL if no selection made, otherwise value
@@ -66,7 +67,7 @@ $( window ).load(function() {
         var cv = $(c).val();
         var bv = ( jQuery.trim($(b).val()).length == 0 ) ? 0 : $(b).val();
         var ev = ( jQuery.trim($(e).val()).length == 0 ) ? 0 : $(e).val();
-        //  trim to eliminate whitespace
+        //  jQuery.trim in two lines directly above to eliminate whitespace
 
         //  WORKING ABOVE THIS COMMENT
 
@@ -84,34 +85,48 @@ $( window ).load(function() {
         //
         //  Still TO DO:  get this to the point where it will submit the form
         //  with only the units argument, and not the individual form element
-        //  values (which is what it's doing now, if I weren't suppressing
-        //  the submit behavior).
+        //  values (which is what it's doing now, if I weren't either
+        //  suppressing the submit behavior or making syntax errors that allow
+        //  the code to pass that statement).
         //
 
+        //
+        //  FOR NOW:  only validate that nonzero inputs were assigned.
+        //
         if (
                 ( 0 < bv )
-            &&  ( bv <= ev )
+            //&&  ( bv <= ev )
             &&  ( 0 < ev )
-            &&  ( ev <= ( bv + 50 ) ) // PROBLEM IS HERE
+            //&&  ( ev <= ( bv + 50 ) ) // PROBLEM IS HERE
             &&  ( cv != "" )
           ) {
-          range[i] = true;
+          range[i] = true; // debugging variable
+
+          if ( units ) {
+            units += ",";
+          }
+
+          units += cv + "|A|" + bv + ":" + cv + "|A|" + ev;
+          //
+          //  Manual testing shows that strings produced by this string
+          //  builder do produce output without errors.
+          //
         }
 
         alert("Range " + i + " validates " + range[i] + "\nChain: " + cv + "\nStart: " + bv + "\nStop: " + ev);
       }
 
-      /*
-      $("input#units").value() = "2AW7|1|A|A|887:2AW7|1|A|A|897";
-
-      var url = "?units=" + $("input#units").value();
-
-      $("form#alnsrv").setAttribute('action', url);
-      */
+      //
+      //  Our case is simpler:  build units from the various form elements and
+      //  submit that via window.location.
+      //
+      var http_str = jQuery.param({units: units});
+      //window.location = "?" + http_str;
 
       //  WORKING BELOW THIS COMMENT
 
       alert("Help!");
+      alert("units is set to: " + units);
 
       event.preventDefault();
 
