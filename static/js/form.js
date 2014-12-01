@@ -64,12 +64,39 @@ $( window ).load(function() {
         var b = "#beg" + i;
         var e = "#end" + i;
 
-        var cv = $(c).val();
-        var bv = ( jQuery.trim($(b).val()).length == 0 ) ? 0 : $(b).val();
-        var ev = ( jQuery.trim($(e).val()).length == 0 ) ? 0 : $(e).val();
+        var cvalue = $(c).val();
+        var bvalue = ( jQuery.trim($(b).val()).length == 0 ) ? 0 : $(b).val();
+        var evalue = ( jQuery.trim($(e).val()).length == 0 ) ? 0 : $(e).val();
         //  jQuery.trim in two lines directly above to eliminate whitespace
 
         //  WORKING ABOVE THIS COMMENT
+
+        var bi = 0;
+        var ei = 0;
+
+        //
+        //  If the input value is already an integer, pass it through;
+        //  otherwise, split the string on '|', set the integer value, and
+        //  hold onto the string portion.
+        //
+        //  bi and ei can be used for numeric tests now.
+        //
+
+        if ( +bvalue === parseInt(bvalue) ){
+          bi = bvalue;
+        } else {
+          var barray = bvalue.split('|');
+          bi = parseInt(barray[0]);
+        }
+
+        if ( +evalue === parseInt(evalue) ){
+          ei = evalue;
+        } else {
+          var earray = evalue.split('|');
+          ei = parseInt(earray[0]);
+        }
+
+        alert("bi: " + bi + "\nei: " + ei ); // DEBUG
 
         //
         //  This block needs more work.  Won't properly handle insertion codes
@@ -94,11 +121,11 @@ $( window ).load(function() {
         //  FOR NOW:  only validate that nonzero inputs were assigned.
         //
         if (
-                ( 0 < bv )
-            //&&  ( bv <= ev )
-            &&  ( 0 < ev )
+                ( 0 < bi )
+            &&  ( 0 < ei )
+            &&  ( cvalue != "" )
+            //&&  ( bi <= ei )          // PROBLEM IS HERE
             //&&  ( ev <= ( bv + 50 ) ) // PROBLEM IS HERE
-            &&  ( cv != "" )
           ) {
           range[i] = true; // debugging variable
 
@@ -106,14 +133,28 @@ $( window ).load(function() {
             units += ",";
           }
 
-          units += cv + "|A|" + bv + ":" + cv + "|A|" + ev;
+          //
+          //  TO DO:  replace bvalue and evalue with properly formatted
+          //  input:  either the raw integers or integer plus insertion code
+          //  with the correct number of intervening pipes.
+          //
+
+          units += cvalue + "|A|" + bvalue;
+
+          if ( bvalue != evalue ) {
+            units += ":" + cvalue + "|A|" + evalue;
+          }
           //
           //  Manual testing shows that strings produced by this string
           //  builder do produce output without errors.
           //
         }
 
-        alert("Range " + i + " validates " + range[i] + "\nChain: " + cv + "\nStart: " + bv + "\nStop: " + ev);
+        alert("Range " + i + " validates " + range[i] + "\nChain: " + cvalue + "\nStart: " + bvalue + "\nStop: " + evalue);
+
+        if ( range[i] == false ) {
+          break;
+        }
       }
 
       //
@@ -126,7 +167,10 @@ $( window ).load(function() {
       //  WORKING BELOW THIS COMMENT
 
       alert("Help!");
-      alert("units is set to: " + units);
+
+      var alert_str = ( units ) ? "units is set to: " + units : "units not set!";
+
+      alert(alert_str);
 
       event.preventDefault();
 
