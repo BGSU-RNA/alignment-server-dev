@@ -25,7 +25,6 @@ $( window ).load(function() {
   $("#alnsrv").submit(function(event){
     var units = "";
 
-
     if ( $("#pdb-model option:selected").val() == "" ){
       //  NULL if no selection made, otherwise value
       alert("Structure not selected!");
@@ -47,7 +46,9 @@ $( window ).load(function() {
         //  WORKING ABOVE THIS COMMENT
 
         var bi = 0;
+        var bc = "";
         var ei = 0;
+        var ec = "";
 
         //
         //  If the input value is already an integer, pass it through;
@@ -62,6 +63,7 @@ $( window ).load(function() {
         } else {
           var barray = bvalue.split('|');
           bi = parseInt(barray[0]);
+          bc = barray[1];
         }
 
         if ( +evalue === parseInt(evalue) ){
@@ -69,6 +71,7 @@ $( window ).load(function() {
         } else {
           var earray = evalue.split('|');
           ei = parseInt(earray[0]);
+          ec = earray[1];
         }
 
         alert("bi: " + bi + "\nei: " + ei ); // DEBUG
@@ -81,17 +84,11 @@ $( window ).load(function() {
         //  Blake has code that can test this, but only after submission.  When
         //  is the best time to test these conditions?
         //
-        //  Split both bv and ev on the '|' character, so then we can cast the
-        //  numerical part of the value to int and range-test it, then
-        //  recombine.
-        //
         //  Still TO DO:  get this to the point where it will submit the form
         //  with only the units argument, and not the individual form element
         //  values (which is what it's doing now, if I weren't either
         //  suppressing the submit behavior or making syntax errors that allow
         //  the code to pass that statement).
-        //
-
         //
         //  FOR NOW:  only validate that nonzero inputs were assigned.
         //
@@ -108,16 +105,13 @@ $( window ).load(function() {
             units += ",";
           }
 
-          //
-          //  TO DO:  replace bvalue and evalue with properly formatted
-          //  input:  either the raw integers or integer plus insertion code
-          //  with the correct number of intervening pipes.
-          //
+          var bout = ( bc == "" ) ? bi : bi + "|||" + bc;
+          var eout = ( ec == "" ) ? ei : ei + "|||" + ec;
 
-          units += cvalue + "|A|" + bvalue;
+          units += cvalue + "|A|" + bout;
 
-          if ( bvalue != evalue ) {
-            units += ":" + cvalue + "|A|" + evalue;
+          if ( bout != eout ) {
+            units += ":" + cvalue + "|A|" + eout;
           }
           //
           //  Manual testing shows that strings produced by this string
@@ -125,7 +119,7 @@ $( window ).load(function() {
           //
         }
 
-        alert("Range " + i + " validates " + range[i] + "\nChain: " + cvalue + "\nStart: " + bvalue + "\nStop: " + evalue);
+        alert("Range " + i + " validates " + range[i] + "\nChain: " + cvalue + "\nStart: " + bout + "\nStop: " + eout); // DEBUG
 
         if ( range[i] == false ) {
           break;
@@ -141,11 +135,11 @@ $( window ).load(function() {
 
       //  WORKING BELOW THIS COMMENT
 
-      alert("Help!");
+      alert("Help!"); // DEBUG
 
       var alert_str = ( units ) ? "units is set to: " + units : "units not set!";
 
-      alert(alert_str);
+      alert(alert_str); // DEBUG
 
       event.preventDefault();
 
