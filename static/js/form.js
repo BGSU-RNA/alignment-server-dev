@@ -1,51 +1,26 @@
-//$( document ).ready(function () {
 $( window ).load(function() {
   'use strict';
 
-  var apdb = document.getElementById("pdb-chain");
-  var x = [];
-  var y = [];
-
-  for ( var i = 0; i < apdb.options.length; i++ )
-  {
-    x[i] = apdb.options[i].value;
-    if ( x[i] == "" ) continue;
-    y[i] = apdb.options[i].text;
-    //alert("(i: " + i + ") " + x[i] + " keys " + y[i]); // DEBUG
+  function rangeDiv(btn) {
+    return $(btn).parents(".range-control-group");
   }
 
-  $("#pdb-model").change(function()
-  {
-    var pdbmod = $("#pdb-model").val();
-    var arrpdbmod = pdbmod.split("|");
-    var pdb = arrpdbmod[0];
-    var mod = arrpdbmod[1];
-    $("input[name=selected_pdb]").val(pdb);
-    $("input[name=selected_mod]").val(mod);
-    //alert( "pdbmod new value: " + pdbmod + "\npdb: " + pdb + "\nmod: " + mod ); // DEBUG
+  function addRangeControl() {
+    var $parent = rangeDiv(event.target),
+        $next = $parent.nextAll(".range-control-group:hidden").first();
+    $next.show();
+  }
 
-    // iterate change for all chain selectors
-    var chainsel = [ "#pdb-chain", "#chain1", "#chain2", "#chain3", "#chain4", "#chain5" ];
-    for ( var k = 0; k < chainsel.length; k++ )
-    {
-      var select = $(chainsel[k]);
+  function removeRangeControl() {
+    var $parent = rangeDiv(event.target);
+    clearRange($parent);
+    return $parent.hide();
+  }
 
-      //select.disabled = false;
-      select.empty().append('{{ null_option() }}}');
-
-      for ( var j = 0; j < y.length; j++ )
-      {
-        if ( y[j] == "" ) continue; // default case handled above
-
-        var arrx = x[j].split("|");
-
-        if ( arrx[0] == pdb && arrx[1] == mod )
-        {
-          select.append('<option value="' + x[j] + '">' + y[j] + '</option>');
-        }
-      }
-    }
-  });
+  function clearRange(selector) {
+    $(selector).find("input").val("");
+    $(selector).find(":selected").removeAttr("selected");
+  }
 
   $("#alnsrv").submit(function(event){
     var units = "";
@@ -184,4 +159,15 @@ $( window ).load(function() {
       });
     }
   });
+
+  $("#pdb-model").change(function() {
+    $('.range-control-header').show();
+    clearRange(".range-control-group");
+    $(".range-control-group").hide();
+    $(".range-control-group").first().show();
+  });
+
+  $(".add-range").on('click', addRangeControl);
+  $(".remove-range").on('click', removeRangeControl);
+
 });
