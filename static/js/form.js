@@ -164,4 +164,8 @@ $( window ).load(function() {
   $(".add-range").on('click', addRangeControl);
   $(".remove-range").on('click', removeRangeControl);
 
+  $("#clear-button").click(function() {
+    clearRange(".range-control-group");
+  });
+
 });
