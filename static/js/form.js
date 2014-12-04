@@ -127,15 +127,12 @@ $( window ).load(function() {
       }
 
       //
-      //  Our case is simpler:  build units from the various form elements and
-      //  submit that via window.location.
+      //  Build units from form elements; submit via window.location.
       //
       var http_str = jQuery.param({units: units});
       //window.location = "?" + http_str;
 
       //  WORKING BELOW THIS COMMENT
-
-      alert("Help!"); // DEBUG
 
       var alert_str = ( units ) ? "units is set to: " + units : "units not set!";
 
