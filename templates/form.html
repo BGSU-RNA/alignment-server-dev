@@ -1,115 +1,115 @@
 {% extends "layout.html" %}
 
 {%- block title -%}
-	<title>Sequence Variation Server</title>
-{%- endblock title %}
+    <title>Sequence Variation Server</title>
+{%- endblock title -%}
 
 {%- block head %}
-{% endblock head -%}
+{%- endblock head -%}
 
 {% macro null_option() -%}
 <option value="" disabled="disabled" selected="selected">Choose an option...</option>
 {%- endmacro -%}
 
-{% macro textinput(name, len=10) -%}
-<input type="text" name="{{ name }}" id="{{ name }}" maxlength="{{ len }}">
-{%- endmacro -%}
+{%- block body %}
+      <div class="row">
+        <h2>Work in progress/staged:</h2>
+        <ul>
+          <li>DONE:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</li>
+          <li>TO DO:  help text to explain the fields listed in the Structure SELECTor</li>
+          <li>TO DO:  help text indicating that ranges may define a single position</li>
+          <li>TO DO:  help text indicating that only one range is required for the server</li>
+          <li>TO DO:  help text indicating that multiple ranges must be filled in order (may not be necessary if we implement a hidden element scheme)</li>
+          <li>NO:  use a fixed-width font for the selector to streamline the field presentation.</li>
+          <li>NO:  add buttons to toggle hidden debugging elements (may not bother with this).</li>
+        </ul>
 
-{% block body %}
+        <form class="form-horizontal" action="{{ url }}" method="post">
 
-<div class="row">
-  <h2>Work in progress/staged:</h2>
-  <p>TESTING:  auto-generate the select list for PDB/model and use jQuery to reflect selections in text boxes.</p>
-  <p>TO DO:  use a fixed-width font for the selector to streamline the field presentation.</p>
-  <p>MAYBE TO DO:  add buttons to toggle hidden debugging elements (may not bother with this).</p>
+          <div class="form-group">
 
-  <form class="form-horizontal" action="{{ url }}" method="post">
+            <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
+            <div class="col-sm-5">
+              <select class="form-control" id="pdb-model" name="pdb-model">
+                {{ null_option() }}
+                {%- for row in mods -%}
+                {%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
+                {%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('| ') %}
+                <option value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
+                {% endfor %}
+              </select>
 
-    <div class="form-group">
+            </div>
 
-      <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
-      <div class="col-sm-5">
-        <select class="form-control" id="pdb-model" name="pdb-model">
-          {{ null_option() }}
-          {%- for row in mods -%}
-          {%- set pdbmod = [row['pdb'],row['model_number']]|join('|') -%}
-          {%- set descrp = [row['organism'],row['taxonomy'],row['contents']]|join('| ') %}
-          <option value="{{ pdbmod }}">{{ pdbmod }}: {{ descrp }}</option>
+            {# This block needs to be both present and not displayed. #}
+            <label for="pdb-chain" class="col-sm-1 control-label" style="display:none" disabled>Chain</label>
+            <div class="col-sm-2" style="display:none">
+              <select class="form-control" id="pdb-chain" name="pdb-chain" disabled>
+                {{ null_option() }}
+                {%- for row in pdbs -%}
+                {%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
+                <option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
+                {%- endfor %}
+              </select>
+            </div>
+
+          </div>
+
+          <div class="range-controls">
+            <div class='form-group range-control-header' hidden>
+              <div class="col-sm-3">
+                <strong>Range: Chain</strong>
+              </div>
+
+              <div class="col-sm-3">
+                <strong>Start</strong>
+              </div>
+
+              <div class="col-sm-3">
+                <strong>Stop</strong>
+              </div>
+            </div>
+
+            {% for index in range(1,6) %}
+            <div class='form-group range-control-group' data-range='{{index}}' hidden>
+
+              <div class="col-sm-3">
+                <select class="form-control range-control" name="chain-select">
+                </select>
+              </div>
+
+              <div class="col-sm-3">
+                <input class="form-control range-control" type="text" placeholder="Start">
+              </div>
+
+              <div class="col-sm-3">
+                <input class="form-control range-control" type="text" placeholder="Stop">
+              </div>
+
+              <div class="col-sm-2">
+                {% if index != 5 %}
+                <button type="button" class="btn btn-default add-range range-control">
+                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+                {% endif %}
+
+                {% if index != 1 %}
+                <button type="button" class="btn btn-default remove-range range-control">
+                  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                </button>
+                {% endif %}
+              </div>
+            </div>
           {% endfor %}
-        </select>
+          </div>
 
-      </div>
-
-      {# This block needs to be both present and not displayed. #}
-      <label for="pdb-chain" class="col-sm-1 control-label" style="display:none" disabled>Chain</label>
-      <div class="col-sm-2" style="display:none">
-        <select class="form-control" id="pdb-chain" name="pdb-chain" disabled>
-          {{ null_option() }}
-          {%- for row in pdbs -%}
-          {%- set unit = [row['pdb'],row['model_number'],row['chain_id']]|join('|') %}
-          <option value="{{ unit }}">{{ unit }}: {{ row['description'] }}</option>
-          {%- endfor %}
-        </select>
-      </div>
-
-    </div>
-
-    <div class="range-controls">
-      <div class='form-group range-control-header' hidden>
-        <div class="col-sm-3">
-          <strong>Chain</strong>
-        </div>
-
-        <div class="col-sm-3">
-          <strong>Start</strong>
-        </div>
-
-        <div class="col-sm-3">
-          <strong>Stop</strong>
-        </div>
-      </div>
-
-      {% for index in range(5) %}
-      <div class='form-group range-control-group' data-range='{{index}}' hidden>
-
-        <div class="col-sm-3">
-          <select class="form-control range-control" name="chain-select">
-          </select>
-        </div>
-
-        <div class="col-sm-3">
-          <input class="form-control range-control" type="text" placeholder="Start">
-        </div>
-
-        <div class="col-sm-3">
-          <input class="form-control range-control" type="text" placeholder="Stop">
-        </div>
-
-        <div class="col-sm-2">
-          {% if index != 4 %}
-          <button type="button" class="btn btn-default add-range range-control">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+          <button type="button" class="btn btn-lg btn-primary remove-range range-control" disabled>
+            Submit
           </button>
-          {% endif %}
-
-          {% if index != 0 %}
-          <button type="button" class="btn btn-default remove-range range-control">
-            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-          </button>
-          {% endif %}
-        </div>
+        </form>
       </div>
-    {% endfor %}
-    </div>
+{%- endblock body %}
 
-    <button type="button" class="btn btn-lg btn-primary remove-range range-control" disabled>
-      Submit
-    </button>
-  </form>
-</div>
-
-{% endblock body %}
-
-{% block page_specific_js %}
-<script src="{{ url_for('static', filename='js/form.js') }}"></script>
-{% endblock page_specific_js %}
+{%- block page_specific_js -%}
+    <script src="{{ url_for('static', filename='js/form.js') }}"></script>
+{%- endblock page_specific_js %}
