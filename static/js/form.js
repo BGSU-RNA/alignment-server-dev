@@ -156,9 +156,50 @@ $( window ).load(function() {
     clearRange(".range-control-group");
     $(".range-control-group").hide();
     $(".range-control-group").first().show();
+
+    var pdbmod = $("#pdb-model").val();
+    var arrpdbmod = pdbmod.split("|");
+    var pdb = arrpdbmod[0];
+    var mod = arrpdbmod[1];
+    //$("input[name=selected_pdb]").val(pdb);
+    //$("input[name=selected_mod]").val(mod);
+    //alert( "pdbmod new value: " + pdbmod + "\npdb: " + pdb + "\nmod: " + mod ); // DEBUG
+
+    // iterate change for all chain selectors
+    //var chainsel = [ "#chain1", "#chain2", "#chain3", "#chain4", "#chain5" ];
+    for ( var k = 1; k <= 5; k++ )
+    {
+      var select = $("#chain-select-"+k);
+
+      //select.disabled = false;
+      select.empty().append('{{ null_option() }}}');
+
+      for ( var j = 0; j < y.length; j++ )
+      {
+        if ( y[j] == "" ) continue; // default case handled above
+
+        var arrx = x[j].split("|");
+
+        if ( arrx[0] == pdb && arrx[1] == mod )
+        {
+          select.append('<option value="' + x[j] + '">' + y[j] + '</option>');
+        }
+      }
+    }
   });
 
   $(".add-range").on('click', addRangeControl);
   $(".remove-range").on('click', removeRangeControl);
 
+  var apdb = document.getElementById("pdb-chain");
+  var x = [];
+  var y = [];
+
+  for ( var i = 0; i < apdb.options.length; i++ )
+  {
+    x[i] = apdb.options[i].value;
+    if ( x[i] == "" ) continue;
+    y[i] = apdb.options[i].text;
+    //alert("(i: " + i + ") " + x[i] + " keys " + y[i]); // DEBUG
+  }
 });
