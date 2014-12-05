@@ -1,3 +1,4 @@
+import os
 import simplejson as json
 
 from flask import g
@@ -84,4 +85,9 @@ def post_html():
 
 
 if __name__ == '__main__':
+    config = {}
+    if os.path.exists('config.json'):
+        with open('config.json', 'rb') as raw:
+            config = json.load(raw)
+    app.config.update(config)
     app.run()
