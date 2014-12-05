@@ -81,6 +81,8 @@ def seqvar(db, pdb, model, ranges):
     reqs = []
     for row in res3:
         reqs.append({
+            'SeqID': row['SeqID'],
+            'SeqVersion': row['SeqVersion'],
             'CompleteFragment': row['CompleteFragment']
         })
 
