@@ -81,7 +81,7 @@
           <br/><br/>
           Green background (for sequence) indicates the sequence present in
           chosen PDB file.  For the actual entry found in the chosen PDB file,
-          the entire row has a light blue background (IN PROGRESS).
+          the entire row has a light blue background.
         </caption>
         <thead>
           {% block results_header %}
@@ -107,10 +107,10 @@
               {% set requested = item['CompleteFragment'] %}
 
               {% for row in full %}
-                {%- set fragclass = 'sequence requested' if requested ==
-                  row['CompleteFragment'] else 'sequence' %}
                 {%- set rowclass = 'reference' if ( seqid == row['SeqID'] and
                   seqvr == row['SeqVersion'] ) else '' %}
+                {%- set fragclass = 'sequence requested' if ( requested ==
+                  row['CompleteFragment'] and rowclass == '' ) else 'sequence' %}
           <tr class="{{rowclass}}">
             <td>{{ row['SeqID'] }}</td>
             <td>{{ row['SeqVersion'] }}</td>
