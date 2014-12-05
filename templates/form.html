@@ -106,9 +106,15 @@
           <button type="button" class="btn btn-lg btn-primary remove-range range-control" disabled>
             Submit
           </button>
+
+          <button type="button" class="btn btn-lg" id='clear-button'>
+            Clear
+          </button>
         </form>
       </div>
-{%- endblock body %}
+    </div>
+
+{% endblock body %}
 
 {%- block page_specific_js -%}
     <script src="{{ url_for('static', filename='js/form.js') }}"></script>
