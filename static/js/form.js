@@ -169,8 +169,18 @@ $( window ).load(function() {
       return filled.length !== 0;
     });
 
+    if (ranges.length === 0) {
+      // TODO: Show error message for no ranges
+      return;
+    }
+
     // Validate all ranges
     var submit = ranges.filter(validateRange);
+
+
+    if (ranges.length === submit.length) {
+      window.location.search = '?units=' + collection(submit);
+    }
   });
 
   $("#pdb-model").change(function() {
