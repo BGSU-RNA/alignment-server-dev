@@ -1,4 +1,7 @@
 import os
+import itertools as it
+import collections as coll
+
 import simplejson as json
 
 from flask import g
@@ -60,6 +63,43 @@ def structures():
     return db.list_structures(g.rcad)
 
 
+def group_options():
+
+    alignments = {}
+    for alignment in options():
+        description = alignment['description']
+        pdb = alignment['pdb']
+        if pdb not in alignments:
+            alignments[pdb] = {}
+
+        if description not in alignments[pdb]:
+            alignments[pdb][description] = {
+                'chains': [],
+                'description': description,
+                'alignment_id': description
+            }
+        info = alignments[pdb][description]
+        info['chains'].append(alignment['chain_id'])
+
+    data = []
+    for structure in structures():
+        entry = {}
+        entry.update(structure)
+        entry['alignments'] = alignments[structure['pdb']].values()
+        entry['organism'] = entry['organism'].strip()
+        entry['contents'] = entry['contents'].strip()
+        entry['taxonomy'] = entry['taxonomy'].strip()
+
+        if 'requires_translation' in entry:
+            del entry['requires_translation']
+        if 'option' in entry:
+            del entry['option']
+
+        data.append(entry)
+
+    return data
+
+
 @app.route('/', methods=['GET'])
 @mimerender(
     json=render_json,
@@ -69,9 +109,8 @@ def get_html():
     if 'units' in request.args:
         full, summ, reqs = variations(request.args)
         return {'template': 'results.html', 'full': full, 'summ': summ, 'reqs': reqs}
-    pdbs = options()
-    mods = structures()
-    return {'template': 'form.html', 'pdbs': pdbs, 'mods': mods}
+
+    return {'template': 'form.html', 'data': group_options()}
 
 
 @app.route('/', methods=['POST'])
