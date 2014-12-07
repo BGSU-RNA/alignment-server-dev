@@ -21,10 +21,13 @@ $( window ).load(function() {
   }
 
   function showError(element, msg) {
-    var $alert = element.siblings('.alert');
+    var $alert = element.siblings('.alert'),
+        icon = '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>';
     $alert
-      .append(msg)
-      .toggle();
+      .empty()
+      .append(icon)
+      .append('&nbsp;' + msg);
+    $alert.toggle();
   }
 
   function validateUnit(unit) {
@@ -117,7 +120,7 @@ $( window ).load(function() {
         model = $pdb.data('model');
 
     var count = parseInt($("#range-control-group").data("range-count"));
-    for(i = 0; i < count; i++) {
+    for(var i = 0; i < count; i++) {
       ranges.push([{pdb: pdb, model: model, unit: '', point: 'start'},
                   {pdb: pdb, model: model, unit: '', point: 'stop'}]);
     }
@@ -176,28 +179,30 @@ $( window ).load(function() {
     $(".range-control-group").hide();
     $(".range-control-group").first().show();
 
-    var pdbmod = $("#pdb-model").val();
-    var arrpdbmod = pdbmod.split("|");
-    var pdb = arrpdbmod[0];
-    var mod = arrpdbmod[1];
+    $(".alignment-control").hide();
+    $(".alignment").removeAttr('checked');
 
-    // iterate change for all chain selectors
-    for ( var k = 1; k <= 5; k++ )
-    {
-      var select = $("#chain-select-"+k);
+    var pdb = $("#pdb-model option:selected").data("pdb"),
+        selector = ".alignment-control[data-pdb='" + pdb + "']",
+        $divs = $(selector),
+        $radios = $divs.find('.alignment-radio');
 
-      for ( var j = 0; j < y.length; j++ )
-      {
-        if ( y[j] == "" ) continue; // default case handled above
+    $divs.show();
+    $radios.first().click();
+  });
 
-        var arrx = x[j].split("|");
+  $(".alignment").click(function (event) {
+    var $radio = $(event.target),
+        chains = $radio.data('chains').split(',');
+    clearRange(".range-control-group");
 
-        if ( arrx[0] == pdb && arrx[1] == mod )
-        {
-          select.append('<option value="' + x[j] + '">' + y[j] + '</option>');
-        }
-      }
-    }
+    $(".chain-selector").empty();
+    chains.forEach(function(chain, index) {
+      var selected = (index === 0 ? 'selected': ''),
+          option = '<option value="' + chain + '" ' + selected +
+            ' data-range="' + index + '">' + chain + "</option>";
+      $(".chain-selector").append(option);
+    });
   });
 
   $(".add-range").on('click', addRangeControl);
@@ -207,15 +212,4 @@ $( window ).load(function() {
     clearRange(".range-control-group");
   });
 
-  var apdb = document.getElementById("pdb-chain");
-  var x = [];
-  var y = [];
-
-  for ( var i = 0; i < apdb.options.length; i++ )
-  {
-    x[i] = apdb.options[i].value;
-    if ( x[i] == "" ) continue;
-    y[i] = apdb.options[i].text;
-    //alert("(i: " + i + ") " + x[i] + " keys " + y[i]); // DEBUG
-  }
 });
