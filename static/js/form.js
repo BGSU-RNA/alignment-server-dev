@@ -21,23 +21,21 @@ $( window ).load(function() {
   }
 
   function showError(element, msg) {
-    var $alert = element.siblings('.alert'),
-        icon = '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>';
-    $alert
-      .empty()
-      .append(icon)
-      .append('&nbsp;' + msg);
-    $alert.toggle();
+    var group = element.parents().first();
+    group.addClass('has-error');
+
+    $("#problems").show();
+    $("#problems .message[data-message-id='" + msg + "']").show();
   }
 
   function validateUnit(unit) {
     if (!unit.hasOwnProperty('number')) {
-      showError(unit.element, 'Must put valid position');
+      showError(unit.element, 1);
       return false;
     }
 
     if (unit.number < 0) {
-      showError(unit.element, 'Must put positive number');
+      showError(unit.element, 1);
       return false;
     }
 
@@ -69,13 +67,13 @@ $( window ).load(function() {
 
     if (range.length === 2) {
       if (range[0].number > range[1].number) {
-        showError(range[0].element, 'Start must be less than stop');
-        showError(range[1].element, 'Start must be less than stop');
+        showError(range[0].element, 2);
+        showError(range[1].element, 2);
         return false;
       } else if (range[0].number === range[1].number) {
         if (range[0].insertion_code > range[1].insertion_code) {
-          showError(range[0].element, 'Start must be less than stop');
-          showError(range[1].element, 'Start must be less than stop');
+          showError(range[0].element, 2);
+          showError(range[1].element, 2);
           return false;
         }
       }
@@ -100,10 +98,17 @@ $( window ).load(function() {
     return $parent.hide();
   }
 
+  function clearErrors() {
+    $('div').removeClass('has-error');
+    $("#problems").hide();
+    $("#problems").children().hide();
+  }
+
   function clearRange(selector) {
     $(selector).find("input").val("");
     $(selector).find(":selected").removeAttr("selected");
     $(selector).find(".alert").hide();
+    $(selector).find('div').removeClass('has-error');
   }
 
   function showFormError(selector, message) {
@@ -112,7 +117,7 @@ $( window ).load(function() {
 
   $("#submit-ranges").click(function(event){
     event.preventDefault();
-    $(".alert").hide();
+    clearErrors();
 
     var ranges = [],
         $pdb = $("#pdb-model option:selected"),
@@ -186,6 +191,7 @@ $( window ).load(function() {
   $("#pdb-model").change(function() {
     $('.range-control-header').show();
     clearRange(".range-control-group");
+    clearErrors();
     $(".range-control-group").hide();
     $(".range-control-group").first().show();
 
@@ -202,9 +208,11 @@ $( window ).load(function() {
   });
 
   $(".alignment").click(function(event) {
-    var $radio = $(event.target),
+    var $target = $(event.target),
+        $radio = ($target.is("label") ? $target : $target.parents("label")),
         chains = $radio.data('chains').split(',');
     clearRange(".range-control-group");
+    clearErrors();
 
     $(".chain-selector").empty();
     chains.forEach(function(chain, index) {
@@ -220,6 +228,7 @@ $( window ).load(function() {
 
   $("#clear-button").click(function() {
     clearRange(".range-control-group");
+    clearErrors();
   });
 
 });

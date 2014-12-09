@@ -33,8 +33,24 @@
               </select>
 
             </div>
+
+          <div class="row">
+            <div class="alert alert-danger col-sm-4" id="problems" role="alert" hidden>
+              <div class="message" data-message-id="1" hidden>
+                <i class="glyphicon glyphicon-exclamation-sign"
+                   aria-hidden="true"></i>
+                Must enter valid position.
+              </div>
+
+              <div class="message" data-message-id="2" hidden>
+                <i class="glyphicon glyphicon-exclamation-sign"
+                   aria-hidden="true"></i>
+                Starting position must be before final position
+              </div>
+            </div>
           </div>
 
+          </div>
 
           <div class="alignment-controls">
             {%- for structure in data -%}
@@ -43,10 +59,9 @@
                    data-count="{{ structure['alignments']|length }}" hidden>
                 {% for alignment in structure['alignments'] %}
                 <div class="col-sm-5 radio alignment">
-                    <label>
+                    <label data-chains='{{alignment["chains"]|join(",")}}'>
                       <input type="radio" class='alignment-radio'
-                          value="{{alignment['alignment_id']}}" name='alignments'
-                          data-chains='{{alignment["chains"]|join(",")}}'>
+                          value="{{alignment['alignment_id']}}" name='alignments'>
                       {{ alignment['description'] }}
                     </label>
                 </div>
@@ -54,6 +69,7 @@
               </div>
             {% endfor %}
           </div>
+
 
           <div class="range-controls" id='range-control-group' data-range-count='5'>
             <div class='form-group range-control-header' hidden>
@@ -80,33 +96,35 @@
               </div>
 
               <div class="col-sm-3">
-                <div class='alert alert-danger' role='alert' hidden>
-                </div>
                 <input class="form-control range-control start-selector" type="text"
                   placeholder="Start Position" data-range="{{index - 1}}">
               </div>
 
               <div class="col-sm-3">
-                <div class='alert alert-danger' role='alert' hidden>
-                  <span class="glyphicon glyphicon-exclamation-sign message" aria-hidden="true">
-                  </span>
-                </div>
                 <input class="form-control range-control stop-selector" type="text"
                   placeholder="Stop Position" data-range="{{index - 1}}">
               </div>
 
               <div class="col-sm-2">
-                {% if index != 5 %}
-                <button type="button" class="btn btn-default add-range range-control">
-                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                </button>
+                {% set add_status = "" %}
+                {% set remove_status = "" %}
+
+                {% if index == 1 %}
+                {%set remove_status="disabled" %}
                 {% endif %}
 
-                {% if index != 1 %}
-                <button type="button" class="btn btn-default remove-range range-control">
+                {% if index == 5 %}
+                {% set add_status="disabled" %}
+                {% endif %}
+
+                <button type="button" class="btn btn-default add-range range-control" {{add_status}}>
+                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+
+                <button type="button" class="btn btn-default remove-range range-control" {{remove_status}}>
                   <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                 </button>
-                {% endif %}
+
               </div>
             </div>
           {% endfor %}
