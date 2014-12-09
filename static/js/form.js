@@ -88,13 +88,13 @@ $( window ).load(function() {
     return $(btn).parents(".range-control-group");
   }
 
-  function addRangeControl() {
+  function addRangeControl(event) {
     var $parent = rangeDiv(event.target),
         $next = $parent.nextAll(".range-control-group:hidden").first();
     $next.show();
   }
 
-  function removeRangeControl() {
+  function removeRangeControl(event) {
     var $parent = rangeDiv(event.target);
     clearRange($parent);
     return $parent.hide();
@@ -201,7 +201,7 @@ $( window ).load(function() {
     $radios.first().click();
   });
 
-  $(".alignment").click(function (event) {
+  $(".alignment").click(function(event) {
     var $radio = $(event.target),
         chains = $radio.data('chains').split(',');
     clearRange(".range-control-group");
