@@ -53,6 +53,15 @@ LIST_OPTIONS = [
         'option': 1
     },
     {
+        'description': u'TEST Escherichia coli LSU rRNA (Bacterial LSU rRNA Private Alignment)',
+        'chain_id': u'C',
+        'model_number': 1,
+        'requires_translation': False,
+        'pdb': u'2QBG',
+        'option': 1
+    },
+
+    {
         'description': u'Escherichia coli SSU rRNA (Bacterial SSU rRNA Seed Alignment)',
         'chain_id': u'A',
         'model_number': 1,
