@@ -114,21 +114,26 @@
               <div class="col-sm-2">
                 {% set add_status = "" %}
                 {% set remove_status = "" %}
+                {% set add_icon = "glyphicon-plus" %}
+                {% set remove_icon = "glyphicon-minus" %}
 
                 {% if index == 1 %}
-                {%set remove_status="disabled" %}
+                {% set remove_status="disabled" %}
+                {% set remove_icon="glyphicon-ban-circle" %}
+
                 {% endif %}
 
                 {% if index == 5 %}
                 {% set add_status="disabled" %}
+                {% set add_icon="glyphicon-ban-circle" %}
                 {% endif %}
 
                 <button type="button" class="btn btn-default add-range range-control" {{add_status}}>
-                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                  <span class="glyphicon {{ add_icon }}" aria-hidden="true"></span>
                 </button>
 
                 <button type="button" class="btn btn-default remove-range range-control" {{remove_status}}>
-                  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                  <span class="glyphicon {{ remove_icon }}" aria-hidden="true"></span>
                 </button>
 
               </div>
