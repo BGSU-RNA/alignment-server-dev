@@ -17,28 +17,40 @@
       background-color: #9999ff;
     }
     </style>
-{%- endblock head %}
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css">
+    <!-- ColVis CSS (DataTables extension) -->
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
+    <!-- TableTools CSS (DataTables extension) -->
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.3/css/dataTables.tableTools.css">
+    {%- endblock head %}
 {% block body %}
       <h2>{{ self.titletext() }}</h2>
+      <p>TESTING:</p>
+      <ul>
+        <li>DataTables:
+          <ul>
+            <li>Pagination for "Sequence Summary"</li>
+            <li>Scrolling for "Sequence Details"</li>
+            <li>Download options for "Sequence Details" (not working yet)</li>
+            <li>Search/filter functions for both tables</li>
+            <li>Initially hide the "LineageName" column to keep the display narrow</li>
+          </ul>
+        </li>
+      </ul>
       <p>TO DO:</p>
       <ul>
-        <li>DataTables tools for pagination, sorting, filtering, <em>etc.</em></li>
+        <li><font color="blue">SEE ABOVE: DataTables tools for pagination, sorting, filtering, <em>etc.</em></font></li>
+        <li><font color="blue">SEE ABOVE: download as text" button option (tab-separated)</font></li>
+        <li><font color="blue">SEE ABOVE: filter box (see the Non-Redundant Sets and Motif Atlas pages</font></li>
         <li>Bootstrap formatting to match form page</li>
         <li>display the ranges that created the output</li>
-        <li>"download as text" button option (tab-separated)</li>
-        <li>filter box (see the Non-Redundant Sets and Motif Atlas pages</li>
-        <li>consider making the header repetition interval user-selectable (an
-          additional variable at submission time, and minor retooling)</li>
-        <li>consider making the "Lineage Name" a mouseover (or similar
-          construct) associated with the "Scientific Name" (to conserve a great
-          deal of space per row of the table; may need the header repeats less
-          often then)</li>
         <li>filter columns that are empty in all sequences from output
           (database-side issue, whether on-the-fly or alignment-related)</li>
       </ul>
       <hr>
       <h3>Sequence Summary</h3>
-      <table border="1">
+      <table border="1" id="sequence_summary" name="sequence_summary">
         <caption>Green background indicates sequence present in chosen PDB
           file.</caption>
         <thead>
@@ -49,12 +61,13 @@
           </tr>
           {% endblock summary_header -%}
         </thead>
+        <tfoot>{{ self.summary_header() }}</tfoot>
         <tbody>
           {%- block rowbuild scoped %}
             {%- for line in reqs %}
-              {% set seqid = line['SeqID'] %}
-              {% set seqvr = line['SeqVersion'] %}
-              {% set requested = line['CompleteFragment'] %}
+              {%- set seqid = line['SeqID'] %}
+              {%- set seqvr = line['SeqVersion'] %}
+              {%- set requested = line['CompleteFragment'] %}
 
               {%- for row in summ %}
                 {%- if requested == row['CompleteFragment'] %}
@@ -72,14 +85,12 @@
             {%- endfor %}
           {%- endblock rowbuild %}
         </tbody>
-        <tfoot>{{ self.summary_header() }}</tfoot>
       </table>
       <hr>
       <h3>Sequence Details</h3>
-      <table border="1" width="100%">
+      <table border="1" width="100%" id="sequence_details" name="sequence_details">
         <caption>Real data from rCAD (unless run in debug mode, with two lines of
-          sample data); header repeated every 20 rows.  Multiple ranges (if
-          requested) are separated by commas.
+          sample data).  Multiple ranges (if requested) are separated by commas.
           <br/><br/>
           Green background (for sequence) indicates the sequence present in
           chosen PDB file.  For the actual entry found in the chosen PDB file,
@@ -88,8 +99,7 @@
         <thead>
           {% block results_header %}
           <tr>
-            <th>SeqID</th>
-            <th>SeqVersion</th>
+            <th>Sequence&nbsp;#<br/>(CRW:&nbsp;ID.Version)</th>
             <th>CompleteFragment</th>
             <th>AccessionID</th>
             <th>TaxID</th>
@@ -99,42 +109,41 @@
           {% endblock results_header %}
         </thead>
         <tbody>
-          {# Iterate over full.  Put another copy of results_header every n
-            rows.  What value of n (trying 20)? #}
-
           {%- block resbuild scoped %}
             {%- for item in reqs %}
-              {% set seqid = item['SeqID'] %}
-              {% set seqvr = item['SeqVersion'] %}
-              {% set requested = item['CompleteFragment'] %}
+              {%- set seqid = item['SeqID'] %}
+              {%- set seqvr = item['SeqVersion'] %}
+              {%- set requested = item['CompleteFragment'] %}
 
-              {% for row in full %}
+              {%- for row in full %}
                 {%- set rowclass = 'reference' if ( seqid == row['SeqID'] and
                   seqvr == row['SeqVersion'] ) else '' %}
                 {%- set fragclass = 'sequence requested' if ( requested ==
                   row['CompleteFragment'] and rowclass == '' ) else 'sequence' %}
           <tr class="{{rowclass}}">
-            <td>{{ row['SeqID'] }}</td>
-            <td>{{ row['SeqVersion'] }}</td>
+            <td>{{ row['SeqID'] }}.{{ row['SeqVersion'] }}</td>
             <td class="{{fragclass}}">{{ row['CompleteFragment'] }}</td>
             <td>{{ row['AccessionID'] }}</td>
             <td>{{ row['TaxID'] }}</td>
             <td>{{ row['ScientificName'] }}</td>
             <td>{{ row['LineageName'] }}</td>
           </tr>
-                {% if loop.index is divisibleby(20) %}
-        </tbody>
-        <tbody>
-              {{ self.results_header() }}
-        </tbody>
-        <tbody>
-                {% endif %}
               {% endfor %}
             {%- endfor %}
           {% endblock resbuild %}
         </tbody>
         <tfoot>
-          {{ self.results_header() }}
+          {{- self.results_header() }}
         </tfoot>
       </table>
 {% endblock body %}
+
+{%- block page_specific_js -%}
+    <script src="{{ url_for('static', filename='js/results.js') }}"></script>
+    <!-- DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.js"></script>
+    <!-- ColVis JS (DataTables extension) -->
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.js"></script>
+    <!-- TableTools JS (DataTables extension) -->
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/tabletools/2.2.3/js/dataTables.tableTools.js"></script>
+{%- endblock page_specific_js %}
