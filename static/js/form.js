@@ -77,6 +77,12 @@ $( window ).load(function() {
           return false;
         }
       }
+
+      if (range[1].number - range[0].number > 50) {
+        showError(range[0].element, 3);
+        showError(range[1].element, 3);
+        return false;
+      }
     }
 
     return true;
