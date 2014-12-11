@@ -6,6 +6,9 @@ $(document).ready( function () {
   } );
 
   $('#sequence_details').DataTable( {
+    language: {
+      search: "Filter:"
+    },
     "columnDefs": [
       {
         "targets": [5],
