@@ -13,7 +13,7 @@ $(document).ready( function () {
         "searchable": true
       }
     ],
-    "dom": '<"wrapper"<CTf><t><lrip><"clear">>',
+    "dom": '<"wrapper"<CTfi><t><lrp><"clear">>',
     "oTableTools": {
       "aButtons": [
         "copy",
@@ -23,14 +23,12 @@ $(document).ready( function () {
           "sButtonText": "Save",
           "aButtons": [ "csv", "xls", "pdf" ]
         }
-      ]
+      ],
+      "sSwfPath": "../swf/copy_csv_xls_pdf.swf"
     },
     "ordering": true,
     "paging": false,
     "scrollY": "600px",
-    "order": [[0, "asc"]]//,
-//    "tableTools": {
-//      "sSwfPath": "../swf/copy_csv_xls_pdf.swf"
-//    }
+    "order": [[0, "asc"]]
   });
 } );
