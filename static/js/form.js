@@ -88,43 +88,7 @@ $( window ).load(function() {
     return true;
   }
 
-  function rangeDiv(btn) {
-    return $(btn).parents(".range-control-group");
-  }
-
-  function addRangeControl(event) {
-    var $parent = rangeDiv(event.target),
-        $next = $parent.nextAll(".range-control-group:hidden").first();
-    $next.show();
-  }
-
-  function removeRangeControl(event) {
-    var $parent = rangeDiv(event.target);
-    clearRange($parent);
-    return $parent.hide();
-  }
-
-  function clearErrors() {
-    $('div').removeClass('has-error');
-    $("#problems").hide();
-    $("#problems").children().hide();
-  }
-
-  function clearRange(selector) {
-    $(selector).find("input").val("");
-    $(selector).find(":selected").removeAttr("selected");
-    $(selector).find(".alert").hide();
-    $(selector).find('div').removeClass('has-error');
-  }
-
-  function showFormError(selector, message) {
-    alert(selector, message);
-  }
-
-  $("#submit-ranges").click(function(event){
-    event.preventDefault();
-    clearErrors();
-
+  function validateRanges() {
     var ranges = [],
         $pdb = $("#pdb-model option:selected"),
         pdb = $pdb.data('pdb'),
@@ -186,11 +150,56 @@ $( window ).load(function() {
     }
 
     // Validate all ranges
-    var submit = ranges.filter(validateRange);
+    var valid = ranges.filter(validateRange);
 
+    return {ranges: valid, success: ranges.length === valid.length};
+  }
 
-    if (ranges.length === submit.length) {
-      window.location.search = '?units=' + collection(submit);
+  function rangeDiv(btn) {
+    return $(btn).parents(".range-control-group");
+  }
+
+  function addRangeControl(event) {
+    var $parent = rangeDiv(event.target),
+        $next = $parent.nextAll(".range-control-group:hidden").first();
+
+    clearErrors();
+    if (validateRanges().success) {
+      $next.show();
+    }
+  }
+
+  function removeRangeControl(event) {
+    var $parent = rangeDiv(event.target);
+    clearRange($parent);
+    return $parent.hide();
+  }
+
+  function clearErrors() {
+    $('div').removeClass('has-error');
+    $("#problems").hide();
+    $("#problems").children().hide();
+  }
+
+  function clearRange(selector) {
+    $(selector).find("input").val("");
+    $(selector).find(":selected").removeAttr("selected");
+    $(selector).find(".alert").hide();
+    $(selector).find('div').removeClass('has-error');
+  }
+
+  function showFormError(selector, message) {
+    alert(selector, message);
+  }
+
+  $("#submit-ranges").click(function(event){
+    event.preventDefault();
+    clearErrors();
+
+    var submit = validateRanges();
+
+    if (submit.success) {
+      window.location.search = '?units=' + collection(submit.ranges);
     }
   });
 
