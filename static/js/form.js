@@ -16,6 +16,9 @@ $( window ).load(function() {
     return range.map(unitId).filter(function(a) { return a; }).join(':');
   }
 
+  // 2AW7|1|A||887:2AW7|1|A||897,
+  // 2AW7|1|||333:2AW7|1|||343
+
   function collection(ranges) {
     return ranges.map(unitRange).join(',');
   }
@@ -105,6 +108,11 @@ $( window ).load(function() {
       $(selector).each(function(_, elem) {
         var $elem = $(elem),
             index = parseInt($elem.data('range'));
+
+        if (isNaN(index)) {
+          index = parseInt($elem.parent().data('range'));
+        }
+
         pos.forEach(function(p) {
           ranges[index][p].element = $elem;
           ranges[index][p][name] = $elem.val();
@@ -230,10 +238,11 @@ $( window ).load(function() {
     clearErrors();
 
     $(".chain-selector").empty();
+
     chains.forEach(function(chain, index) {
       var selected = (index === 0 ? 'selected': ''),
-          option = '<option value="' + chain + '" ' + selected +
-            ' data-range="' + index + '">' + chain + "</option>";
+      option = '<option value="' + chain + '" ' + selected + '">' +
+        chain + "</option>";
       $(".chain-selector").append(option);
     });
   });
