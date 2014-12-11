@@ -9,7 +9,8 @@ log_dir = os.path.realpath(os.path.join(app_dir, "..", "logs"))
 if os.path.isdir(log_dir):
     handler = logging.FileHandler(os.path.join(log_dir, "app.log"))
     handler.setLevel(logging.INFO)
-    handler.basicConfig(format='%(asctime)s:  %(message)s')
+    formatter = logging.Formatter('%(asctime)s:  %(message)s')
+    handler.setFormatter(formatter)
 
     loggers = [app.logger, logging.getLogger('db')]
     for logger in loggers:
