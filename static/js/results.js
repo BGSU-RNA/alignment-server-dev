@@ -9,6 +9,7 @@ $(document).ready( function () {
     language: {
       search: "Filter:"
     },
+/*
     "columnDefs": [
       {
         "targets": [5],
@@ -16,6 +17,7 @@ $(document).ready( function () {
         "searchable": true
       }
     ],
+*/
     "dom": '<"wrapper"<CTfi><t><lrp><"clear">>',
     "oTableTools": {
       "aButtons": [
