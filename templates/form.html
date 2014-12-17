@@ -7,10 +7,6 @@
 {%- block head %}
 {%- endblock head -%}
 
-{% macro null_option() -%}
-<option value="" disabled="disabled" selected="selected">Choose an option...</option>
-{%- endmacro -%}
-
 {%- block body %}
       <div class="row">
 
@@ -24,7 +20,7 @@
                 <option value="" disabled="disabled" selected="selected">
                   Choose a structure
                 </option>
-                {%- for row in data -%}
+                {%- for row in data %}
                   <option value="{{ pdbmod }}" data-pdb='{{row['pdb']}}'
                           data-model='{{row['model_number']}}'>
                     {{ row['pdb'] }}: {{ row['organism'] }} | {{row['contents']}}
@@ -63,7 +59,7 @@
               <div class="form-group alignment-control"
                    data-pdb="{{structure['pdb']}}"
                    data-count="{{ structure['alignments']|length }}" hidden>
-                {% for alignment in structure['alignments'] %}
+                {%- for alignment in structure['alignments'] %}
                 <div class="col-sm-5 radio alignment">
                     <label data-chains='{{alignment["chains"]|join(",")}}'>
                       <input type="radio" class='alignment-radio'
@@ -92,7 +88,7 @@
               </div>
             </div>
 
-            {% for index in range(1,6) %}
+            {%- for index in range(1,6) %}
             <div class='form-group range-control-group' data-range='{{index - 1}}' hidden>
 
               <div class="col-sm-3">
@@ -112,21 +108,20 @@
               </div>
 
               <div class="col-sm-2">
-                {% set add_status = "" %}
-                {% set remove_status = "" %}
-                {% set add_icon = "glyphicon-plus" %}
-                {% set remove_icon = "glyphicon-minus" %}
+                {%- set add_status = "" %}
+                {%- set remove_status = "" %}
+                {%- set add_icon = "glyphicon-plus" %}
+                {%- set remove_icon = "glyphicon-minus" %}
 
-                {% if index == 1 %}
-                {% set remove_status="disabled" %}
-                {% set remove_icon="glyphicon-ban-circle" %}
+                {%- if index == 1 %}
+                  {%- set remove_status="disabled" %}
+                  {%- set remove_icon="glyphicon-ban-circle" %}
+                {%- endif %}
 
-                {% endif %}
-
-                {% if index == 5 %}
-                {% set add_status="disabled" %}
-                {% set add_icon="glyphicon-ban-circle" %}
-                {% endif %}
+                {%- if index == 5 %}
+                  {%- set add_status="disabled" %}
+                  {%- set add_icon="glyphicon-ban-circle" %}
+                {%- endif %}
 
                 <button type="button" class="btn btn-default add-range range-control" {{add_status}}>
                   <span class="glyphicon {{ add_icon }}" aria-hidden="true"></span>
@@ -138,7 +133,7 @@
 
               </div>
             </div>
-          {% endfor %}
+          {%- endfor %}
           </div>
 
           <button type="button" class="btn btn-lg btn-primary remove-range
