@@ -124,8 +124,8 @@
           <tr class="{{rowclass}}">
             <td class="{{rowclass}}">{{ row['SeqID'] }}.{{ row['SeqVersion'] }}</td>
             <td class="{{fragclass}} {{rowclass}}">{{ row['CompleteFragment'] }}</td>
-            <td class="{{rowclass}}">{{ row['AccessionID'] }}</td>
-            <td class="{{rowclass}}">{{ row['TaxID'] }}</td>
+            <td class="{{rowclass}}"><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ row['AccessionID'] }}?report=GenBank" target="_blank">{{ row['AccessionID'] }}</td>
+            <td class="{{rowclass}}"><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{row['TaxID']}}" target="_blank">{{ row['TaxID'] }}</a></td>
             <td class="{{rowclass}}">{{ row['ScientificName'] }}</td>
             <td class="{{rowclass}}">{{ row['LineageName'] }}</td>
           </tr>
