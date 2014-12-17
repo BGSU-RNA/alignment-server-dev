@@ -1,14 +1,20 @@
 $(document).ready( function () {
-  $('#sequence_summary').DataTable( {
+  $.extend( $.fn.dataTable.defaults, {
+    language: {
+      search: "Filter:"
+    },
     "ordering": true,
     "paging": true,
+    "scrollY": "600px"
+  } );
+
+  $('#sequence_summary').DataTable( {
+    "dom": '<"wrapper"<flip><t><lirp><"clear">>',
+    "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
     "order": [[1, "desc"]]
   } );
 
   $('#sequence_details').DataTable( {
-    language: {
-      search: "Filter:"
-    },
 /*
     "columnDefs": [
       {
@@ -18,7 +24,8 @@ $(document).ready( function () {
       }
     ],
 */
-    "dom": '<"wrapper"<CTfi><t><lrp><"clear">>',
+    "dom": '<"wrapper"<CTflip><t><lirp><"clear">>',
+    "lengthMenu": [[25, 50, 100, 200, -1], [25, 50, 100, 200, "All"]],
     "oTableTools": {
       "aButtons": [
         "copy",
@@ -31,9 +38,6 @@ $(document).ready( function () {
       ],
       "sSwfPath": "../swf/copy_csv_xls_pdf.swf"
     },
-    "ordering": true,
-    "paging": false,
-    "scrollY": "600px",
     "order": [[0, "asc"]]
   });
 } );
