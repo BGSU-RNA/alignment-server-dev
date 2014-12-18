@@ -55,10 +55,13 @@
         <caption>Green background indicates sequence present in chosen PDB
           file.</caption>
         <thead>
-          {%- block summary_header %}
+          {%- block summary_header scoped %}
           <tr>
             <th>Complete Fragment</th>
-            <th>Number of Occurences</th>
+            {%- for entry in reqs %}
+            <th>Number of Occurences (of {{ entry['TotalCount'] }})</th>
+            {%- endfor %}
+            <th>% of Total</th>
           </tr>
           {% endblock summary_header -%}
         </thead>
@@ -69,6 +72,7 @@
               {%- set seqid = line['SeqID'] %}
               {%- set seqvr = line['SeqVersion'] %}
               {%- set requested = line['CompleteFragment'] %}
+              {%- set tcount = line['TotalCount'] %}
 
               {%- for row in summ %}
                 {%- if requested == row['CompleteFragment'] %}
@@ -78,9 +82,11 @@
                   {%- set fragclass = 'sequence' %}
                   {%- set appsclass = 'right' %}
                 {%- endif %}
+                {%- set percentage = ( 100 * row['NumberOfAppearances'] / tcount ) %}
           <tr>
             <td class="{{fragclass}}">{{ row['CompleteFragment'] }}</td>
             <td class="{{appsclass}}">{{ row['NumberOfAppearances'] }}</td>
+            <td class="{{appsclass}}">{{ "{0:0.4f}".format(percentage) }} %</td>
           </tr>
               {%- endfor %}
             {%- endfor %}
