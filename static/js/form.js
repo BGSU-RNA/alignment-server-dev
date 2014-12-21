@@ -233,7 +233,7 @@ $( window ).load(function() {
   $(".alignment").click(function(event) {
     var $target = $(event.target),
         $radio = ($target.is("label") ? $target : $target.parents("label")),
-        chains = $radio.data('chains').split(',');
+        chains = String($radio.data('chains')).split(',');
     clearRange(".range-control-group");
     clearErrors();
 
