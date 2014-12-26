@@ -103,7 +103,8 @@ def group_options():
 @app.route('/', methods=['GET'])
 @mimerender(
     json=render_json,
-    html=render_html
+    html=render_html,
+    override_input_key='format',
 )
 def get_html():
     if 'units' in request.args:
@@ -117,6 +118,7 @@ def get_html():
 @mimerender(
     json=render_json,
     html=render_html,
+    override_input_key='format',
 )
 def post_html():
     data = request.get_json() or request.form
