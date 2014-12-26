@@ -36,7 +36,7 @@ $(document).ready( function () {
           "aButtons": [ "csv", "xls", "pdf" ]
         }
       ],
-      "sSwfPath": "../swf/copy_csv_xls_pdf.swf"
+      "sSwfPath": "/static/swf/copy_csv_xls_pdf.swf"
     },
     "order": [[0, "asc"]]
   });
