@@ -1,4 +1,6 @@
 import os
+import glob
+import hashlib
 
 import simplejson as json
 
@@ -20,6 +22,15 @@ render_json = lambda template, **kwargs: json.dumps(kwargs)
 render_html = lambda template, **kwargs: render_template(template, **kwargs)
 
 
+def load_examples():
+    examples = set()
+    for filename in glob.glob("examples/*.json"):
+        basename = os.path.basename(filename)
+        name = os.path.splitext(basename)[0]
+        examples.add(name)
+    return examples
+
+
 @app.before_request
 def before_request():
     g.rcad = None
@@ -35,6 +46,13 @@ def teardown_request(exception):
 
 
 def variations(data):
+    name = hashlib.md5(data['units']).hexdigest()
+    if name in app.config['examples']:
+        filename = os.path.join('examples', name + '.json')
+        with open(filename, 'rb') as raw:
+            data = json.load(raw)
+            return data
+
     if app.debug:
         return dd.DATA
 
@@ -128,10 +146,13 @@ def post_html():
     return result(data)
 
 
+app.config['examples'] = load_examples()
+config = {}
+if os.path.exists('config.json'):
+    with open('config.json', 'rb') as raw:
+        config = json.load(raw)
+app.config.update(config)
+
+
 if __name__ == '__main__':
-    config = {}
-    if os.path.exists('config.json'):
-        with open('config.json', 'rb') as raw:
-            config = json.load(raw)
-    app.config.update(config)
     app.run()
