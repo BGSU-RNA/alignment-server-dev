@@ -13,7 +13,6 @@
         <form class="form-horizontal" action="{{ url }}" method="post">
 
           <div class="form-group">
-
             <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
             <div class="col-sm-5">
               <select class="form-control" id="pdb-model" name="pdb-model">
@@ -27,31 +26,29 @@
                   </option>
                 {% endfor %}
               </select>
-
             </div>
 
-          <div class="row">
-            <div class="alert alert-danger col-sm-4" id="problems" role="alert" hidden>
-              <div class="message" data-message-id="1" hidden>
-                <i class="glyphicon glyphicon-exclamation-sign"
-                   aria-hidden="true"></i>
-                Must enter valid position.
-              </div>
+            <div class="row">
+              <div class="alert alert-danger col-sm-4" id="problems" role="alert" hidden>
+                <div class="message" data-message-id="1" hidden>
+                  <i class="glyphicon glyphicon-exclamation-sign"
+                     aria-hidden="true"></i>
+                  Must enter valid position.
+                </div>
 
-              <div class="message" data-message-id="2" hidden>
-                <i class="glyphicon glyphicon-exclamation-sign"
-                   aria-hidden="true"></i>
-                Starting position must be before final position
-              </div>
+                <div class="message" data-message-id="2" hidden>
+                  <i class="glyphicon glyphicon-exclamation-sign"
+                     aria-hidden="true"></i>
+                  Starting position must be before final position
+                </div>
 
-              <div class="message" data-message-id="3" hidden>
-                <i class="glyphicon glyphicon-exclamation-sign"
-                   aria-hidden="true"></i>
-                Range may be no more than 50 nucleotides long
+                <div class="message" data-message-id="3" hidden>
+                  <i class="glyphicon glyphicon-exclamation-sign"
+                     aria-hidden="true"></i>
+                  Range may be no more than 50 nucleotides long
+                </div>
               </div>
             </div>
-          </div>
-
           </div>
 
           <div class="alignment-controls">
