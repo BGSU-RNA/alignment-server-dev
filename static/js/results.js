@@ -24,8 +24,13 @@ $(document).ready( function () {
       }
     ],
 */
+/*
+    //T = TableTools (copy/print/save)
     "dom": '<"wrapper"<CTflip><t><lirp><"clear">>',
+*/
+    "dom": '<"wrapper"<Cflip><t><lirp><"clear">>',
     "lengthMenu": [[25, 50, 100, 200, -1], [25, 50, 100, 200, "All"]],
+/*
     "oTableTools": {
       "aButtons": [
         "copy",
@@ -34,10 +39,12 @@ $(document).ready( function () {
           "sExtends": "collection",
           "sButtonText": "Save",
           "aButtons": [ "csv", "xls", "pdf" ]
+
         }
       ],
       "sSwfPath": "/static/swf/copy_csv_xls_pdf.swf"
     },
+*/
     "order": [[0, "asc"]]
   });
 } );
