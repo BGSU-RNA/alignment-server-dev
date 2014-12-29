@@ -40,12 +40,13 @@
       <hr>
       <h3>Sequence Summary:</h3>
       <table border="1" id="sequence_summary" name="sequence_summary">
-        <caption>Green background: indicates sequence present in chosen PDB
-          file.</caption>
+        <caption>Green background (for sequence) indicates the sequence present
+          in the chosen PDB file.  Multiple ranges (if requested) are
+          separated by commas.</caption>
         <thead>
           {%- block summary_header scoped %}
           <tr>
-            <th>Complete Fragment</th>
+            <th>Sequence</th>
             {%- for entry in reqs %}
             <th>Number of Occurences (of {{ entry['TotalCount'] }})</th>
             {%- endfor %}
