@@ -23,36 +23,24 @@
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css">
     <!-- TableTools CSS (DataTables extension) -->
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.3/css/dataTables.tableTools.css">
-    {%- endblock head %}
+{%- endblock head %}
 {% block body %}
       <h2>{{ self.titletext() }}</h2>
-      {# <p>TESTING:</p>
-      <ul>
-        <li>DataTables:
-          <ul>
-            <li>Pagination for "Sequence Summary"</li>
-            <li>Scrolling for "Sequence Details"</li>
-            <li>Download options for "Sequence Details" (not working yet)</li>
-            <li>Search/filter functions for both tables</li>
-            <li>Initially hide the "LineageName" column to keep the display narrow</li>
-          </ul>
-        </li>
-      </ul>
+      {#
       <p>TO DO:</p>
       <ul>
-        <li><font color="blue">SEE ABOVE: DataTables tools for pagination, sorting, filtering, <em>etc.</em></font></li>
-        <li><font color="blue">SEE ABOVE: download as text" button option (tab-separated)</font></li>
-        <li><font color="blue">SEE ABOVE: filter box (see the Non-Redundant Sets and Motif Atlas pages</font></li>
-        <li>Bootstrap formatting to match form page</li>
         <li>display the ranges that created the output</li>
         <li>filter columns that are empty in all sequences from output
           (database-side issue, whether on-the-fly or alignment-related)</li>
       </ul>
       #}
       <hr>
-      <h3>Sequence Summary</h3>
+      <h3>Query Information:</h3>
+      <p>This result set:  {{ request.url }}</p>
+      <hr>
+      <h3>Sequence Summary:</h3>
       <table border="1" id="sequence_summary" name="sequence_summary">
-        <caption>Green background indicates sequence present in chosen PDB
+        <caption>Green background: indicates sequence present in chosen PDB
           file.</caption>
         <thead>
           {%- block summary_header scoped %}
@@ -85,6 +73,9 @@
                 {%- set percentage = ( 100 * row['NumberOfAppearances'] / tcount ) %}
           <tr>
             <td class="{{fragclass}}">{{ row['CompleteFragment'] }}</td>
+            {#
+            <td class="{{fragclass}}">{{ row['CompleteFragment']|replace(",", "<br><br>")|safe }}</td>
+            #}
             <td class="{{appsclass}}">{{ row['NumberOfAppearances'] }}</td>
             <td class="{{appsclass}}">{{ "{0:0.4f}".format(percentage) }} %</td>
           </tr>
@@ -94,14 +85,12 @@
         </tbody>
       </table>
       <hr>
-      <h3>Sequence Details</h3>
+      <h3>Sequence Details:</h3>
       <table border="1" width="100%" id="sequence_details" name="sequence_details">
         <caption>Results from rCAD.  Multiple ranges (if requested) are
-          separated by commas.
-          <br/><br/>
-          Green background (for sequence) indicates the sequence present in
-          chosen PDB file.  For the actual entry found in the chosen PDB file,
-          the entire row has a light blue background.
+          separated by commas.  Green background (for sequence) indicates the
+          sequence present in the chosen PDB file.  For the actual entry found
+          in the chosen PDB file, the entire row has a light blue background.
         </caption>
         <thead>
           {% block results_header %}
@@ -127,9 +116,13 @@
                   seqvr == row['SeqVersion'] ) else '' %}
                 {%- set fragclass = 'sequence requested' if ( requested ==
                   row['CompleteFragment'] and rowclass == '' ) else 'sequence' %}
+                {%- set result = row['CompleteFragment']|replace(",", "<br><br>")|safe %}
           <tr class="{{rowclass}}">
             <td class="{{rowclass}}">{{ row['SeqID'] }}.{{ row['SeqVersion'] }}</td>
             <td class="{{fragclass}} {{rowclass}}">{{ row['CompleteFragment'] }}</td>
+            {#
+            <td class="{{fragclass}} {{rowclass}}">{{ result }}</td>
+            #}
             <td class="{{rowclass}}"><a href="http://www.ncbi.nlm.nih.gov/nuccore/{{ row['AccessionID'] }}?report=GenBank" target="_blank">{{ row['AccessionID'] }}</td>
             <td class="{{rowclass}}"><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{row['TaxID']}}" target="_blank">{{ row['TaxID'] }}</a></td>
             <td class="{{rowclass}}">{{ row['ScientificName'] }}</td>
