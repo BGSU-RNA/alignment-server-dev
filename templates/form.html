@@ -8,9 +8,40 @@
 {%- endblock head -%}
 
 {%- block body %}
+      <div class="jumbotron">
+          <h1>RNA 3D Structure-to-Multiple Sequence Alignment Server</h1>
+
+          <p>
+            A joint initiative of the <a href="http://rna.bgsu.edu">BGSU RNA
+            Group</a> and the <a href="http://www.rna.ccbb.utexas.edu/">
+            Comparative RNA Web (CRW) Project</a>
+          </p>
+
+          <hr/>
+
+          <p>
+            Purpose: To link RNA 3D structures with high-quality sequence
+            alignments. R3D-2-MSA enables users to select nucleotides from
+            representative RNA 3D structures and seamlessly access sequence variants from
+            large and diverse sequence alignments.
+          </p>
+      </div>
+
+      <div class='row'>
+        <div class='alert alert-info col-sm-11'>
+          <p>
+          <strong>How to use:</strong> First select a reference 3D structure from PDB/NDB and then
+            provide up to five nucleotide ranges using the nucleotide numbers used in the
+            structure.
+          </p>
+        </div>
+      </div>
+
       <div class="row">
 
         <form class="form-horizontal" action="{{ url }}" method="post">
+          <caption>
+          </caption>
 
           <div class="form-group">
             <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
