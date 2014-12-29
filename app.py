@@ -1,6 +1,4 @@
 import os
-import itertools as it
-import collections as coll
 
 import simplejson as json
 
