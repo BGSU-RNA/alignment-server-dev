@@ -100,6 +100,12 @@ def group_options():
     return data
 
 
+def result(data):
+    full, summ, reqs = variations(data)
+    return {'template': 'results.html', 'full': full, 'summ': summ,
+            'reqs': reqs}
+
+
 @app.route('/', methods=['GET'])
 @mimerender(
     json=render_json,
@@ -108,8 +114,7 @@ def group_options():
 )
 def get_html():
     if 'units' in request.args:
-        full, summ, reqs = variations(request.args)
-        return {'template': 'results.html', 'full': full, 'summ': summ, 'reqs': reqs}
+        return result(request.args)
 
     return {'template': 'form.html', 'data': group_options()}
 
@@ -122,7 +127,7 @@ def get_html():
 )
 def post_html():
     data = request.get_json() or request.form
-    return {'template': 'results.html', 'data': variations(data)}
+    return result(data)
 
 
 if __name__ == '__main__':
