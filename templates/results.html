@@ -38,22 +38,10 @@
       <h3>Query Information:</h3>
       <ul>
         <li>PDB|Model:  {{ pdb }}|{{ model }}</li>
-        <li>{{ ranges }}</li>
         {%- block rangelist scoped %}
-          {%- set rangeno = 1 %}
-          {%- set chain = '' %}
-          {%- set pos1 = '' %}
-          {%- set pos2 = '' %}
+          {%- set rangeno = 0 %}
           {%- for range in ranges %}
-            {%- set posno = 1 %}
-            {%- for pos in range %}
-              {%- set chain = pos['chain'] %}
-              {%- set pos1 = pos['number'] if ( posno == 1 ) %}
-              {%- set pos2 = pos['number'] if ( posno == 2 ) %}
-              {%- set posno = posno + 1 %}
-              <li>{{chain}}:  {{pos1}}-{{pos2}}</li>
-            {%- endfor %}
-        <li>Range {{ rangeno }}:  Chain {{ chain }}, positions {{ pos1 }}-{{ pos2 }}</li>
+        <li>Range {{ rangeno + 1 }}:  Chain {{ ranges[rangeno][0]['chain'] }}, positions {{ ranges[rangeno][0]['number'] }}-{{ ranges[rangeno][1]['number'] }}</li>
             {%- set rangeno = rangeno + 1 %}
           {% endfor %}
         {% endblock rangelist %}
