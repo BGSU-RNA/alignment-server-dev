@@ -41,9 +41,9 @@ def merge():
 def deploy():
     common()
 
-#    local("git push origin %s" % env.branch)
-
-    with cd(env.app):
-        with prefix("workon %s" % env.virtualenv):
+    with prefix("workon %s" % env.virtualenv):
+        with cd(env.app):
             run("git pull origin %s" % env.branch)
-            run("wsgid restart --app-path=%s" % env.deploy)
+
+        with cd(env.deploy):
+            run("wsgid restart")
