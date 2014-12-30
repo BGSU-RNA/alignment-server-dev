@@ -127,6 +127,8 @@ def group_options():
 def result(data):
     result = {'template': 'results.html'}
     result.update(variations(data))
+    if app.config['log_queries']:
+        app.logger.info("Getting variations for: %s", data['units'])
     return result
 
 
