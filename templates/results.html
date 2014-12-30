@@ -36,7 +36,7 @@
       #}
       <hr>
       <h3>Query Information:</h3>
-      <p>This result set:  {{ request.url }}</p>
+      <p>This result set:  {{ request.url|replace("localhost:6767", "rna.bgsu.edu") }}</p>
       <hr>
       <h3>Sequence Summary:</h3>
       <table border="1" id="sequence_summary" name="sequence_summary">
