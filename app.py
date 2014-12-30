@@ -45,10 +45,17 @@ def teardown_request(exception):
         db.close()
 
 
+def example_filename(units):
+    name = hashlib.md5(units).hexdigest()
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                        'examples', name + '.json')
+    return path
+
+
 def variations(data):
     name = hashlib.md5(data['units']).hexdigest()
     if name in app.config['examples']:
-        filename = os.path.join('examples', name + '.json')
+        filename = example_filename(data['units'])
         with open(filename, 'rb') as raw:
             data = json.load(raw)
             return data
