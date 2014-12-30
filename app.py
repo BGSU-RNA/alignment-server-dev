@@ -64,7 +64,15 @@ def variations(data):
         return db.get_translation(g.rcad, pdb, model, chain)
 
     translated = ut.translate(translator, ranges)
-    return db.seqvar(g.rcad, pdb, model, translated)
+    full, summ, reqs = db.seqvar(g.rcad, pdb, model, translated)
+    return {
+        'full': full,
+        'summ': summ,
+        'reqs': reqs,
+        'pdb': pdb,
+        'model': model,
+        'ranges': ranges
+    }
 
 
 def options():
@@ -117,9 +125,9 @@ def group_options():
 
 
 def result(data):
-    full, summ, reqs = variations(data)
-    return {'template': 'results.html', 'full': full, 'summ': summ,
-            'reqs': reqs}
+    result = {'template': 'results.html'}
+    result.update(variations(data))
+    return result
 
 
 @app.route('/', methods=['GET'])
