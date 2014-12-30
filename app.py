@@ -132,6 +132,18 @@ def result(data):
     return result
 
 
+def examples():
+    return [
+        {'description': 'Watson Crick Basepair',
+         'units': '2AW7|1|A||1265,2AW7|1|A||1270'},
+        {'description': 'GNRA Loop', 'units': '2AW7|1|A||1265:2AW7|1|A||1270'},
+        {'description': 'Internal Loop',
+         'units': '2AW7|1|A||580:2AW7|1|A||584,2AW7|1|A||757:2AW7|1|A||761'},
+        {'description': 'Three way junction',
+         'units': '2AW7|1|A||826:2AW7|1|A||829,2AW7|1|A||857:2AW7|1|A||861,2AW7|1|A||868:2AW7|1|A||874'}
+    ]
+
+
 @app.route('/', methods=['GET'])
 @mimerender(
     json=render_json,
@@ -142,7 +154,11 @@ def get_html():
     if 'units' in request.args:
         return result(request.args)
 
-    return {'template': 'form.html', 'data': group_options()}
+    return {
+        'template': 'form.html',
+        'examples': examples(),
+        'data': group_options()
+    }
 
 
 @app.route('/', methods=['POST'])
