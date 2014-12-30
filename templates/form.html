@@ -20,19 +20,43 @@
           <hr/>
 
           <p>
-            Purpose: To link RNA 3D structures with high-quality sequence
+            <b>Purpose</b>: To link RNA 3D structures with high-quality sequence
             alignments. R3D-2-MSA enables users to select nucleotides from
             representative RNA 3D structures and seamlessly access sequence variants from
             large and diverse sequence alignments.
+          </p>
+
+          <p>
+            <b>Data Source</b>:
           </p>
       </div>
 
       <div class='row'>
         <div class='alert alert-info col-sm-11'>
           <p>
-          <strong>How to use:</strong> First select a reference 3D structure from PDB/NDB and then
-            provide up to five nucleotide ranges using the nucleotide numbers used in the
-            structure.
+            <strong>How to use:</strong>
+          </p>
+          <ul>
+            <li>First, select a reference 3D structure from PDB/NDB.  Each entry in the menu is
+              annotated with its organism and general structure contents.
+            </li>
+            <li>Then, select an alignment.  Structures that contain multiple RNAs will show
+              more than one alignment as options.
+            </li>
+            <li>Next, provide up to five nucleotide ranges of 1-50 nucleotides, using the nucleotide
+              numbers from the structure.
+              <ul>
+                <li>For ranges of one nucleotide, only the "Start" position is required.</li>
+                <li>The "Start" position must be 5' to the "Stop" position.</li>
+                <li>Use the "+" button to add another range, and the "-" button to remove all ranges
+                  below that point.</li>
+                <li>Ranges may be entered in any order.</li>
+              </ul>
+            </li>
+
+          </ul>
+           and then
+
           </p>
         </div>
       </div>
