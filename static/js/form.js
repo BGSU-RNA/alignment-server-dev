@@ -1,6 +1,9 @@
 $( window ).load(function() {
   'use strict';
 
+  var UNIT_FRAGEMENTS = ['pdb', 'model', 'chain', 'sequence', 'number',
+    'atom_name', 'alt_id', 'insertion_code', 'symmetry_operator'];
+
   function unitId(unit) {
     if (!unit.number) {
       return null;
@@ -253,6 +256,45 @@ $( window ).load(function() {
   $("#clear-button").click(function() {
     clearRange(".range-control-group");
     clearErrors();
+  });
+
+  $(".example-data").click(function(event) {
+    var $link = $(event.target),
+        units = $link.data('units'),
+        ranges = [];
+
+    units.split(',').forEach(function (range) {
+      var parts = range.split(':').map(function(part) {
+        var data = {};
+        part.split('|').forEach(function(part, index){
+          data[UNIT_FRAGEMENTS[index]] = part;
+        });
+        return data;
+      });
+
+      if (parts.length === 1) {
+        parts.push({});
+      }
+
+      ranges.push(parts);
+    });
+
+    // Select the correct structure
+    var pdb = ranges[0][0].pdb;
+    $("#pdb-model option[data-pdb='" + pdb + "']").prop('selected', true).change();
+
+    // Fill out each range
+    ranges.forEach(function(range, index) {
+      var $control = $(".range-control-group[data-range='" + index + "']");
+
+      $control.find(".chain-selector").val(range[0].chain).change();
+      $control.find(".start-selector").val(range[0].number).change();
+      $control.find(".stop-selector").val(range[1].number).change();
+
+      if (index !== (ranges.length - 1)) {
+        $control.find(".add-range").click();
+      }
+    });
   });
 
 });
