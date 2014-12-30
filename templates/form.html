@@ -165,14 +165,34 @@
           {%- endfor %}
           </div>
 
-          <button type="button" class="btn btn-lg btn-primary remove-range
-            range-control" id="submit-ranges">
-            Submit
-          </button>
+          <div class="form-group">
 
-          <button type="button" class="btn btn-lg" id='clear-button'>
-            Clear
-          </button>
+             <div class="btn-group dropup">
+              <a class="btn btn-default dropdown-toggle"
+                id="example-button" href='#' data-toggle='dropdown'>
+                Examples <span class="caret"></span>
+              </a>
+
+              <ul class="dropdown-menu">
+                {% for example in examples %}
+                  <li>
+                    <a class="example-data" data-units='{{ example.units }}'>
+                      {{ example.description }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+             </div>
+
+            <button type="button" class="btn btn-lg btn-primary remove-range
+              range-control pull-right" id="submit-ranges">
+              Submit
+            </button>
+
+            <button type="button" class="btn btn-lg pull-right" id='clear-button'>
+              Clear
+            </button>
+          </div>
         </form>
       </div>
 
