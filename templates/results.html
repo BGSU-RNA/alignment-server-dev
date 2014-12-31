@@ -45,7 +45,7 @@
             {%- set rangeno = rangeno + 1 %}
           {% endfor %}
         {% endblock rangelist %}
-        <li>This result set:  {{ request.url|replace("localhost:6767","rna.bgsu.edu") }}</li>
+        <li>This result set:  <a href="{{ request.url|replace('localhost:6767','rna.bgsu.edu') }}">{{ request.url|replace("localhost:6767","rna.bgsu.edu") }}</a></li>
       </ul>
       <hr>
       <h3>Sequence Summary:</h3>
