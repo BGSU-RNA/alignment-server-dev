@@ -41,7 +41,11 @@
         {%- block rangelist scoped %}
           {%- set rangeno = 0 %}
           {%- for range in ranges %}
+            {%- if ( ranges[rangeno][0]['number'] == ranges[rangeno][1]['number'] ) %}
+        <li>Range {{ rangeno + 1 }}:  Chain {{ ranges[rangeno][0]['chain'] }}, position {{ ranges[rangeno][0]['number'] }}</li>
+            {%- else %}
         <li>Range {{ rangeno + 1 }}:  Chain {{ ranges[rangeno][0]['chain'] }}, positions {{ ranges[rangeno][0]['number'] }}-{{ ranges[rangeno][1]['number'] }}</li>
+            {%- endif %}
             {%- set rangeno = rangeno + 1 %}
           {% endfor %}
         {% endblock rangelist %}
