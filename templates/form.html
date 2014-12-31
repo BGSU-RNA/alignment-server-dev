@@ -19,7 +19,7 @@
 
       <div class="row">
 
-        <form class="form-horizontal col-sm-11" action="{{ url }}" method="post">
+        <form class="form-horizontal col-sm-12" action="{{ url }}" method="post">
 
           <div class="form-group">
 
@@ -37,7 +37,7 @@
               </select>
             </div>
 
-              <div class="col-sm-2 col-sm-offset-2">
+              <div class="col-sm-2 col-sm-offset-3">
                 <h4>Examples</h4>
                 <ul class="list-unstyled">
                   {% for example in examples %}
@@ -96,7 +96,7 @@
 
           <div class="range-controls" id='range-control-group' data-range-count='5'>
             <div class='form-group range-control-header' hidden>
-              <div class="col-sm-3">
+              <div class="col-sm-2">
                 <strong>Chain</strong>
               </div>
 
@@ -112,7 +112,7 @@
             {%- for index in range(1,6) %}
             <div class='form-group range-control-group' data-range='{{index - 1}}' hidden>
 
-              <div class="col-sm-3">
+              <div class="col-sm-2">
                 <select class="form-control range-control chain-selector"
                   name="chain-select" data-range="{{index - 1}}">
                 </select>
@@ -128,7 +128,7 @@
                   placeholder="Stop Position" data-range="{{index - 1}}">
               </div>
 
-              <div class="col-sm-2">
+              <div class="col-sm-3">
                 {%- set add_status = "" %}
                 {%- set remove_status = "" %}
                 {%- set add_icon = "glyphicon-plus" %}
