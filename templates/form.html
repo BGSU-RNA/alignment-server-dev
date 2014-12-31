@@ -8,68 +8,26 @@
 {%- endblock head -%}
 
 {%- block body %}
-      <div class="jumbotron">
-          <h1>RNA 3D Structure-to-Multiple Sequence Alignment Server</h1>
-
-          <p>
-            A joint initiative of the <a href="http://rna.bgsu.edu">BGSU RNA
+      <div class="page_header">
+        <h1>RNA 3D Structure-to-Multiple Sequence Alignment Server</h1>
+        <h4>    A joint initiative of the <a href="http://rna.bgsu.edu">BGSU RNA
             Group</a> and the <a href="http://www.rna.ccbb.utexas.edu/">
             Comparative RNA Web (CRW) Project</a>
-          </p>
-
-          <hr/>
-
-          <p>
-            <b>Purpose</b>: To link RNA 3D structures with high-quality sequence
-            alignments. R3D-2-MSA enables users to select nucleotides from
-            representative RNA 3D structures and seamlessly access sequence variants from
-            large and diverse sequence alignments.
-          </p>
-
-          <p>
-            <b>Data Source</b>: Representative alignments from the <a
-            href="http://www.rna.ccbb.utexas.edu/">CRW Site</a>
-            (<a href="http://dx.doi.org/10.1186/1471-2105-3-2">reference</a>).
-          </p>
+        </h4>
+        <p>
+          <strong>Purpose:</strong> To link RNA 3D structures with high-quality sequence
+          alignments. R3D-2-MSA enables users to select nucleotides from
+          representative RNA 3D structures and seamlessly access sequence variants from
+          large and diverse sequence alignments.</p>
       </div>
-
-      <div class='row'>
-        <div class='alert alert-info col-sm-11'>
-          <p>
-            <strong>How to use:</strong>
-          </p>
-          <ul>
-            <li>First, select a reference 3D structure from PDB/NDB.  Each entry in the menu is
-              annotated with its organism and general structure contents.
-            </li>
-            <li>Then, select an alignment.  Structures that contain multiple RNAs will show
-              more than one alignment as options.
-            </li>
-            <li>Next, provide up to five nucleotide ranges of 1-50 nucleotides, using the nucleotide
-              numbers from the structure.
-              <ul>
-                <li>For ranges of one nucleotide, only the "Start" position is required.</li>
-                <li>The "Start" position must be 5' to the "Stop" position.</li>
-                <li>Use the "+" button to add another range, and the "-" button to remove all ranges
-                  below that point.</li>
-                <li>Ranges may be entered in any order.</li>
-              </ul>
-            </li>
-            <li>Submit your query.</li>
-            <li>For examples, click the example buttons.</li>
-          </ul>
-          </p>
-        </div>
-      </div>
+      <hr>
 
       <div class="row">
 
-        <form class="form-horizontal" action="{{ url }}" method="post">
-          <caption>
-          </caption>
+        <form class="form-horizontal col-sm-12" action="{{ url }}" method="post">
 
           <div class="form-group">
-            <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
+
             <div class="col-sm-5">
               <select class="form-control" id="pdb-model" name="pdb-model">
                 <option value="" disabled="disabled" selected="selected">
@@ -84,7 +42,42 @@
               </select>
             </div>
 
-            <div class="row">
+              <div class="col-sm-2 col-sm-offset-3">
+                <h4>Examples</h4>
+                <ul class="list-unstyled">
+                  {% for example in examples %}
+                    <li>
+                      <a class="example-data" data-units='{{ example.units }}'>
+                        {{ example.description }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+            <div class="alignment-controls">
+              {%- for structure in data -%}
+                <div class="alignment-control"
+                     data-pdb="{{structure['pdb']}}"
+                     data-count="{{ structure['alignments']|length }}" hidden>
+                  {%- for alignment in structure['alignments'] %}
+                  <div class="col-sm-5">
+                    <div class="radio alignment">
+                        <label data-chains='{{alignment["chains"]|join(",")}}'>
+                          <input type="radio" class='alignment-radio'
+                              value="{{alignment['alignment_id']}}" name='alignments'>
+                          {{ alignment['description'] }}
+                        </label>
+                    </div>
+                  </div>
+                {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+
+          </div>
+
+          <div class="form-group">
               <div class="alert alert-danger col-sm-4" id="problems" role="alert" hidden>
                 <div class="message" data-message-id="1" hidden>
                   <i class="glyphicon glyphicon-exclamation-sign"
@@ -104,31 +97,11 @@
                   Range may be no more than 50 nucleotides long
                 </div>
               </div>
-            </div>
           </div>
-
-          <div class="alignment-controls">
-            {%- for structure in data -%}
-              <div class="form-group alignment-control"
-                   data-pdb="{{structure['pdb']}}"
-                   data-count="{{ structure['alignments']|length }}" hidden>
-                {%- for alignment in structure['alignments'] %}
-                <div class="col-sm-5 radio alignment">
-                    <label data-chains='{{alignment["chains"]|join(",")}}'>
-                      <input type="radio" class='alignment-radio'
-                          value="{{alignment['alignment_id']}}" name='alignments'>
-                      {{ alignment['description'] }}
-                    </label>
-                </div>
-              {% endfor %}
-              </div>
-            {% endfor %}
-          </div>
-
 
           <div class="range-controls" id='range-control-group' data-range-count='5'>
             <div class='form-group range-control-header' hidden>
-              <div class="col-sm-3">
+              <div class="col-sm-2">
                 <strong>Chain</strong>
               </div>
 
@@ -144,7 +117,7 @@
             {%- for index in range(1,6) %}
             <div class='form-group range-control-group' data-range='{{index - 1}}' hidden>
 
-              <div class="col-sm-3">
+              <div class="col-sm-2">
                 <select class="form-control range-control chain-selector"
                   name="chain-select" data-range="{{index - 1}}">
                 </select>
@@ -160,7 +133,7 @@
                   placeholder="Stop Position" data-range="{{index - 1}}">
               </div>
 
-              <div class="col-sm-2">
+              <div class="col-sm-3">
                 {%- set add_status = "" %}
                 {%- set remove_status = "" %}
                 {%- set add_icon = "glyphicon-plus" %}
@@ -190,26 +163,8 @@
           </div>
 
           <div class="form-group">
-
-             <div class="btn-group dropup">
-              <a class="btn btn-default dropdown-toggle"
-                id="example-button" href='#' data-toggle='dropdown'>
-                Examples <span class="caret"></span>
-              </a>
-
-              <ul class="dropdown-menu">
-                {% for example in examples %}
-                  <li>
-                    <a class="example-data" data-units='{{ example.units }}'>
-                      {{ example.description }}
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-             </div>
-
-            <div class='pull-right'>
-              <button type="button" class="btn btn-lg" id='clear-button'>
+            <div class='col-sm-3 col-sm-offset-8'>
+              <button type="button" class="btn btn-danger" id='clear-button'>
                 Clear
               </button>
 
@@ -220,6 +175,42 @@
             </div>
           </div>
         </form>
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-sm-8">
+          <h3>How to Use</h3>
+          <ul>
+            <li>First, select a reference 3D structure from PDB/NDB.  Each entry in the menu is
+              annotated with its organism and general structure contents.
+            </li>
+            <li>Then, select an alignment.  Structures that contain multiple RNAs will show
+              more than one alignment as options.
+            </li>
+            <li>Next, provide up to five nucleotide ranges of 1-50 nucleotides, using the nucleotide
+              numbers from the structure.
+              <ul>
+                <li>For ranges of one nucleotide, only the "Start" position is required.</li>
+                <li>The "Start" position must be 5' to the "Stop" position.</li>
+                <li>Use the "+" button to add another range, and the "-" button to remove all ranges
+                  below that point.</li>
+                <li>Ranges may be entered in any order.</li>
+              </ul>
+            </li>
+            <li>Submit your query.</li>
+            <li>For examples, click the example buttons.</li>
+          </ul>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Data Source</h3>
+          <p>Representative alignments from the <a
+            href="http://www.rna.ccbb.utexas.edu/">CRW Site</a>
+            (<a href="http://dx.doi.org/10.1186/1471-2105-3-2">reference</a>).
+          </p>
+        </div>
       </div>
 
 {% endblock body %}
