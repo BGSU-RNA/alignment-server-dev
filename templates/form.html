@@ -8,65 +8,18 @@
 {%- endblock head -%}
 
 {%- block body %}
-      <div class="jumbotron">
-          <h1>RNA 3D Structure-to-Multiple Sequence Alignment Server</h1>
-
-          <p>
-            A joint initiative of the <a href="http://rna.bgsu.edu">BGSU RNA
+      <div class="page_header">
+        <h1>RNA 3D Structure-to-Multiple Sequence Alignment Server</h1>
+        <h4>    A joint initiative of the <a href="http://rna.bgsu.edu">BGSU RNA
             Group</a> and the <a href="http://www.rna.ccbb.utexas.edu/">
             Comparative RNA Web (CRW) Project</a>
-          </p>
-
-          <hr/>
-
-          <p>
-            <b>Purpose</b>: To link RNA 3D structures with high-quality sequence
-            alignments. R3D-2-MSA enables users to select nucleotides from
-            representative RNA 3D structures and seamlessly access sequence variants from
-            large and diverse sequence alignments.
-          </p>
-
-          <p>
-            <b>Data Source</b>: Representative alignments from the <a
-            href="http://www.rna.ccbb.utexas.edu/">CRW Site</a>
-            (<a href="http://dx.doi.org/10.1186/1471-2105-3-2">reference</a>).
-          </p>
+        </h4>
       </div>
-
-      <div class='row'>
-        <div class='alert alert-info col-sm-11'>
-          <p>
-            <strong>How to use:</strong>
-          </p>
-          <ul>
-            <li>First, select a reference 3D structure from PDB/NDB.  Each entry in the menu is
-              annotated with its organism and general structure contents.
-            </li>
-            <li>Then, select an alignment.  Structures that contain multiple RNAs will show
-              more than one alignment as options.
-            </li>
-            <li>Next, provide up to five nucleotide ranges of 1-50 nucleotides, using the nucleotide
-              numbers from the structure.
-              <ul>
-                <li>For ranges of one nucleotide, only the "Start" position is required.</li>
-                <li>The "Start" position must be 5' to the "Stop" position.</li>
-                <li>Use the "+" button to add another range, and the "-" button to remove all ranges
-                  below that point.</li>
-                <li>Ranges may be entered in any order.</li>
-              </ul>
-            </li>
-            <li>Submit your query.</li>
-            <li>For examples, click the example buttons.</li>
-          </ul>
-          </p>
-        </div>
-      </div>
+      <hr>
 
       <div class="row">
 
-        <form class="form-horizontal" action="{{ url }}" method="post">
-          <caption>
-          </caption>
+        <form class="form-horizontal col-sm-11" action="{{ url }}" method="post">
 
           <div class="form-group">
             <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
@@ -209,7 +162,7 @@
              </div>
 
             <div class='pull-right'>
-              <button type="button" class="btn btn-lg" id='clear-button'>
+              <button type="button" class="btn btn-danger" id='clear-button'>
                 Clear
               </button>
 
@@ -220,6 +173,49 @@
             </div>
           </div>
         </form>
+      </div>
+
+      <div class="row well">
+        <div class="col-sm-4">
+          <h3>Purpose</h3>
+          <p>
+            To link RNA 3D structures with high-quality sequence
+            alignments. R3D-2-MSA enables users to select nucleotides from
+            representative RNA 3D structures and seamlessly access sequence variants from
+            large and diverse sequence alignments.</p>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>How to Use</h3>
+          <ul>
+            <li>First, select a reference 3D structure from PDB/NDB.  Each entry in the menu is
+              annotated with its organism and general structure contents.
+            </li>
+            <li>Then, select an alignment.  Structures that contain multiple RNAs will show
+              more than one alignment as options.
+            </li>
+            <li>Next, provide up to five nucleotide ranges of 1-50 nucleotides, using the nucleotide
+              numbers from the structure.
+              <ul>
+                <li>For ranges of one nucleotide, only the "Start" position is required.</li>
+                <li>The "Start" position must be 5' to the "Stop" position.</li>
+                <li>Use the "+" button to add another range, and the "-" button to remove all ranges
+                  below that point.</li>
+                <li>Ranges may be entered in any order.</li>
+              </ul>
+            </li>
+            <li>Submit your query.</li>
+            <li>For examples, click the example buttons.</li>
+          </ul>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Data Source</h3>
+          <p>Representative alignments from the <a
+            href="http://www.rna.ccbb.utexas.edu/">CRW Site</a>
+            (<a href="http://dx.doi.org/10.1186/1471-2105-3-2">reference</a>).
+          </p>
+        </div>
       </div>
 
 {% endblock body %}
