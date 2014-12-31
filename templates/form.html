@@ -22,7 +22,7 @@
         <form class="form-horizontal col-sm-11" action="{{ url }}" method="post">
 
           <div class="form-group">
-            <label for="pdb-model" class="col-sm-1 control-label">Structure</label>
+
             <div class="col-sm-5">
               <select class="form-control" id="pdb-model" name="pdb-model">
                 <option value="" disabled="disabled" selected="selected">
@@ -37,7 +37,42 @@
               </select>
             </div>
 
-            <div class="row">
+              <div class="col-sm-2 col-sm-offset-2">
+                <h4>Examples</h4>
+                <ul class="list-unstyled">
+                  {% for example in examples %}
+                    <li>
+                      <a class="example-data" data-units='{{ example.units }}'>
+                        {{ example.description }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+            <div class="alignment-controls">
+              {%- for structure in data -%}
+                <div class="alignment-control"
+                     data-pdb="{{structure['pdb']}}"
+                     data-count="{{ structure['alignments']|length }}" hidden>
+                  {%- for alignment in structure['alignments'] %}
+                  <div class="col-sm-5">
+                    <div class="radio alignment">
+                        <label data-chains='{{alignment["chains"]|join(",")}}'>
+                          <input type="radio" class='alignment-radio'
+                              value="{{alignment['alignment_id']}}" name='alignments'>
+                          {{ alignment['description'] }}
+                        </label>
+                    </div>
+                  </div>
+                {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+
+          </div>
+
+          <div class="form-group">
               <div class="alert alert-danger col-sm-4" id="problems" role="alert" hidden>
                 <div class="message" data-message-id="1" hidden>
                   <i class="glyphicon glyphicon-exclamation-sign"
@@ -57,27 +92,7 @@
                   Range may be no more than 50 nucleotides long
                 </div>
               </div>
-            </div>
           </div>
-
-          <div class="alignment-controls">
-            {%- for structure in data -%}
-              <div class="form-group alignment-control"
-                   data-pdb="{{structure['pdb']}}"
-                   data-count="{{ structure['alignments']|length }}" hidden>
-                {%- for alignment in structure['alignments'] %}
-                <div class="col-sm-5 radio alignment">
-                    <label data-chains='{{alignment["chains"]|join(",")}}'>
-                      <input type="radio" class='alignment-radio'
-                          value="{{alignment['alignment_id']}}" name='alignments'>
-                      {{ alignment['description'] }}
-                    </label>
-                </div>
-              {% endfor %}
-              </div>
-            {% endfor %}
-          </div>
-
 
           <div class="range-controls" id='range-control-group' data-range-count='5'>
             <div class='form-group range-control-header' hidden>
@@ -143,25 +158,7 @@
           </div>
 
           <div class="form-group">
-
-             <div class="btn-group dropup">
-              <a class="btn btn-default dropdown-toggle"
-                id="example-button" href='#' data-toggle='dropdown'>
-                Examples <span class="caret"></span>
-              </a>
-
-              <ul class="dropdown-menu">
-                {% for example in examples %}
-                  <li>
-                    <a class="example-data" data-units='{{ example.units }}'>
-                      {{ example.description }}
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-             </div>
-
-            <div class='pull-right'>
+            <div class='col-sm-3 col-sm-offset-8'>
               <button type="button" class="btn btn-danger" id='clear-button'>
                 Clear
               </button>
@@ -174,6 +171,8 @@
           </div>
         </form>
       </div>
+
+      <hr>
 
       <div class="row">
         <div class="col-sm-4">
