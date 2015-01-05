@@ -233,7 +233,7 @@ $( window ).load(function() {
     $radios.first().click();
   });
 
-  $(".alignment").click(function(event) {
+  $(".alignment").change(function(event) {
     var $target = $(event.target),
         $radio = ($target.is("label") ? $target : $target.parents("label")),
         chains = String($radio.data('chains')).split(',');
