@@ -10,6 +10,9 @@ $(document).ready( function () {
 
   $('#sequence_summary').DataTable( {
     "dom": '<"wrapper"<flip><t><lirp><"clear">>',
+    "language": {
+      "searchPlaceholder": "Filter records (all fields)"
+    },
     "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
     "order": [[1, "desc"]]
   } );
@@ -29,6 +32,9 @@ $(document).ready( function () {
     "dom": '<"wrapper"<CTflip><t><lirp><"clear">>',
 */
     "dom": '<"wrapper"<Cflip><t><lirp><"clear">>',
+    "language": {
+      "searchPlaceholder": "Filter records (all fields)"
+    },
     "lengthMenu": [[25, 50, 100, 200, -1], [25, 50, 100, 200, "All"]],
 /*
     "oTableTools": {
