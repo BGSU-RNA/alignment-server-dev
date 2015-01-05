@@ -26,14 +26,6 @@
 {%- endblock head %}
 {% block body %}
       <h2>{{ self.titletext() }}</h2>
-      {#
-      <p>TO DO:</p>
-      <ul>
-        <li>display the ranges that created the output</li>
-        <li>filter columns that are empty in all sequences from output
-          (database-side issue, whether on-the-fly or alignment-related)</li>
-      </ul>
-      #}
       <hr>
       <h3>Query Information:</h3>
       <ul>
@@ -41,11 +33,15 @@
         {%- block rangelist scoped %}
           {%- set rangeno = 0 %}
           {%- for range in ranges %}
+            {%- if ( ranges[rangeno][0]['number'] == ranges[rangeno][1]['number'] ) %}
+        <li>Range {{ rangeno + 1 }}:  Chain {{ ranges[rangeno][0]['chain'] }}, position {{ ranges[rangeno][0]['number'] }}</li>
+            {%- else %}
         <li>Range {{ rangeno + 1 }}:  Chain {{ ranges[rangeno][0]['chain'] }}, positions {{ ranges[rangeno][0]['number'] }}-{{ ranges[rangeno][1]['number'] }}</li>
+            {%- endif %}
             {%- set rangeno = rangeno + 1 %}
           {% endfor %}
         {% endblock rangelist %}
-        <li>This result set:  {{ request.url|replace("localhost:6767","rna.bgsu.edu") }}</li>
+        <li>This result set:  <a href="{{ request.url|replace('localhost:6767','rna.bgsu.edu') }}">{{ request.url|replace("localhost:6767","rna.bgsu.edu") }}</a></li>
       </ul>
       <hr>
       <h3>Sequence Summary:</h3>
