@@ -82,22 +82,31 @@ def variations(data):
     }
 
 
-def options():
+def configure():
+    #   Needs a fully-tested and viable debugging option... this should be partway there.
     if app.debug:
-        return dd.LIST_OPTIONS
-    return db.list_options(g.rcad)
+        return dd.LIST_STRUCTURES, dd.LIST_OPTIONS
+    return db.all_options(g.rcad)
 
 
-def structures():
-    if app.debug:
-        return dd.LIST_STRUCTURES
-    return db.list_structures(g.rcad)
+#def options():
+#    if app.debug:
+#        return dd.LIST_OPTIONS
+#    return db.list_options(g.rcad)
+
+
+#def structures():
+#    if app.debug:
+#        return dd.LIST_STRUCTURES
+#    return db.list_structures(g.rcad)
 
 
 def group_options():
+    pdbs, opts, tran = configure()
 
     alignments = {}
-    for alignment in options():
+    for alignment in opts:
+#    for alignment in options():
         description = alignment['description']
         pdb = alignment['pdb']
         if pdb not in alignments:
@@ -113,10 +122,13 @@ def group_options():
         info['chains'].append(alignment['chain_id'])
 
     data = []
-    for structure in structures():
+    for structure in pdbs:
+#    for structure in structures():
         entry = {}
         entry.update(structure)
         entry['alignments'] = alignments[structure['pdb']].values()
+        #   The next three lines should no longer be necessary -- these columns have been
+        #   reverted to varchar from char, and the extra spaces purged.
         entry['organism'] = entry['organism'].strip()
         entry['contents'] = entry['contents'].strip()
         entry['taxonomy'] = entry['taxonomy'].strip()

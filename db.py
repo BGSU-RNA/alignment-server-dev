@@ -184,3 +184,57 @@ def list_structures(conn):
             'contents': row['Description_Contents']
         })
     return data
+
+
+def all_options(conn):
+    """
+    Basically, the 'One Ring' of rCAD configuration.
+
+    Replaces ListAlnServerStructures, ListAlnServerOptions, and GetPDBTranslation.  In testing,
+    returns all three data sets in approximately two seconds while eliminating two round-trips
+    from BGSU to rCAD.
+
+    No input parameters required (beyond connection).
+    """
+
+    proc = conn.init_procedure('BGSU.AlnServerOptions')
+    proc.execute()
+
+    res1 = [row for row in conn]
+    res2 = [row for row in conn]
+    res3 = [row for row in conn]
+
+    pdbs = []
+    for row in res1:
+        pdbs.append({
+            'pdb': row['PDBID'],
+            'model_number': row['ModelNumber'],
+            'organism': row['Description_Organism'],
+            'taxonomy': row['Description_Taxonomy'],
+            'contents': row['Description_Contents']
+        })
+
+    opts = []
+    for row in res2:
+        opts.append({
+            'pdb': row['PDBID'],
+            'model_number': row['ModelNumber'],
+            'chain_id': row['ChainID'],
+            'option': row['Map3DAlnID'],
+            'description': row['Description'],
+            'requires_translation': row['Requires_Translation'],
+            'crw_diagram': row['CRWSiteDiagramLink']
+        })
+
+    tran = []
+    for row in res3:
+        tran.append({
+            'pdb': row['PDBID'],
+            'model_number': row['ModelNumber'],
+            'chain_id': row['ChainID'],
+            'chain_number': row['ChainNumber'],
+            'chain_number_ic': row['ChainNumberIC'],
+            'natural_number': row['NaturalNumber']
+        })
+
+    return pdbs, opts, tran
