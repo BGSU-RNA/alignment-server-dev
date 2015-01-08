@@ -141,11 +141,13 @@ def translate(translator, ranges):
         if chain not in mappings:
             mappings[chain] = translator(chain)
 
-        start['number'] = number(start)
-        stop['number'] = number(stop)
+        trans_start = dict(start)
+        trans_stop = dict(stop)
+        trans_start['number'] = number(start)
+        trans_stop['number'] = number(stop)
 
-        if stop['number'] - start['number'] > RANGE_LIMIT:
+        if trans_stop['number'] - trans_start['number'] > RANGE_LIMIT:
             raise BadRequest("Ranges must be less than %s large", RANGE_LIMIT)
 
-        translated.append((start, stop))
+        translated.append((trans_start, trans_stop))
     return translated

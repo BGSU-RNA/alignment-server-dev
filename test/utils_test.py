@@ -169,3 +169,14 @@ class TranslateTest(ut.TestCase):
             ({'chain': 'A', 'number': 1}, {'chain': 'A', 'number': 200})
         ])
 
+    def test_does_not_modify_given_data(self):
+        ranges = [(
+            {'chain': 'A', 'number': 1, 'insertion_code': 'a'},
+            {'chain': 'A', 'number': 2}
+        )]
+        ranges2 = [(
+            {'chain': 'A', 'number': 1, 'insertion_code': 'a'},
+            {'chain': 'A', 'number': 2}
+        )]
+        u.translate(self.basic, ranges)
+        self.assertEqual(ranges, ranges2)
