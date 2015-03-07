@@ -20,7 +20,12 @@
           representative RNA 3D structures and seamlessly access sequence variants from
           large and diverse sequence alignments.</p>
       </div>
+      <!--
       <hr>
+      <div>
+        <p>{{ data }}</p>
+      </div>
+    -->
 
       <div class="row">
 
@@ -41,19 +46,24 @@
                 {% endfor %}
               </select>
             </div>
+            <!--
+            <div class="col-sm-5">
+              FOO
+            </div>
+            -->
 
-              <div class="col-sm-2 col-sm-offset-3">
-                <h4>Examples</h4>
-                <ul class="list-unstyled">
-                  {% for example in examples %}
-                    <li>
-                      <a class="example-data" data-units='{{ example.units }}'>
-                        {{ example.description }}
-                      </a>
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
+            <div class="col-sm-2 col-sm-offset-3">
+              <h4>Examples</h4>
+              <ul class="list-unstyled">
+                {% for example in examples %}
+                  <li>
+                    <a class="example-data" data-units='{{ example.units }}'>
+                      {{ example.description }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
 
             <div class="alignment-controls">
               {%- for structure in data -%}
@@ -69,6 +79,12 @@
                           {{ alignment['description'] }}
                         </label>
                     </div>
+
+                    <div class="form-group">
+                      Model diagram (PDF from CRW Site):  {{ alignment['diagram'] }}
+                      <br/>NOT WORKING:  Link to original sequence alignment (from CRW Site):  {{ alignment['crw_aln_dir'] }} ++ {{ alignment['aln_fil'] }}
+                    </div>
+
                   </div>
                 {% endfor %}
                 </div>
@@ -78,25 +94,25 @@
           </div>
 
           <div class="form-group">
-              <div class="alert alert-danger col-sm-4" id="problems" role="alert" hidden>
-                <div class="message" data-message-id="1" hidden>
-                  <i class="glyphicon glyphicon-exclamation-sign"
-                     aria-hidden="true"></i>
-                  Must enter valid position.
-                </div>
-
-                <div class="message" data-message-id="2" hidden>
-                  <i class="glyphicon glyphicon-exclamation-sign"
-                     aria-hidden="true"></i>
-                  Starting position must be before final position
-                </div>
-
-                <div class="message" data-message-id="3" hidden>
-                  <i class="glyphicon glyphicon-exclamation-sign"
-                     aria-hidden="true"></i>
-                  Range may be no more than 50 nucleotides long
-                </div>
+            <div class="alert alert-danger col-sm-4" id="problems" role="alert" hidden>
+              <div class="message" data-message-id="1" hidden>
+                <i class="glyphicon glyphicon-exclamation-sign"
+                   aria-hidden="true"></i>
+                Must enter valid position.
               </div>
+
+              <div class="message" data-message-id="2" hidden>
+                <i class="glyphicon glyphicon-exclamation-sign"
+                   aria-hidden="true"></i>
+                Starting position must be before final position
+              </div>
+
+              <div class="message" data-message-id="3" hidden>
+                <i class="glyphicon glyphicon-exclamation-sign"
+                   aria-hidden="true"></i>
+                Range may be no more than 50 nucleotides long
+              </div>
+            </div>
           </div>
 
           <div class="range-controls" id='range-control-group' data-range-count='5'>

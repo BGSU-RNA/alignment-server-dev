@@ -89,24 +89,11 @@ def configure():
     return db.all_options(g.rcad)
 
 
-#def options():
-#    if app.debug:
-#        return dd.LIST_OPTIONS
-#    return db.list_options(g.rcad)
-
-
-#def structures():
-#    if app.debug:
-#        return dd.LIST_STRUCTURES
-#    return db.list_structures(g.rcad)
-
-
 def group_options():
     pdbs, opts, tran = configure()
 
     alignments = {}
     for alignment in opts:
-#    for alignment in options():
         description = alignment['description']
         pdb = alignment['pdb']
         if pdb not in alignments:
@@ -116,22 +103,19 @@ def group_options():
             alignments[pdb][description] = {
                 'chains': [],
                 'description': description,
-                'alignment_id': description
+                'alignment_id': description,
+                'diagram': alignment['crw_diagram'],
+                'aln_dir': alignment['crw_aln_dir'],
+                'aln_fil': alignment['crw_aln_fil']
             }
         info = alignments[pdb][description]
         info['chains'].append(alignment['chain_id'])
 
     data = []
     for structure in pdbs:
-#    for structure in structures():
         entry = {}
         entry.update(structure)
         entry['alignments'] = alignments[structure['pdb']].values()
-        #   The next three lines should no longer be necessary -- these columns have been
-        #   reverted to varchar from char, and the extra spaces purged.
-        entry['organism'] = entry['organism'].strip()
-        entry['contents'] = entry['contents'].strip()
-        entry['taxonomy'] = entry['taxonomy'].strip()
 
         if 'requires_translation' in entry:
             del entry['requires_translation']

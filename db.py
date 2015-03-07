@@ -223,7 +223,9 @@ def all_options(conn):
             'option': row['Map3DAlnID'],
             'description': row['Description'],
             'requires_translation': row['Requires_Translation'],
-            'crw_diagram': row['CRWSiteDiagramLink']
+            'crw_diagram': row['CRWSiteDiagramLink'],
+            'crw_aln_dir': row['CRWSiteAlnDirectory'],
+            'crw_aln_fil': row['CRWSiteAlnFilenameRoot']
         })
 
     tran = []
