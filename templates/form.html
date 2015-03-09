@@ -10,7 +10,7 @@
 {%- block body %}
       <div class="page_header">
         <h1>RNA 3D Structure-to-Multiple Sequence Alignment Server</h1>
-        <h4>    A joint initiative of the <a href="http://rna.bgsu.edu">BGSU RNA
+        <h4>A joint initiative of the <a href="http://rna.bgsu.edu">BGSU RNA
             Group</a> and the <a href="http://www.rna.ccbb.utexas.edu/">
             Comparative RNA Web (CRW) Project</a>
         </h4>
@@ -40,11 +40,6 @@
                 {% endfor %}
               </select>
             </div>
-            <!--
-            <div class="col-sm-5">
-              FOO
-            </div>
-            -->
 
             <div class="col-sm-2 col-sm-offset-3">
               <h4>Examples</h4>
@@ -75,8 +70,19 @@
                     </div>
 
                     <div class="form-group">
-                      Model diagram (PDF from CRW Site):  {{ alignment['diagram'] }}
-                      <br/>Link to original sequence alignment (from CRW Site):  {{ alignment['aln_dir'] }} ++ {{ alignment['aln_fil'] }}
+                      Links from the <a href="http://{{CRW}}/">CRW Site</a>:
+                      {%- set CRW = "www.rna.ccbb.utexas.edu" %}
+                      {%- set STRDIR = "RNA/Structures" %}
+                      <ul>
+                      {%- if alignment['diagram'].split('.')[1] == "23x" %}
+                        FOO
+                        {%- set DF = alignment['diagram'].replace("23x","235") %}
+                        {%- set DT = alignment['diagram'].replace("23x","233") %}
+                        <li>Model diagram: <a href="http://{{CRW}}/{{STRDIR}}/{{DF}}">PDF (5' half)</a> | <a href="http://{{CRW}}/{{STRDIR}}/{{DT}}">PDF (3' half)</a></li>
+                      {%- else %}
+                        <li>Model diagram: <a href="http://{{CRW}}/{{STRDIR}}/{{alignment['diagram']}}">PDF</a></li>
+                      {%- endif %}
+                        <li>Link to original sequence alignment (from CRW Site):  {{ alignment['aln_dir'] }} ++ {{ alignment['aln_fil'] }}</li>
                     </div>
 
                   </div>
