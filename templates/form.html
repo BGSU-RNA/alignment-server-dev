@@ -75,7 +75,6 @@
                       {%- set STRDIR = "RNA/Structures" %}
                       <ul>
                       {%- if alignment['diagram'].split('.')[1] == "23x" %}
-                        FOO
                         {%- set DF = alignment['diagram'].replace("23x","235") %}
                         {%- set DT = alignment['diagram'].replace("23x","233") %}
                         <li>Model diagram: <a href="http://{{CRW}}/{{STRDIR}}/{{DF}}">PDF (5' half)</a> | <a href="http://{{CRW}}/{{STRDIR}}/{{DT}}">PDF (3' half)</a></li>
