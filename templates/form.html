@@ -70,9 +70,10 @@
                     </div>
 
                     <div class="form-group">
-                      Links from the <a href="http://{{CRW}}/">CRW Site</a>:
+                      <br/>Links from the <a href="http://{{CRW}}/">CRW Site</a>:
                       {%- set CRW = "www.rna.ccbb.utexas.edu" %}
                       {%- set STRDIR = "RNA/Structures" %}
+                      {%- set ALNDIR = "DAT/3C/Alignment/Files/" + alignment['aln_dir'] + "/" + alignment['aln_fil'] %}
                       <ul>
                       {%- if alignment['diagram'].split('.')[1] == "23x" %}
                         {%- set DF = alignment['diagram'].replace("23x","235") %}
@@ -81,7 +82,11 @@
                       {%- else %}
                         <li>Model diagram: <a href="http://{{CRW}}/{{STRDIR}}/{{alignment['diagram']}}">PDF</a></li>
                       {%- endif %}
-                        <li>Link to original sequence alignment (from CRW Site):  {{ alignment['aln_dir'] }} ++ {{ alignment['aln_fil'] }}</li>
+                        <li>Original sequence alignment:  <a href="http://{{CRW}}/{{ALNDIR}}.aln.zip">AE2</a> |
+                          <a href="http://{{CRW}}/{{ALNDIR}}.gb.zip">Genbank</a> |
+                          <a href="http://{{CRW}}/{{ALNDIR}}.alnfasta.zip">FASTA</a>
+                        </li>
+                      </ul>
                     </div>
 
                   </div>
