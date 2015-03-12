@@ -45,6 +45,11 @@ def teardown_request(exception):
         db.close()
 
 
+@app.errorhandler(db.ProcessingException)
+def handle_problem_range(error):
+    return render_template('invalid_range.html'), 400
+
+
 def example_filename(units):
     name = hashlib.md5(units).hexdigest()
     path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
