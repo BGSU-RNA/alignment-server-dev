@@ -70,15 +70,17 @@
                     </div>
 
                     <div class="form-group">
-                      <br/>Links from the <a href="http://{{CRW}}/">CRW Site</a>:
                       {%- set CRW = "www.rna.ccbb.utexas.edu" %}
                       {%- set STRDIR = "RNA/Structures" %}
                       {%- set ALNDIR = "DAT/3C/Alignment/Files/" + alignment['aln_dir'] + "/" + alignment['aln_fil'] %}
+                      <br/>Links from the <a href="http://{{CRW}}/">CRW Site</a>:
                       <ul>
-                      {%- if alignment['diagram'].split('.')[1] == "23x" %}
+                      {%- if alignment['diagram'] == "unavailable" %}
+                        <li>Secondary structure model diagram: not available</li>
+                      {%- elif alignment['diagram'].split('.')[1] == "23x" %}
                         {%- set DF = alignment['diagram'].replace("23x","235") %}
                         {%- set DT = alignment['diagram'].replace("23x","233") %}
-                        <li>Model diagram: <a href="http://{{CRW}}/{{STRDIR}}/{{DF}}">PDF (5' half)</a> | <a href="http://{{CRW}}/{{STRDIR}}/{{DT}}">PDF (3' half)</a></li>
+                        <li>Secondary structure model diagram: <a href="http://{{CRW}}/{{STRDIR}}/{{DF}}">PDF (5' half)</a> | <a href="http://{{CRW}}/{{STRDIR}}/{{DT}}">PDF (3' half)</a></li>
                       {%- else %}
                         <li>Secondary structure model diagram: <a href="http://{{CRW}}/{{STRDIR}}/{{alignment['diagram']}}">PDF</a></li>
                       {%- endif %}
