@@ -5,6 +5,19 @@ try:
 except ImportError:
     pass  # or better to die, since none of the other functions will work?
 
+
+class ConnectionException(Exception):
+    """Raised when we can't generate a good connection.
+    """
+    pass
+
+
+class ProcessingException(Exception):
+    """Raised when we can't process a range in the database.
+    """
+    pass
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,7 +36,7 @@ def rcad_connect(config):
         logger.error("Failed to connect with %s:%s@%s", username, password,
                      hostname)
         logger.exception(err)
-        return None
+        raise
 
 
 def seqvar(db, pdb, model, ranges):
@@ -51,7 +64,12 @@ def seqvar(db, pdb, model, ranges):
         proc.bind(stop.get('number', False), _mssql.SQLINT4, name + 'b',
                   null=False, output=False)
 
-    proc.execute()
+    try:
+        proc.execute()
+    except Exception as err:
+        logging.error("Failed to process %s %s", pdb, ranges)
+        logging.exception(err)
+        raise ProcessingException()
 
     # This copying is done because result dict also allows access by index, we
     # only want the entries with keys.
