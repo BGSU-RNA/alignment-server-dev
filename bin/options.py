@@ -3,11 +3,12 @@
 import os
 import sys
 import json
+import argparse
 
 here = os.path.dirname(__file__)
 sys.path.append(os.path.join(here, ".."))
 
-import db
+from r3d2msa.db import rcad as db
 
 
 def options(connection):
@@ -49,13 +50,21 @@ def options(connection):
     return data
 
 
-def main(config, filename):
-    connection = db.rcad_connect(config)
+def main(config):
+    connection = db.connect(config)
     data = options(connection)
 
-    with open(filename, 'wb') as out:
+    with open(config['options'], 'wb') as out:
         json.dump(data, out)
 
 
 if __name__ == '__main__':
-    main({}, 'conf/options.json')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', dest='config', default='conf/config.json',
+                        help='Config file to use')
+    args = parser.parse_args()
+
+    with open(args.config, 'rb') as raw:
+        config = json.load(raw)
+
+    main(config)
