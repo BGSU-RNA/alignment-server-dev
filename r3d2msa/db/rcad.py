@@ -1,9 +1,7 @@
 import logging
+from contextlib import contextmanager
 
-try:
-    import _mssql  # stored procedure support
-except ImportError:
-    pass  # or better to die, since none of the other functions will work?
+import _mssql
 
 
 class ConnectionException(Exception):
@@ -21,7 +19,23 @@ class ProcessingException(Exception):
 logger = logging.getLogger(__name__)
 
 
-def rcad_connect(config):
+class Session(object):
+    def __init__(self, builder):
+        self.builder = builder
+
+    @contextmanager
+    def __call__(self):
+        session = self.builder()
+        try:
+            yield session
+            session.commit()
+        except:
+            session.rollback()
+        finally:
+            session.close()
+
+
+def connect(config):
     """
     Open connection to rCAD @ UT for data retrieval.
     """
@@ -208,9 +222,10 @@ def all_options(conn):
     """
     Basically, the 'One Ring' of rCAD configuration.
 
-    Replaces ListAlnServerStructures, ListAlnServerOptions, and GetPDBTranslation.  In testing,
-    returns all three data sets in approximately two seconds while eliminating two round-trips
-    from BGSU to rCAD.
+    Replaces ListAlnServerStructures, ListAlnServerOptions, and
+    GetPDBTranslation.  In testing, returns all three data sets in
+    approximately two seconds while eliminating two round-trips from BGSU to
+    rCAD.
 
     No input parameters required (beyond connection).
     """
