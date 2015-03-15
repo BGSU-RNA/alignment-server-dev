@@ -9,16 +9,24 @@ import logging
 here = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(here, "..")))
 
-import r3d2msa.db as db
+import r3d2msa.db.rcad as db
+import r3d2msa.utils as ut
 import r3d2msa.queue as q
 
 
 class Worker(q.Worker):
     def process(self, query):
-        rcad = db.rcad.connect(config)
+        rcad = db.connect(config)
+
+        def translator(chain):
+            return db.get_translation(rcad, query['pdb'], query['model'], chain)
+
+        translated = ut.translate(translator, query['ranges'])
         full, summ, reqs = db.seqvar(rcad, query['pdb'], query['model'],
-                                     query['translated'])
+                                     translated)
         return {
+            'id': query['id'],
+            'units': query['units'],
             'full': full,
             'summ': summ,
             'reqs': reqs,
