@@ -10,7 +10,7 @@ from db.cache import Cache
 
 
 KNOWN_STATUS = set(['pending', 'submitted', 'failed', 'succeeded'])
-FINISHED_STATUS = set(['failed', 'suceeded'])
+FINISHED_STATUS = set(['failed', 'succeeded'])
 
 
 class MissingResults(Exception):
