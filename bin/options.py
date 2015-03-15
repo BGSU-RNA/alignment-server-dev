@@ -16,7 +16,6 @@ def options(connection):
 
     alignments = {}
     for alignment in opts:
-        print(alignment)
         description = alignment['description']
         pdb = alignment['pdb']
         if pdb not in alignments:

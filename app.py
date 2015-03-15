@@ -132,9 +132,7 @@ def before_request():
     override_input_key='format',
 )
 def get_data():
-    print('request')
     if 'units' in request.args:
-        print('has units')
         return result(request.args)
 
     return {
@@ -159,8 +157,6 @@ def post_data():
 
 with open('conf/config.json', 'rb') as raw:
     app.config.update(json.load(raw))
-
-app.config['examples'] = r3d.examples.load()
 
 
 if __name__ == '__main__':
