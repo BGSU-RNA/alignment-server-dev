@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{%- block title %}
+  <title>{% block titletext %}Sequence Variation Results{% endblock titletext %}</title>
+{%- endblock title %}
+
+{% block body %}
+  <p>Your query is being processed.</p>
+{% endblock body %}
+
+{%- block page_specific_js -%}
+  <script src="{{ url_for('static', filename='js/results.js') }}"></script>
+{%- endblock page_specific_js %}

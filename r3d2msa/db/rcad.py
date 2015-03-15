@@ -1,5 +1,4 @@
 import logging
-from contextlib import contextmanager
 
 import _mssql
 
@@ -19,29 +18,14 @@ class ProcessingException(Exception):
 logger = logging.getLogger(__name__)
 
 
-class Session(object):
-    def __init__(self, builder):
-        self.builder = builder
-
-    @contextmanager
-    def __call__(self):
-        session = self.builder()
-        try:
-            yield session
-            session.commit()
-        except:
-            session.rollback()
-        finally:
-            session.close()
-
-
 def connect(config):
     """
     Open connection to rCAD @ UT for data retrieval.
     """
-    hostname = config.get("RCAD_HOSTNAME", "crw-rcad.austin.utexas.edu:1433")
-    username = config.get("RCAD_USERNAME", "BGSU")
-    password = config.get("RCAD_PASSWORD", "b1g4s3uDHRuNbA$")
+    conf = config['rcad']['connection']
+    hostname = conf.get("RCAD_HOSTNAME", "crw-rcad.austin.utexas.edu:1433")
+    username = conf.get("RCAD_USERNAME", "BGSU")
+    password = conf.get("RCAD_PASSWORD", "b1g4s3uDHRuNbA$")
 
     try:
         return _mssql.connect(server=hostname, user=username,

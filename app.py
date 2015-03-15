@@ -1,4 +1,3 @@
-import os
 import hashlib
 
 import simplejson as json
@@ -8,9 +7,7 @@ from flask import Flask
 from flask import request
 from flask import render_template
 
-import db
-import utils as ut
-import examples
+import r3d2msa as r3d
 
 import mimerender
 
@@ -19,66 +16,130 @@ app = Flask(__name__)
 mimerender = mimerender.FlaskMimeRender()
 
 render_json = lambda template, **kwargs: json.dumps(kwargs)
-render_html = lambda template, **kwargs: render_template(template, **kwargs)
 
 
-@app.errorhandler(db.ProcessingException)
-def handle_problem_range(error):
-    return render_template('invalid_range.html'), 400
+def render_html(**kwargs):
+    status = kwargs.get('status', 'unknown')
+    template = kwargs.get('template', 'results/%s.html' % status)
+    return render_template(template, **kwargs)
 
 
 def options():
-    with open('conf/options.json', 'rb') as raw:
+    with open(app.config['options'], 'rb') as raw:
         return json.load(raw)
 
 
-def variations(data):
-    name = hashlib.md5(data['units']).hexdigest()
-    if name in app.config['examples']:
-        filename = examples.filename(data['units'])
-        with open(filename, 'rb') as raw:
-            return json.load(raw)
+def known():
+    """Generate a list of all known pdbs, models and chains we allow.
+    """
 
-    pdb, model, ranges = ut.ranges(data)
-    known = db.list_options(g.rcad)
-    ut.validate(pdb, model, ranges, known)
+    known = []
+    for option in options():
+        for alignment in option['alignments']:
+            for chain in alignment['chains']:
+                known.append({
+                    'pdb': option['pdb'],
+                    'model_number': option['model_number'],
+                    'chain_id': chain
+                })
+    return known
 
-    def translator(chain):
-        return db.get_translation(g.rcad, pdb, model, chain)
 
-    translated = ut.translate(translator, ranges)
-    full, summ, reqs = db.seqvar(g.rcad, pdb, model, translated)
-    return {
-        'full': full,
-        'summ': summ,
-        'reqs': reqs,
+def create_id(data):
+    """Should create an id that is unique the query, but this should be the
+    same given the same inputs. Here we use an md5 of the requested units to do
+    this. In the future, if we support multiple alignments per chain we should
+    use units and the alignment id.
+
+    :param dict data: The query we are getting an id for.
+    :returns: An id string for the query.
+    """
+
+    md5 = hashlib.md5()
+    md5.update(data['units'])
+    return md5.hexdigest()
+
+
+def create_query(data):
+    """Turn the requested ata into a proper query. This validates the data to
+    make sure it is valid and then builds the query data structure. We hold off
+    on translating this as that requires a connection to rcad. We want to
+    connect to rcad outside the web server to prevent slow downs due to
+    connection issues.
+
+    :param dict data: The dictionary to generate a query from.
+    :returns: The query dict. This will contain a pdb, models and ranges key.
+    The values here are the ones produced by parsing the units entry of the
+    data dictonary with r3d2msa.utils.ranges. We also add an id entry, which is
+    an id unique to this query as produced by create_id. It also has the
+    'units' entry from the given data.
+    """
+
+    pdb, model, ranges = r3d.utils.ranges(data)
+    r3d.utils.validate(pdb, model, ranges, known())
+
+    query = {
         'pdb': pdb,
         'model': model,
-        'ranges': ranges
+        'ranges': ranges,
+        'units': data['units']
     }
+    query['id'] = create_id(query)
+    return query
 
 
 def result(data):
-    result = {'template': 'results.html'}
-    result.update(variations(data))
-    if app.config.get('log_queries'):
-        app.logger.info("Getting variations for: %s", data['units'])
+    """Determine the result, if any of the query. This will ask the current
+    queue for the status of the query. If it is finshed either successfully or
+    not it will get the result and return it. If this query has not yet been
+    submitted then it will submit the query and set the status to submitted.
+
+    :param dict data: The data to get a result for.
+    :returns: A dictonary representing the result. This will have a status key.
+    The status is a string in the KNOWN_STATUS set from r3d2msa.queue. If the
+    status is one of the finished statuses then the dictonary will also include
+    all keys from loading the result.
+    """
+
+    query = create_query(data)
+    queue = g.queue
+    status = queue.status(query)
+
+    result = {}
+    if status in r3d.queue.KNOWN_STATUS:
+        result['status'] = status
+    else:
+        queue.submit(query)
+        result['status'] = 'submitted'
+
+    if status in r3d.queue.FINISHED_STATUS:
+        result.update(queue.result(query))
+
     return result
+
+
+@app.before_request
+def before_request():
+    g.queue = r3d.queue.Queue(app.config)
 
 
 @app.route('/', methods=['GET'])
 @mimerender(
     json=render_json,
     html=render_html,
+    # fasta=r3d.alignments.writer('fasta'),
+    # stockholm=r3d.alignments.writer('stockholm'),
     override_input_key='format',
 )
-def get_html():
+def get_data():
+    print('request')
     if 'units' in request.args:
+        print('has units')
         return result(request.args)
 
     return {
         'template': 'form.html',
-        'examples': examples.known(),
+        'examples': r3d.examples.known(),
         'data': options()
     }
 
@@ -87,19 +148,19 @@ def get_html():
 @mimerender(
     json=render_json,
     html=render_html,
+    # fasta=r3d.alignments.writer('fasta'),
+    # stockholm=r3d.alignments.writer('stockholm'),
     override_input_key='format',
 )
-def post_html():
+def post_data():
     data = request.get_json() or request.form
     return result(data)
 
 
-app.config['examples'] = examples.load()
-config = {}
-if os.path.exists('config.json'):
-    with open('config.json', 'rb') as raw:
-        config = json.load(raw)
-app.config.update(config)
+with open('conf/config.json', 'rb') as raw:
+    app.config.update(json.load(raw))
+
+app.config['examples'] = r3d.examples.load()
 
 
 if __name__ == '__main__':
