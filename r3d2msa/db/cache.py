@@ -26,9 +26,9 @@ class Cache(object):
 
     def set(self, query_id, result):
         data = self.get(query_id)
-        if data:
-            query = self.cache.update()
         query = self.cache.insert()
+        if data:
+            query = self.cache.update().where(self.cache.c.id == query_id)
 
         body = json.dumps(result)
         with self.transaction() as connection:
