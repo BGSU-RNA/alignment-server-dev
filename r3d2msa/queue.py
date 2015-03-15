@@ -49,7 +49,7 @@ class Queue(object):
         return status
 
     def result(self, query):
-        result = self.cache.get(query)
+        result = self.cache.get(query['id'])
         if not result:
             raise MissingResults()
         return result
@@ -78,11 +78,10 @@ class Worker(object):
         self.logger.debug("Updating results for %s", result['id'])
         info = dict(result)
         info['status'] = status
-        self.cache.set(result['id'], info)
+        self.cache.set(info['id'], info)
 
     def work(self, job, query):
         self.logger.debug("Working on query %s", query['id'])
-
         self.save(query, status='pending')
         result = self.process(query)
         self.logger.debug("Done working on %s", query['id'])
