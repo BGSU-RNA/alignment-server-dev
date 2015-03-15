@@ -4,3 +4,5 @@
 conf/config.json
 .jshintrc
 conf/options.json
+conf/supervisord.conf
+cache.db
