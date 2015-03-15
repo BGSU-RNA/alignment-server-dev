@@ -34,6 +34,8 @@ class Queue(object):
         self.beanstalk.ignore('default')
 
     def submit(self, query):
+        if self.cache.get(query['id']):
+            return None
         self.beanstalk.put(json.dumps(query))
         data = dict(query)
         data['status'] = 'submitted'
