@@ -13,9 +13,17 @@ import mimerender
 
 
 app = Flask(__name__)
+
+mimerender.register_mime('fasta', ('text/fasta',))
+# mimerender.register_mime('stockholm', ('text/stockholm',))
+mimerender.register_mime('clustal', ('text/clustal',))
 mimerender = mimerender.FlaskMimeRender()
 
-render_json = lambda template, **kwargs: json.dumps(kwargs)
+
+def render_json(**kwargs):
+    if 'template' in kwargs:
+        kwargs.pop('template')
+    return json.dumps(kwargs)
 
 
 def render_html(**kwargs):
@@ -127,8 +135,9 @@ def before_request():
 @mimerender(
     json=render_json,
     html=render_html,
-    # fasta=r3d.alignments.writer('fasta'),
-    # stockholm=r3d.alignments.writer('stockholm'),
+    fasta=r3d.alignments.fasta,
+    # stockholm=r3d.alignments.stockholm,
+    clustal=r3d.alignments.clustal,
     override_input_key='format',
 )
 def get_data():
@@ -146,8 +155,9 @@ def get_data():
 @mimerender(
     json=render_json,
     html=render_html,
-    # fasta=r3d.alignments.writer('fasta'),
-    # stockholm=r3d.alignments.writer('stockholm'),
+    fasta=r3d.alignments.fasta,
+    # stockholm=r3d.alignments.stockholm,
+    clustal=r3d.alignments.clustal,
     override_input_key='format',
 )
 def post_data():
