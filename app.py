@@ -1,3 +1,4 @@
+import os
 import hashlib
 
 import simplejson as json
@@ -165,7 +166,9 @@ def post_data():
     return result(data)
 
 
-with open('conf/config.json', 'rb') as raw:
+here = os.path.abspath(os.path.dirname(__file__))
+config_path = os.path.join('conf', 'config.json')
+with open(config_path, 'rb') as raw:
     app.config.update(json.load(raw))
 
 
