@@ -11,11 +11,15 @@ sys.path.append(os.path.abspath(os.path.join(here, "..")))
 
 import r3d2msa.db.rcad as db
 import r3d2msa.ranges as ranges
-import r3d2msa.queue as q
+import r3d2msa.background.worker as work
 
 
-class Worker(q.Worker):
+class Worker(work.Worker):
+
     def process(self, query):
+        if self.canned:
+            return self.canned
+
         rcad = db.connect(config)
 
         def translator(chain):
@@ -45,6 +49,8 @@ if __name__ == '__main__':
                         help='File to log to')
     parser.add_argument('--name', dest='name', default='Worker',
                         help='Name of the worker for logging')
+    parser.add_argument('--test-data', dest='canned', default='',
+                        help='Canned data to use if any')
     args = parser.parse_args()
 
     if args.log_filename:
@@ -52,8 +58,13 @@ if __name__ == '__main__':
     else:
         logging.basicConfig()
 
+    canned = None
+    if args.canned:
+        with open(args.canned, 'rb') as raw:
+            canned = json.load(raw)
+
     with open(args.config, 'rb') as raw:
         config = json.load(raw)
 
-    worker = Worker(config, name=args.name)
+    worker = Worker(config, name=args.name, canned=canned)
     worker()
