@@ -10,7 +10,7 @@ here = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(here, "..")))
 
 import r3d2msa.db.rcad as db
-import r3d2msa.utils as ut
+import r3d2msa.ranges as ranges
 import r3d2msa.queue as q
 
 
@@ -19,9 +19,10 @@ class Worker(q.Worker):
         rcad = db.connect(config)
 
         def translator(chain):
-            return db.get_translation(rcad, query['pdb'], query['model'], chain)
+            return db.get_translation(rcad, query['pdb'], query['model'],
+                                      chain)
 
-        translated = ut.translate(translator, query['ranges'])
+        translated = ranges.translate(translator, query['ranges'])
         full, summ, reqs = db.seqvar(rcad, query['pdb'], query['model'],
                                      translated)
         return {
