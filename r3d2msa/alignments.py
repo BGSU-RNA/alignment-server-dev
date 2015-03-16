@@ -30,20 +30,7 @@ def as_alignment(data):
 
 
 def write(name, data):
-    print(name)
     handle = sio.StringIO()
     alignment = as_alignment(data)
     AlignIO.write(alignment, handle, name)
     return handle.getvalue()
-
-
-def fasta(**kwargs):
-    return write('fasta', kwargs)
-
-
-def stockholm(**kwargs):
-    return write('stockholm', kwargs)
-
-
-def clustal(**kwargs):
-    return write('clustal', kwargs)
