@@ -9,5 +9,7 @@
 {% endblock body %}
 
 {%- block page_specific_js -%}
-  <script src="{{ url_for('static', filename='js/results.js') }}"></script>
+<script>
+  window.setInterval(function() { location.reload(true); }, 3000);
+</script>
 {%- endblock page_specific_js %}
