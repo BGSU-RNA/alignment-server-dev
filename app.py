@@ -14,13 +14,36 @@ import mimerender
 
 app = Flask(__name__)
 
+# Define some content types
+# TODO: Are these good types?
 mimerender.register_mime('fasta', ('text/fasta',))
+# Currenlty we can't generate stockholm as the ids used are not unique, should
+# probably switch to CRW ids for the produced alignments
 # mimerender.register_mime('stockholm', ('text/stockholm',))
 mimerender.register_mime('clustal', ('text/clustal',))
 mimerender = mimerender.FlaskMimeRender()
 
 
+def examples():
+    """Get all known examples. This loads a JSON file for examples as this is
+    pretty basic configuration stuff and doesn't need a connection to a
+    database.
+
+    :returns: A list of the examples used.
+    """
+
+    with open(app.config['examples'], 'rb') as raw:
+        return json.load(raw)
+
+
 def options():
+    """Load the options JSON file to get all known options. This is used
+    instead of a connection to the RCAD database so that the site is still
+    responsive despite the server being slow.
+
+    :returns: A list of dictionaries with all options
+    """
+
     with open(app.config['options'], 'rb') as raw:
         return json.load(raw)
 
@@ -120,7 +143,7 @@ def get_data():
 
     return {
         'template': 'form.html',
-        'examples': r3d.examples.known(),
+        'examples': examples(),
         'data': options()
     }
 
@@ -138,10 +161,18 @@ def post_data():
     return result(data)
 
 
+# Load config information
 here = os.path.abspath(os.path.dirname(__file__))
 config_path = os.path.join('conf', 'config.json')
 with open(config_path, 'rb') as raw:
     app.config.update(json.load(raw))
+
+# Place all example ids into the persist list
+if not app.config['cache'].get('persist'):
+    app.config['cache']['persist'] = []
+
+for example in examples():
+    app.config['cache']['persist'].append(create_id(example))
 
 
 if __name__ == '__main__':
