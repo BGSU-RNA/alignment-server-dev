@@ -1,3 +1,8 @@
+"""This module contains an abstract base class for all workers. It will handle
+the logic of logging, queueing and caching, leaving only the actual processing
+for subclasses to worry about.
+"""
+
 import abc
 import uuid
 import logging
@@ -16,9 +21,19 @@ class Worker(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, config, **kwargs):
+        """Create a new Worker. This uses the config dictionary to connect to
+        the queue and worker. That dictionary must contain a cache dictionary
+        with the keys connection to indicate the connection to use, timeout for
+        the time in seconds until an object is expired in the cache.
+
+        :config: A configuration dictionary. This must specify the cache and
+        queue to use.
+        :kwargs: Keyword arguments to set as attributes of this worker. If no
+        name is given then a random UUID is generated as a name.
+        """
         self.cache = redis.StrictRedis(**config['cache']['connection'])
         self.timeout = config['cache']['timeout']
-        self.presist = set(config['cache'].get('persist', []))
+        self.persist = set(config['cache'].get('persist', []))
 
         self.beanstalk = beanstalkc.Connection(**config['queue']['connection'])
         self.beanstalk.watch(config['queue']['name'])
@@ -32,18 +47,46 @@ class Worker(object):
 
     @abc.abstractmethod
     def process(self, query):
+        """Process the data. This method takes the input query which was placed
+        in the queue and preforms some operation to create the result data
+        structure. That structure will be placed into the cache as needed. In
+        addition, the state of the job will be updated. If this process fails
+        it should raise an exception to indicate failure. All worker subclasses
+        must implement this.
+
+        :query: The query to process.
+        :returns: The result.
+        """
         pass
 
     def save(self, result, status='failed'):
+        """Save an object into the cache. This will set the object, with
+        whatever is in result['id'] to the new object and update it's status as
+        well. If the object's id is not in self.persist then it will be given
+        the lifetime set in self.timeout.
+
+        :param dict result: The result dictionary to save.
+        :param string status: The status to set.
+        """
+
         self.logger.debug("Updating results for %s", result['id'])
         info = dict(result)
         info['status'] = status
         self.cache.set(info['id'], json.dumps(info, separators=(',', ':')))
 
-        if info['id'] not in self.presist:
+        if info['id'] not in self.persist:
             self.cache.expire(info['id'], self.timeout)
 
     def work(self, job, query):
+        """Work on a job. This will work on some job until it is finished. The
+        job will be deleted from the queue if this finishes. The job's status
+        will be set to pending while it is being processed and then to success
+        if it succeeds.
+
+        :param Job job: The job to work on.
+        :param dict query: The query to work on.
+        """
+
         self.logger.debug("Working on query %s", query['id'])
         self.save(query, status='pending')
         result = self.process(query)
@@ -52,6 +95,13 @@ class Worker(object):
         job.delete()
 
     def __call__(self):
+        """The main entry point for all workers. When called this will wait
+        until a job can be reserved from the queue and then send it to
+        self.work(). The jobs body's are expected to be JSON encoded
+        dictionaries. Results from processing are saved as JSON encoded objects
+        into the cache.
+        """
+
         self.logger.info("Starting worker %s", self.name)
         while True:
             job = self.beanstalk.reserve()
