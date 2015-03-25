@@ -131,10 +131,11 @@ def before_request():
 
 @app.route('/', methods=['GET'])
 @mimerender(
-    json=r3d.render.to_json,
-    html=r3d.render.to_html,
+    tsv=r3d.render.to_tsv,
     fasta=r3d.render.to_fasta,
     clustal=r3d.render.to_clustal,
+    json=r3d.render.to_json,
+    html=r3d.render.to_html,
     override_input_key='format',
 )
 def get_data():
@@ -150,10 +151,11 @@ def get_data():
 
 @app.route('/', methods=['POST'])
 @mimerender(
-    json=r3d.render.to_json,
-    html=r3d.render.to_html,
+    tsv=r3d.render.to_tsv,
     fasta=r3d.render.to_fasta,
     clustal=r3d.render.to_clustal,
+    json=r3d.render.to_json,
+    html=r3d.render.to_html,
     override_input_key='format',
 )
 def post_data():

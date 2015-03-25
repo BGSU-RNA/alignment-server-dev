@@ -2,9 +2,13 @@
 website.
 """
 
+import csv
+import cStringIO as sio
+
 import simplejson as json
 
 from flask import render_template
+from werkzeug.exceptions import BadRequest
 
 from r3d2msa.alignments import write
 
@@ -46,3 +50,24 @@ def to_clustal(**kwargs):
     """Generate clustal style output.
     """
     return write('clustal', kwargs)
+
+
+def to_tsv(**kwargs):
+    """Generate a TSV output. This will generete the variations as a TSV that
+    can be imported to excel easily.
+    """
+
+    if 'full' not in kwargs:
+        raise BadRequest("Can't generate TSV until processing is complete")
+
+    handle = sio.StringIO()
+    header = ['AccessionID', 'SeqVersion', 'CompleteFragment', 'TaxID',
+              'ScientificName', 'LineageName']
+
+    writer = csv.DictWriter(handle, header, delimiter='\t',
+                            extrasaction='ignore')
+    writer.writerow(dict(zip(header, header)))
+    for row in kwargs['full']:
+        writer.writerow(row)
+
+    return handle.getvalue()
