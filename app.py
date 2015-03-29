@@ -12,7 +12,7 @@ import r3d2msa as r3d
 import mimerender
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/r3d-2-msa/static')
 
 # Define some content types
 # TODO: Are these good types?
@@ -129,7 +129,7 @@ def before_request():
     g.queue = r3d.background.queue.Queue(app.config)
 
 
-@app.route('/', methods=['GET'])
+@app.route('/r3d-2-msa', methods=['GET'])
 @mimerender(
     tsv=r3d.render.to_tsv,
     fasta=r3d.render.to_fasta,
@@ -149,7 +149,7 @@ def get_data():
     }
 
 
-@app.route('/', methods=['POST'])
+@app.route('/r3d-2-msa', methods=['POST'])
 @mimerender(
     tsv=r3d.render.to_tsv,
     fasta=r3d.render.to_fasta,
