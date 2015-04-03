@@ -13,12 +13,18 @@ env.virtualenv = "api"
 env.base = '~/deploy'
 
 # Differ between prod and dev
-env.app_name = 'r3d-2-msa'
+env.app_name = 'r3d-2-msa-dev'
 env.branch = 'develop'
 
 
 def common():
     env.app = '%s/apps/%s' % (env.base, env.app_name)
+
+
+@task
+def prod():
+    env.app_name = 'r3d-2-msa'
+    env.branch = 'master'
 
 
 @task
