@@ -1,12 +1,10 @@
-{% extends "layout.html" %}
+{% extends "results/base.html" %}
 
-{%- block title %}
-  <title>{% block titletext %}Sequence Variation Results{% endblock titletext %}</title>
-{%- endblock title %}
-
-{% block body %}
+{% block results %}
+<div class='row'>
   <p>Your query has been submitted and will be processed shortly</p>
-{% endblock body %}
+</div>
+{% endblock results %}
 
 {%- block page_specific_js -%}
 <script>

@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{%- block title %}
+  <title>{% block titletext %}Sequence Variation Results{% endblock titletext %}</title>
+{%- endblock title %}
+
+{% block body %}
+<div class='row'>
+  <h3>Query Information:</h3>
+
+  <div class='col-md-6'>
+    <ul>
+
+      <li>PDB|Model: {{ pdb }}|{{ model }}</li>
+      {%- block rangelist scoped %}
+      {%- set rangeno = 0 %}
+      {%- for range in ranges %}
+        {%- if ( ranges[rangeno][0]['number'] == ranges[rangeno][1]['number'] ) %}
+          <li>Range {{ rangeno + 1 }}:  Chain {{ ranges[rangeno][0]['chain'] }}, position {{ ranges[rangeno][0]['number'] }}</li>
+        {%- else %}
+          <li>Range {{ rangeno + 1 }}: Chain {{ ranges[rangeno][0]['chain'] }}, positions {{ ranges[rangeno][0]['number'] }}-{{ ranges[rangeno][1]['number'] }}</li>
+        {%- endif %}
+      {%- set rangeno = rangeno + 1 %}
+      {% endfor %}
+      {% endblock rangelist %}
+
+      <li>This result set:
+        <a href="{{ request.url|replace('rna.bgsu.edu', 'rna.bgsu.edu/r3d-2-msa') }}">
+        {{ request.url|replace("rna.bgsu.edu", "rna.bgsu.edu/r3d-2-msa") }}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class='col-md-6'>
+    {% block jsmol %}
+    {% endblock %}
+  </div>
+</div>
+
+<hr>
+
+{% block results %}
+{% endblock %}
+
+{% endblock body %}
