@@ -18,7 +18,9 @@ class Worker(work.Worker):
 
     def process(self, query):
         if self.canned:
-            return self.canned
+            canned = dict(self.canned)
+            canned['id'] = query['id']
+            return canned
 
         rcad = db.connect(config)
 
