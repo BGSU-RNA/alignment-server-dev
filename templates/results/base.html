@@ -5,12 +5,16 @@
 {%- endblock title %}
 
 {% block body %}
+
+{% set uri = request.url|replace('rna.bgsu.edu', 'rna.bgsu.edu/r3d-2-msa') %}
+
 <div class='row'>
   <h3>Query Information:</h3>
 
   <div class='col-md-6'>
-    <ul>
 
+    <div class='col-md-12'>
+    <ul>
       <li>PDB|Model: {{ pdb }}|{{ model }}</li>
       {%- block rangelist scoped %}
       {%- set rangeno = 0 %}
@@ -25,11 +29,26 @@
       {% endblock rangelist %}
 
       <li>This result set:
-        <a href="{{ request.url|replace('rna.bgsu.edu', 'rna.bgsu.edu/r3d-2-msa') }}">
-        {{ request.url|replace("rna.bgsu.edu", "rna.bgsu.edu/r3d-2-msa") }}
-        </a>
+        <a href="{{ uri }}">{{ uri }}</a>
       </li>
     </ul>
+    </div>
+
+    <div class='col-md-12'>
+    <div class="btn-group">
+
+      {% set disabled = "disabled" if formats == [] else "" %}
+      <button class="btn bth-default dropdown-toggle"
+        type="button" data-toggle="dropdown" {{ disabled }} >
+        Download Alignment  <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        {%- for format in formats %}
+        <li><a href="{{ format.url }}">{{ format.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    </div>
   </div>
 
   <div class='col-md-6'>

@@ -121,7 +121,15 @@ def result(data):
     """
 
     query = create_query(data)
-    return g.queue.process(query)
+    result = g.queue.process(query)
+    result['formats'] = []
+    if 'full' in result:
+        for name in ['json', 'clustal', 'fasta', 'tsv']:
+            result['formats'].append({
+                'name': name,
+                'url': request.url + '&format=%s' % name
+            })
+    return result
 
 
 @app.before_request
