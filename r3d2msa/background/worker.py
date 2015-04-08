@@ -31,6 +31,7 @@ class Worker(object):
         :kwargs: Keyword arguments to set as attributes of this worker. If no
         name is given then a random UUID is generated as a name.
         """
+        self.config = dict(config)
         self.cache = redis.StrictRedis(**config['cache']['connection'])
         self.timeout = config['cache']['timeout']
         self.persist = set(config['cache'].get('persist', []))
