@@ -131,11 +131,12 @@ def before_request():
 
 @app.route('/r3d-2-msa', methods=['GET'])
 @mimerender(
-    tsv=r3d.render.to_tsv,
-    fasta=r3d.render.to_fasta,
-    clustal=r3d.render.to_clustal,
-    json=r3d.render.to_json,
+    default='html',
     html=r3d.render.to_html,
+    json=r3d.render.to_json,
+    clustal=r3d.render.to_clustal,
+    fasta=r3d.render.to_fasta,
+    tsv=r3d.render.to_tsv,
     override_input_key='format',
 )
 def get_data():
@@ -151,11 +152,12 @@ def get_data():
 
 @app.route('/r3d-2-msa', methods=['POST'])
 @mimerender(
-    tsv=r3d.render.to_tsv,
-    fasta=r3d.render.to_fasta,
-    clustal=r3d.render.to_clustal,
-    json=r3d.render.to_json,
+    default='html',
     html=r3d.render.to_html,
+    json=r3d.render.to_json,
+    clustal=r3d.render.to_clustal,
+    fasta=r3d.render.to_fasta,
+    tsv=r3d.render.to_tsv,
     override_input_key='format',
 )
 def post_data():
