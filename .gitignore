@@ -8,3 +8,4 @@ conf/supervisord.conf
 cache.db
 dump.rdb
 conf/response.json
+logs/
