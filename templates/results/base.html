@@ -35,19 +35,19 @@
     </div>
 
     <div class='col-md-12'>
-    <div class="btn-group">
+      <div class="btn-group">
 
-      {% set disabled = "disabled" if formats == [] else "" %}
-      <button class="btn btn-default dropdown-toggle"
-        type="button" data-toggle="dropdown" {{ disabled }} >
-        Download Alignment  <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" role="menu">
-        {%- for format in formats %}
-        <li><a href="{{ format.url }}">{{ format.name }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
+        {% set disabled = "disabled" if formats == [] else "" %}
+        <button class="btn btn-default dropdown-toggle"
+          type="button" data-toggle="dropdown" {{ disabled }} >
+          Download Alignment  <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          {%- for format in formats %}
+          <li><a href="{{ format.url }}">{{ format.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
 
