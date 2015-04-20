@@ -6,20 +6,39 @@ import json
 import argparse
 import logging
 
+from sqlalchemy import create_engine
+
 here = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(here, "..")))
 
 import r3d2msa.db.rcad as db
+import r3d2msa.db.hub as hub
 import r3d2msa.ranges as ranges
 import r3d2msa.background.worker as work
 
 
 class Worker(work.Worker):
 
+    def expand(self, ranges):
+        if not self.hub:
+            return []
+
+        expanded = []
+        for (start, stop) in ranges:
+            try:
+                found = self.hub.units(start, stop)
+                expanded.extend(found)
+            except Exception as err:
+                self.logger.error("Failed expanding range %s %s", start, stop)
+                self.logger.exception(err)
+
+        return ','.join(expanded)
+
     def process(self, query):
         if self.canned:
             canned = dict(self.canned)
             canned['id'] = query['id']
+            canned['expanded_units'] = self.expand(query['ranges'])
             return canned
 
         rcad = db.connect(config)
@@ -39,7 +58,8 @@ class Worker(work.Worker):
             'reqs': reqs,
             'pdb': query['pdb'],
             'model': query['model'],
-            'ranges': query['ranges']
+            'ranges': query['ranges'],
+            'expanded_units': self.expand_ranges(query['ranges'])
         }
 
 
@@ -68,5 +88,14 @@ if __name__ == '__main__':
     with open(args.config, 'rb') as raw:
         config = json.load(raw)
 
-    worker = Worker(config, name=args.name, canned=canned)
+    rna3dhub = None
+    try:
+        engine = create_engine(config['rna3dhub']['connection'])
+        rna3dhub = hub.db.Hub(engine)
+    except Exception as err:
+        logging.error("Could not connect to rna3dhub")
+        logging.error("Will not have full units for 3D display")
+        logging.exception(err)
+
+    worker = Worker(config, name=args.name, canned=canned, hub=rna3dhub)
     worker()
