@@ -24,7 +24,7 @@ $(document).ready( function () {
     $.ajax(request).done(function(data) {
       var structure = pv.io.pdb(data);
       viewer.clear();
-      viewer.lines('structure', structure, {});
+      viewer.ballsAndSticks('structure', structure, {});
       viewer.autoZoom();
     });
 
