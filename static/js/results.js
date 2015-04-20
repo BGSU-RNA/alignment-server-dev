@@ -1,3 +1,5 @@
+var VIEWER = null;
+
 $(document).ready( function () {
   var viewer = pv.Viewer(document.getElementById("viewer"), {
     width : 'auto',
@@ -8,6 +10,7 @@ $(document).ready( function () {
     background : '#f2f2f2',
     animateTime: 500,
   });
+  VIEWER = viewer;
 
   window.addEventListener('resize', function() {
     viewer.fitParent();
@@ -22,10 +25,16 @@ $(document).ready( function () {
         };
 
     $.ajax(request).done(function(data) {
-      var structure = pv.io.pdb(data);
+      var structure = pv.io.pdb(data),
+          labels = [];
       viewer.clear();
       viewer.ballsAndSticks('structure', structure, {});
       viewer.autoZoom();
+      structure.eachResidue(function(residue) {
+        var atom = residue.centralAtom(),
+            name = residue.qualifiedName();
+        viewer.label("label-" + name, name, atom.pos(), {fontSize: 14});
+      });
     });
 
   }
@@ -87,5 +96,17 @@ $(document).ready( function () {
 
 
   viewer.addListener('viewerReady', loadCollection);
+
+  $("#hide-labels").click(function() {
+    var target = $(this);
+    if (!target.hasClass('active')) {
+      viewer.hide('label-*');
+      target.text("Show Labels");
+    } else {
+      viewer.show('label-*');
+      target.text("Hide Labels");
+    }
+    viewer.requestRedraw();
+  });
 
 } );

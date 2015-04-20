@@ -24,8 +24,11 @@
 {%- endblock head %}
 
 {% block viewer %}
-  {#<div id="viewer" data-units="{{units}}"></div>#}
-  <div id="viewer" data-units="2QBG_AU_1_B_1262_A_,2QBG_AU_1_B_1263_U_,2QBG_AU_1_B_1264_A_,2QBG_AU_1_B_1265_A_,2QBG_AU_1_B_1266_G_,2QBG_AU_1_B_1267_U_,2QBG_AU_1_B_1268_A_,2QBG_AU_1_B_1269_A_,2QBG_AU_1_B_2011_U_,2QBG_AU_1_B_2012_G_,2QBG_AU_1_B_2013_A_,2QBG_AU_1_B_2014_A_,2QBG_AU_1_B_2015_A_,2QBG_AU_1_B_2016_U_,2QBG_AU_1_B_2017_U_"></div>
+  <div id="viewer" data-units="{{expanded_units}}"></div>
+  <button class="btn btn-default" id="hide-labels" data-toggle="button"
+    type="button">
+    Hide Labels
+  </button>
 {% endblock viewer %}
 
 {% block results %}
