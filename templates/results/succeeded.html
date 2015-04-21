@@ -23,6 +23,19 @@
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/tabletools/2.2.3/css/dataTables.tableTools.css">
 {%- endblock head %}
 
+{% block viewer %}
+  <div id="viewer" data-units="{{expanded_units}}"></div>
+  <button class="btn btn-default" id="toggle-labels" data-toggle="button"
+    type="button">
+    Hide Labels
+  </button>
+
+  <button class="btn btn-default" id="toggle-neighborhood" data-toggle="button"
+    type="button">
+    Show Neighborhood
+  </button>
+{% endblock viewer %}
+
 {% block results %}
   <div class='row'>
       <h3>Sequence Summary:</h3>
@@ -139,6 +152,7 @@
 {% endblock results %}
 
 {%- block page_specific_js -%}
+    <script type="text/javascript" charset="utf8" src="/r3d-2-msa/static/js/pv.js"></script>
     <script src="/r3d-2-msa/static/js/results.js"></script>
     <!-- DataTables JS -->
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.js"></script>

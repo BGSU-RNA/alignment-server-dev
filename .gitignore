@@ -10,3 +10,4 @@ dump.rdb
 conf/response.json
 logs/
 conf/gunicorn.conf
+node_modules/
