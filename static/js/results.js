@@ -1,7 +1,8 @@
-var VIEWER = null;
-var STR = null;
+/*globals pv */
 
 $(document).ready( function () {
+  'use strict';
+
   var viewer = pv.Viewer(document.getElementById("viewer"), {
     width : 'auto',
     height: 400,
@@ -11,11 +12,19 @@ $(document).ready( function () {
     background : '#f2f2f2',
     animateTime: 500,
   });
-  VIEWER = viewer;
 
   window.addEventListener('resize', function() {
     viewer.fitParent();
   });
+
+  function asModels(raw) {
+    return raw.
+      split("\n").
+      filter(function(line) { return !(/\dH\d/.test(line)); }).
+      join("\n").
+      split("ENDMDL").
+      map(function(raw) { return raw + "ENDMDL\n"; });
+  }
 
   function loadCollection() {
     var units = $("#viewer").data("units"),
@@ -26,22 +35,34 @@ $(document).ready( function () {
         };
 
     $.ajax(request).done(function(data) {
-      var parts = data.split("ENDMDL").map(function(m) { return m + "ENDMDL\n"; }),
-          region = pv.io.pdb(parts[0]),
-          nearNA = pv.io.pdb(parts[1]),
-          nearAA = pv.io.pdb(parts[2]);
+      var models = asModels(data),
+          region = pv.io.pdb(models[0]),
+          nearNA = pv.io.pdb(models[1]),
+          nearAA = pv.io.pdb(models[2]);
 
       viewer.clear();
       viewer.ballsAndSticks('selected', region, {});
-      viewer.ballsAndSticks('near-na', nearNA, {color: pv.color.uniform('grey')});
-      viewer.ballsAndSticks('near-aa', nearAA, {color: pv.color.uniform('purple')});
+      viewer.ballsAndSticks('near-na', nearNA,
+          {color: pv.color.uniform('grey')});
+      viewer.ballsAndSticks('near-aa', nearAA,
+          {color: pv.color.uniform('purple')});
       viewer.hide('near-*');
       viewer.autoZoom();
 
       region.eachResidue(function(residue) {
         var atom = residue.centralAtom(),
-            name = residue.qualifiedName();
-        viewer.label("label-" + name, name, atom.pos(), {fontSize: 14});
+            parts = [residue.chain().name(), residue.name(), residue.num(),
+                     residue.insCode()],
+            config = {
+              fontSize: 14,
+              fontStyle: 'bold'
+            };
+
+        if (parts[3]) {
+          parts.pop(3);
+        }
+
+        viewer.label("label-" + name, parts.join('|'), atom.pos(), config);
       });
     });
 
