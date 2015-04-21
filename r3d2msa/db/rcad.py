@@ -38,7 +38,8 @@ def connect(config):
 
 
 def seqvar(db, pdb, model, ranges):
-    proc = db.init_procedure('BGSU.SeqVar')
+    proc = db.init_procedure('BGSU.SeqVar_DEBUG')
+    #proc = db.init_procedure('BGSU.SeqVar')
 
     proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
               max_length=4)
@@ -100,7 +101,8 @@ def seqvar(db, pdb, model, ranges):
             'SeqID': row['SeqID'],
             'SeqVersion': row['SeqVersion'],
             'CompleteFragment': row['CompleteFragment'],
-            'TotalCount': row['TotalCount']
+            'TotalCount': row['TotalCount'],
+            'NumColumns': row['NumColumns']
         })
 
     return full, summ, reqs
