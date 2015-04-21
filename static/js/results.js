@@ -1,4 +1,5 @@
 var VIEWER = null;
+var STR = null;
 
 $(document).ready( function () {
   var viewer = pv.Viewer(document.getElementById("viewer"), {
@@ -25,12 +26,19 @@ $(document).ready( function () {
         };
 
     $.ajax(request).done(function(data) {
-      var structure = pv.io.pdb(data),
-          labels = [];
+      var parts = data.split("ENDMDL").map(function(m) { return m + "ENDMDL\n"; }),
+          region = pv.io.pdb(parts[0]),
+          nearNA = pv.io.pdb(parts[1]),
+          nearAA = pv.io.pdb(parts[2]);
+
       viewer.clear();
-      viewer.ballsAndSticks('structure', structure, {});
+      viewer.ballsAndSticks('selected', region, {});
+      viewer.ballsAndSticks('near-na', nearNA, {color: pv.color.uniform('grey')});
+      viewer.ballsAndSticks('near-aa', nearAA, {color: pv.color.uniform('purple')});
+      viewer.hide('near-*');
       viewer.autoZoom();
-      structure.eachResidue(function(residue) {
+
+      region.eachResidue(function(residue) {
         var atom = residue.centralAtom(),
             name = residue.qualifiedName();
         viewer.label("label-" + name, name, atom.pos(), {fontSize: 14});
@@ -97,7 +105,7 @@ $(document).ready( function () {
 
   viewer.addListener('viewerReady', loadCollection);
 
-  $("#hide-labels").click(function() {
+  $("#toggle-labels").click(function() {
     var target = $(this);
     if (!target.hasClass('active')) {
       viewer.hide('label-*');
@@ -105,6 +113,18 @@ $(document).ready( function () {
     } else {
       viewer.show('label-*');
       target.text("Hide Labels");
+    }
+    viewer.requestRedraw();
+  });
+
+  $("#toggle-neighborhood").click(function() {
+    var target = $(this);
+    if (target.hasClass('active')) {
+      viewer.hide('near-*');
+      target.text("Show Neighborhood");
+    } else {
+      viewer.show('near-*');
+      target.text("Hide Neighborhood");
     }
     viewer.requestRedraw();
   });

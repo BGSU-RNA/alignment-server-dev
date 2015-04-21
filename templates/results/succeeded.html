@@ -25,9 +25,14 @@
 
 {% block viewer %}
   <div id="viewer" data-units="{{expanded_units}}"></div>
-  <button class="btn btn-default" id="hide-labels" data-toggle="button"
+  <button class="btn btn-default" id="toggle-labels" data-toggle="button"
     type="button">
     Hide Labels
+  </button>
+
+  <button class="btn btn-default" id="toggle-neighborhood" data-toggle="button"
+    type="button">
+    Show Neighborhood
   </button>
 {% endblock viewer %}
 
