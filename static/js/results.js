@@ -1,6 +1,3 @@
-var VIEWER = null;
-var STR = null;
-
 $(document).ready( function () {
   var viewer = pv.Viewer(document.getElementById("viewer"), {
     width : 'auto',
@@ -11,7 +8,6 @@ $(document).ready( function () {
     background : '#f2f2f2',
     animateTime: 500,
   });
-  VIEWER = viewer;
 
   window.addEventListener('resize', function() {
     viewer.fitParent();
