@@ -100,7 +100,8 @@ def seqvar(db, pdb, model, ranges):
             'SeqID': row['SeqID'],
             'SeqVersion': row['SeqVersion'],
             'CompleteFragment': row['CompleteFragment'],
-            'TotalCount': row['TotalCount']
+            'TotalCount': row['TotalCount'],
+            'NumColumns': row['NumColumns']
         })
 
     return full, summ, reqs
