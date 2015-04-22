@@ -124,7 +124,7 @@ def result(data):
     result = g.queue.process(query)
     result['formats'] = []
     if 'full' in result:
-        for name in ['json', 'clustal', 'fasta', 'tsv']:
+        for name in ['clustal', 'fasta', 'tsv', 'json']:
             result['formats'].append({
                 'name': name,
                 'url': request.url + '&format=%s' % name
