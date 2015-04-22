@@ -1,5 +1,9 @@
 {% extends "results/base.html" %}
 
+{%- block title %}
+<title>{% block titletext %} {{status|capitalize}} | Sequence Variation Results{% endblock titletext %}</title>
+{%- endblock title %}
+
 {%- block head %}
     <style type="text/css">
     .sequence {
