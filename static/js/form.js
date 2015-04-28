@@ -1,6 +1,9 @@
 $( window ).load(function() {
   'use strict';
 
+  $("option").prop("selected", false);
+  $("option").first().prop("selected", true);
+
   var UNIT_FRAGEMENTS = ['pdb', 'model', 'chain', 'sequence', 'number',
     'atom_name', 'alt_id', 'insertion_code', 'symmetry_operator'];
 
