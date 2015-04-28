@@ -39,7 +39,7 @@ def as_alignment(data):
     for entry in data['full']:
         seq = Seq(entry['CompleteFragment'], generic_rna)
         record = SeqRecord(seq)
-        record.id = '%s.%s' % (entry['AccessionID'], entry['SeqVersion'])
+        record.id = '%s.%s' % (entry['SeqID'], entry['SeqVersion'])
         record.description = entry['ScientificName']
         sequences.append(record)
 
