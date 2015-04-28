@@ -17,9 +17,7 @@ app = Flask(__name__, static_url_path='/r3d-2-msa/static')
 # Define some content types
 # TODO: Are these good types?
 mimerender.register_mime('fasta', ('text/fasta',))
-# Currenlty we can't generate stockholm as the ids used are not unique, should
-# probably switch to CRW ids for the produced alignments
-# mimerender.register_mime('stockholm', ('text/stockholm',))
+mimerender.register_mime('stockholm', ('text/stockholm',))
 mimerender.register_mime('clustal', ('text/clustal',))
 mimerender = mimerender.FlaskMimeRender()
 
@@ -124,7 +122,7 @@ def result(data):
     result = g.queue.process(query)
     result['formats'] = []
     if 'full' in result:
-        for name in ['clustal', 'fasta', 'tsv', 'json']:
+        for name in ['stockholm', 'clustal', 'fasta', 'tsv', 'json']:
             result['formats'].append({
                 'name': name,
                 'url': request.url + '&format=%s' % name
@@ -144,6 +142,7 @@ def before_request():
     html=r3d.render.to_html,
     json=r3d.render.to_json,
     clustal=r3d.render.to_clustal,
+    stockholm=r3d.render.to_stockholm,
     fasta=r3d.render.to_fasta,
     tsv=r3d.render.to_tsv,
     override_input_key='format',
@@ -166,6 +165,7 @@ def get_data():
     html=r3d.render.to_html,
     json=r3d.render.to_json,
     clustal=r3d.render.to_clustal,
+    stockholm=r3d.render.to_stockholm,
     fasta=r3d.render.to_fasta,
     tsv=r3d.render.to_tsv,
     override_input_key='format',
