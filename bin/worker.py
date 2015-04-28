@@ -19,14 +19,28 @@ import r3d2msa.background.worker as work
 
 class Worker(work.Worker):
 
+    def rna3dhub(self):
+        try:
+            connection = config.get('rna3dhub', {}).get('connection', None)
+            if not connection:
+                return None
+            engine = create_engine(connection)
+            return hub.db.Hub(engine)
+        except Exception as err:
+            logging.error("Could not connect to rna3dhub")
+            logging.error("Will not have full units for 3D display")
+            logging.exception(err)
+            return None
+
     def expand(self, ranges):
-        if not self.hub:
-            return []
+        rna3dhub = self.rna3dhub()
+        if not rna3dhub:
+            return ''
 
         expanded = []
         for (start, stop) in ranges:
             try:
-                found = self.hub.units(start, stop)
+                found = rna3dhub.units(start, stop)
                 expanded.extend(found)
             except Exception as err:
                 self.logger.error("Failed expanding range %s %s", start, stop)
@@ -88,14 +102,5 @@ if __name__ == '__main__':
     with open(args.config, 'rb') as raw:
         config = json.load(raw)
 
-    rna3dhub = None
-    try:
-        engine = create_engine(config['rna3dhub']['connection'])
-        rna3dhub = hub.db.Hub(engine)
-    except Exception as err:
-        logging.error("Could not connect to rna3dhub")
-        logging.error("Will not have full units for 3D display")
-        logging.exception(err)
-
-    worker = Worker(config, name=args.name, canned=canned, hub=rna3dhub)
+    worker = Worker(config, name=args.name, canned=canned)
     worker()
