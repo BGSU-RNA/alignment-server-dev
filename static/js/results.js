@@ -5,7 +5,7 @@ $(document).ready( function () {
 
   var viewer = pv.Viewer(document.getElementById("viewer"), {
     width : 'auto',
-    height: 400,
+    height: 'auto',
     antialias : true,
     outline : true,
     quality : 'medium',
