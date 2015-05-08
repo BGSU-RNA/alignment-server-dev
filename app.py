@@ -177,7 +177,7 @@ def post_data():
 
 # Load config information
 here = os.path.abspath(os.path.dirname(__file__))
-config_path = os.path.join('conf', 'config.json')
+config_path = os.path.join(here, 'conf', 'config.json')
 with open(config_path, 'rb') as raw:
     app.config.update(json.load(raw))
 
