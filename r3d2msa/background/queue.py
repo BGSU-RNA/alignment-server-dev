@@ -22,7 +22,7 @@ class Queue(object):
         use. The default tube will be ignored.
         """
 
-        self.cache = redis.StrictRedis(**config['cache']['connection'])
+        self.cache = redis.Redis(**config['cache']['connection'])
         self.beanstalk = beanstalkc.Connection(**config['queue']['connection'])
         self.beanstalk.use(config['queue']['name'])
         self.beanstalk.ignore('default')
