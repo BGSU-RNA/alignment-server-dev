@@ -2,6 +2,9 @@
     "DEBUG": true,
     "options": "conf/options.json",
     "examples": "conf/examples.json",
+    "rna3dhub": {
+        "connection": "mysql://bob:bob@127.0.0.1/rna3dhub"
+    },
     "rcad": {
         "connection": {
             "RCAD_HOSTNAME": "bob",
