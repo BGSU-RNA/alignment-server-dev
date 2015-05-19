@@ -28,11 +28,14 @@ $(document).ready( function () {
 
   function loadCollection() {
     var units = $("#viewer").data("units"),
+        url = window.location.origin + '/rna3dhub/rest/getCoordinates',
         request = {
-          url: "http://rna.bgsu.edu/rna3dhub/rest/getCoordinates",
+          url: url,
           type: "post",
           data: {coord: units}
         };
+
+    if (units === '') { return; }
 
     $.ajax(request).done(function(data) {
       var models = asModels(data),
