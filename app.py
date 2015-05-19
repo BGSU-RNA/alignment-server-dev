@@ -135,8 +135,7 @@ def before_request():
     g.queue = r3d.background.queue.Queue(app.config)
 
 
-@app.route('/r3d-2-msa', methods=['GET'])
-@app.route('/r3d-2-msa-dev', methods=['GET'])
+@app.route('/', methods=['GET'])
 @mimerender(
     default='html',
     html=r3d.render.to_html,
@@ -158,8 +157,7 @@ def get_data():
     }
 
 
-@app.route('/r3d-2-msa', methods=['POST'])
-@app.route('/r3d-2-msa-dev', methods=['POST'])
+@app.route('/', methods=['POST'])
 @mimerender(
     default='html',
     html=r3d.render.to_html,
