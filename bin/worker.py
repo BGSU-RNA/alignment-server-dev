@@ -62,8 +62,10 @@ class Worker(work.Worker):
                                       chain)
 
         translated = ranges.translate(translator, query['ranges'])
-        full, summ, reqs = db.seqvar(rcad, query['pdb'], query['model'],
-                                     translated)
+        #full, summ, reqs = db.seqvar(rcad, query['pdb'], query['model'],
+        #                             translated)
+        full, summ, reqs = db.seqvarM3A(rcad, query['pdb'], query['model'],
+                                        translated, m3daid = 1)
         return {
             'id': query['id'],
             'units': query['units'],

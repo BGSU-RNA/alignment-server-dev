@@ -107,6 +107,78 @@ def seqvar(db, pdb, model, ranges):
     return full, summ, reqs
 
 
+def seqvarM3A(db, pdb, model, ranges, m3daid):
+    proc = db.init_procedure('BGSU.SeqVar_TEST_Map3DAlnID')
+
+    proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
+              max_length=4)
+    proc.bind(model, _mssql.SQLINT1, '@ModNum', null=False, output=False)
+
+    # This copies the list of ranges to a new list and then appends as many
+    # empty default values as needed.
+    all_ranges = list(ranges)
+    all_ranges.extend([({}, {})] * (5 - len(ranges)))
+
+    for index, (start, stop) in enumerate(all_ranges):
+        chain = start.get('chain', '')
+        name = '@range%s' % (index + 1)
+
+        chain_name = '@Chain%s' % (index + 1)
+
+        proc.bind(chain, _mssql.SQLCHAR, chain_name, null=False, output=False,
+                  max_length=1)
+        proc.bind(start.get('number', False), _mssql.SQLINT4, name + 'a',
+                  null=False, output=False)
+        proc.bind(stop.get('number', False), _mssql.SQLINT4, name + 'b',
+                  null=False, output=False)
+
+    proc.bind(m3daid, _mssql.SQLINT1, '@M3DAID', null=False, output=False)
+
+    try:
+        proc.execute()
+    except Exception as err:
+        logging.error("Failed to process %s %s %s", pdb, ranges, m3daid)
+        logging.exception(err)
+        raise ProcessingException()
+
+    # This copying is done because result dict also allows access by index, we
+    # only want the entries with keys.
+    res1 = [row for row in db]
+    res2 = [row for row in db]
+    res3 = [row for row in db]
+
+    full = []
+    for row in res1:
+        full.append({
+            'SeqID': row['SeqID'],
+            'SeqVersion': row['SeqVersion'],
+            'CompleteFragment': row['CompleteFragment'],
+            'AccessionID': row['AccessionID'],
+            'TaxID': row['TaxID'],
+            'ScientificName': row['ScientificName'],
+            'LineageName': row['LineageName'],
+        })
+
+    summ = []
+    for row in res2:
+        summ.append({
+            'CompleteFragment': row['CompleteFragment'],
+            'NumberOfAppearances': row['NumberOfAppearances']
+        })
+
+    reqs = []
+    for row in res3:
+        reqs.append({
+            'SeqID': row['SeqID'],
+            'SeqVersion': row['SeqVersion'],
+            'CompleteFragment': row['CompleteFragment'],
+            'TotalCount': row['TotalCount'],
+            'NumColumns': row['NumColumns']
+        })
+
+    return full, summ, reqs
+
+
 def get_translation(conn, pdb, model, chain):
     """
     Contact rCAD for the translation table (to account for insertion codes in
