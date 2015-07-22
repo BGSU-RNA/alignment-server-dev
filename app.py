@@ -79,16 +79,18 @@ def create_id(data):
 
 
 def create_query(data):
-    """Turn the requested ata into a proper query. This validates the data to
-    make sure it is valid and then builds the query data structure. We hold off
-    on translating this as that requires a connection to rcad. We want to
-    connect to rcad outside the web server to prevent slow downs due to
-    connection issues.
+    """Turn the requested data into a proper query. This validates the data
+    and then builds the query data structure. We hold off on translating this
+    as that requires a connection to rCAD. We want to connect to rCAD outside
+    the web server to prevent slow downs due to connection issues.
+
+    TODO:  use the translation data from the options download here.  This
+    minimizes the number of round trips to rCAD.
 
     :param dict data: The dictionary to generate a query from.
     :returns: The query dict. This will contain a pdb, models and ranges key.
     The values here are the ones produced by parsing the units entry of the
-    data dictonary with r3d2msa.ranges.ranges. We also add an id entry, which
+    data dictionary with r3d2msa.ranges.ranges. We also add an id entry, which
     is an id unique to this query as produced by create_id. It also has the
     'units' entry from the given data.
     """
@@ -108,15 +110,16 @@ def create_query(data):
 
 def result(data):
     """Determine the result, if any of the query. This will ask the current
-    queue for the status of the query. If it is finshed either successfully or
-    not it will get the result and return it. If this query has not yet been
-    submitted then it will submit the query and set the status to submitted.
+    queue for the status of the query. If it is finished, either successfully
+    or not, it will get the result and return it. If this query has not yet
+    been submitted, then it will submit the query and set the status to
+    submitted.
 
     :param dict data: The data to get a result for.
-    :returns: A dictonary representing the result. This will have a status key.
-    The status is a string in the KNOWN_STATUS set from r3d2msa.queue. If the
-    status is one of the finished statuses then the dictonary will also include
-    all keys from loading the result.
+    :returns: A dictionary representing the result. This will have a status
+    key that is a string in the KNOWN_STATUS set from r3d2msa.queue. If the
+    status is one of the finished statuses, then the dictionary will also
+    include all keys from loading the result.
     """
 
     query = create_query(data)
