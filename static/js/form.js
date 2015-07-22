@@ -211,9 +211,11 @@ $( window ).load(function() {
     clearErrors();
 
     var submit = validateRanges();
+    var aid = $('input[name=alignments]:checked').parent().data("aid");
 
     if (submit.success) {
-      window.location.search = '?units=' + collection(submit.ranges);
+      window.location.search = '?units=' + collection(submit.ranges) +
+        '&aid=' + aid;
     }
   });
 
