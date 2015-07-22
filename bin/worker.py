@@ -66,6 +66,7 @@ class Worker(work.Worker):
         #                             translated)
         full, summ, reqs = db.seqvarM3A(rcad, query['pdb'], query['model'],
                                         translated, m3daid = 1)
+                                        #translated, query['aid'])
         return {
             'id': query['id'],
             'units': query['units'],
@@ -76,6 +77,7 @@ class Worker(work.Worker):
             'model': query['model'],
             'ranges': query['ranges'],
             'expanded_units': self.expand(query['ranges'])
+            #,'aid': query['aid']
         }
 
 
