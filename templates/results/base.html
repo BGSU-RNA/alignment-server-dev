@@ -16,6 +16,7 @@
     <div class='col-md-12'>
     <ul>
       <li>PDB|Model: {{ pdb }}|{{ model }}</li>
+      <li>Alignment: {{ aid }}</li>
       {%- block rangelist scoped %}
       {%- set rangeno = 0 %}
       {%- for range in ranges %}
