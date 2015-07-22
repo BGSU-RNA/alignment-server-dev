@@ -28,7 +28,8 @@ def options(connection):
                 'alignment_id': description,
                 'diagram': alignment['crw_diagram'],
                 'aln_dir': alignment['crw_aln_dir'],
-                'aln_fil': alignment['crw_aln_fil']
+                'aln_fil': alignment['crw_aln_fil'],
+                'option': alignment['option']
             }
         info = alignments[pdb][description]
         info['chains'].append(alignment['chain_id'])
