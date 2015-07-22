@@ -57,7 +57,8 @@ def known():
                 known.append({
                     'pdb': option['pdb'],
                     'model_number': option['model_number'],
-                    'chain_id': chain
+                    'chain_id': chain,
+                    'aid': alignment['option']
                 })
     return known
 
