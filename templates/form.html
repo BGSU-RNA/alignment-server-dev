@@ -62,10 +62,11 @@
                   {%- for alignment in structure['alignments'] %}
                   <div class="col-sm-5">
                     <div class="radio alignment">
-                        <label data-chains='{{alignment["chains"]|join(",")}}'>
+                        <label data-chains='{{alignment["chains"]|join(",")}}'
+                                data-aid='{{alignment['option']}}'>
                           <input type="radio" class='alignment-radio'
                               value="{{alignment['alignment_id']}}" name='alignments'>
-                          {{ alignment['description'] }}
+                          {{ alignment['description'] }} ((({{ alignment['option']}})))
                         </label>
                     </div>
 
