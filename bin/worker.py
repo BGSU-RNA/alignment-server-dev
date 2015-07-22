@@ -76,8 +76,8 @@ class Worker(work.Worker):
             'pdb': query['pdb'],
             'model': query['model'],
             'ranges': query['ranges'],
-            'expanded_units': self.expand(query['ranges'])
-            #,'aid': query['aid']
+            'expanded_units': self.expand(query['ranges']),
+            'aid': query['aid']
         }
 
 
