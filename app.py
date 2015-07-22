@@ -102,7 +102,8 @@ def create_query(data):
         'pdb': pdb,
         'model': model,
         'ranges': ranges,
-        'units': data['units']
+        'units': data['units'],
+        'aid': data['aid']
     }
     query['id'] = create_id(query)
     return query
