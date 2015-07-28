@@ -76,7 +76,8 @@ class Worker(work.Worker):
             'model': query['model'],
             'ranges': query['ranges'],
             'expanded_units': self.expand(query['ranges']),
-            'aid': query['aid']
+            'aid': query['aid'],
+            'descr': query['descr']
         }
 
 

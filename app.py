@@ -58,7 +58,8 @@ def known():
                     'pdb': option['pdb'],
                     'model_number': option['model_number'],
                     'chain_id': chain,
-                    'aid': alignment['option']
+                    'aid': alignment['option'],
+                    'descr': alignment['description']
                 })
     return known
 
@@ -98,12 +99,19 @@ def create_query(data):
     pdb, model, ranges = r3d.ranges.ranges(data)
     r3d.ranges.validate(pdb, model, ranges, known())
 
+    for entry in known():
+        if (entry.get('pdb') == pdb) \
+            and (entry.get('model_number') == model) \
+            and (str(entry.get('aid')) == str(data['aid'])):
+            descr = entry.get('descr')
+
     query = {
         'pdb': pdb,
         'model': model,
         'ranges': ranges,
         'units': data['units'],
-        'aid': data['aid']
+        'aid': data['aid'],
+        'descr': descr
     }
     query['id'] = create_id(query)
     return query
