@@ -76,6 +76,7 @@ def create_id(data):
 
     md5 = hashlib.md5()
     md5.update(data['units'])
+    md5.update(data['aid'])
     return md5.hexdigest()
 
 
