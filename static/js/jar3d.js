@@ -22,7 +22,7 @@ $(window).load(function() {
     var parts = sequence.split(',')
 
     // A sequence is valid if it is only composed of A, C, G, U, N or -
-    if (sequence.search(/[^ACGUN-]/)) {
+    if (sequence.search(/[^ACGUN-]/i) !== -1) {
       return false;
     }
 
@@ -32,7 +32,7 @@ $(window).load(function() {
       return chars[0] === '-' || chars[chars.length - 1] === '-'
     });
 
-    if (flanking_gaps.length === 0) {
+    if (flanking_gaps.length !== 0) {
       return false;
     }
 
@@ -54,22 +54,30 @@ $(window).load(function() {
   }
 
   function getAllChildSequences(parent) {
-    return $(parent)
-      .select('.sequence')
-      .contents()
-      .map(function(str) { return str.toUpperCase(); })
-      .filter(validSequence);
+    var sequences = []
+    $(parent)
+      .find('.sequence')
+      .each(function() {
+        console.log($(this));
+        sequences.push($(this).text());
+      });
+
+    console.log(sequences);
+    return sequences.filter(validSequence);
   }
 
   $(".jar3d-all").on('click', function(event) {
     var sequences = getAllChildSequences("#sequence_summary");
+    console.log(sequences);
     if (sequences.length == 0) {
-      showMessage({valid: false, msg: "No valid sequences found"});
+      return showMessage({valid: false, msg: "No valid sequences found"});
     }
+
+    var url = 'https://' + window.location.host + '/jar3d';
 
     $.ajax({
       type: 'POST',
-      url: 'https://rna.bgsu.edu/jar3d',
+      url: url,
       contentType: 'application/json; charset=utf8',
       traditional: false,
       data: formatRequest(sequences),
@@ -77,7 +85,6 @@ $(window).load(function() {
       if (data.redirect) {
         window.location.href = data.redirect;
       } else if (data.error) {
-        console.log(data.error);
         showMessage({valid: false, msg: data.error});
       } else {
         showMessage({valid: false, msg: "Unknown Error occurred"});
