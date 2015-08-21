@@ -37,7 +37,7 @@ def connect(config):
         raise
 
 
-def seqvar(db, pdb, model, ranges):
+def seqvar(db, pdb, model, ranges, m3daid):
     proc = db.init_procedure('BGSU.SeqVar')
 
     proc.bind(pdb, _mssql.SQLCHAR, '@PDBID', null=False, output=False,
@@ -62,10 +62,12 @@ def seqvar(db, pdb, model, ranges):
         proc.bind(stop.get('number', False), _mssql.SQLINT4, name + 'b',
                   null=False, output=False)
 
+    proc.bind(m3daid, _mssql.SQLINT1, '@M3DAID', null=False, output=False)
+
     try:
         proc.execute()
     except Exception as err:
-        logging.error("Failed to process %s %s", pdb, ranges)
+        logging.error("Failed to process %s %s %s", pdb, ranges, m3daid)
         logging.exception(err)
         raise ProcessingException()
 
