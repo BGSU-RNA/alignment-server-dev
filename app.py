@@ -135,11 +135,16 @@ def result(data):
     query = create_query(data)
     result = g.queue.process(query)
     result['formats'] = []
+
+    url = request.url
+    if app.config.get('secure'):
+        url = url.replace('http', 'https')
+
     if 'full' in result:
         for name in ['stockholm', 'clustal', 'fasta', 'tsv', 'json']:
             result['formats'].append({
                 'name': name,
-                'url': request.url + '&format=%s' % name
+                'url': url + '&format=%s' % name
             })
     return result
 
