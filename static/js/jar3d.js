@@ -19,7 +19,7 @@ $(window).load(function() {
   }
 
   function validSequence(sequence) {
-    var parts = sequence.split(',')
+    var parts = sequence.split('*')
 
     // A sequence is valid if it is only composed of A, C, G, U, N or -
     if (sequence.search(/[^ACGUN-]/i) !== -1) {
