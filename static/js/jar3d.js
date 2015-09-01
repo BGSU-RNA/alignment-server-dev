@@ -73,7 +73,7 @@ $(window).load(function() {
       return showMessage({valid: false, msg: "No valid sequences found"});
     }
 
-    var url = 'https://' + window.location.host + '/jar3d';
+    var url = 'http://' + window.location.host + '/jar3d/process_input';
 
     $.ajax({
       type: 'POST',
