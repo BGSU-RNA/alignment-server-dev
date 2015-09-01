@@ -21,8 +21,11 @@ $(window).load(function() {
   function validSequence(sequence) {
     var parts = sequence.split('*')
 
-    // A sequence is valid if it is only composed of A, C, G, U, N or -
-    if (sequence.search(/[^ACGUN-]/i) !== -1) {
+    // A sequence is valid if it is only composed of A, C, G, U or -
+    var bad_parts = parts.filter(function(p) {
+      return sequence.search(/[^ACGU-]/i) !== -1;
+    });
+    if (bad_parts.length !== 0) {
       return false;
     }
 
@@ -58,17 +61,14 @@ $(window).load(function() {
     $(parent)
       .find('.sequence')
       .each(function() {
-        console.log($(this));
         sequences.push($(this).text());
       });
 
-    console.log(sequences);
     return sequences.filter(validSequence);
   }
 
   $(".jar3d-all").on('click', function(event) {
     var sequences = getAllChildSequences("#sequence_summary");
-    console.log(sequences);
     if (sequences.length == 0) {
       return showMessage({valid: false, msg: "No valid sequences found"});
     }
