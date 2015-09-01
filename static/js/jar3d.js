@@ -20,6 +20,9 @@ $(window).load(function() {
 
   function validSequence(sequence) {
     var parts = sequence.split('*')
+    if (parts.length > 2) {
+      return false;
+    }
 
     // A sequence is valid if it is only composed of A, C, G, U or -
     var bad_parts = parts.filter(function(p) {
