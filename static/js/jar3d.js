@@ -4,7 +4,7 @@ $(window).load(function() {
   function formatRequest(sequences) {
     var fasta = sequences.join('\n');
     var headers = [];
-    var request = {
+    return {
       valid: true,
       query_type: "isNoFastaMultipleLoops",
       fasta: headers,
