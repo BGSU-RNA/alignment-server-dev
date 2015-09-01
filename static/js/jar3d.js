@@ -81,10 +81,11 @@ $(window).load(function() {
       contentType: 'application/json; charset=utf8',
       traditional: false,
       data: formatRequest(sequences),
-    }).done(function(data) {
-      if (data.redirect) {
-        window.location.href = data.redirect;
-      } else if (data.error) {
+    }).done(function(raw) {
+      var d = JSON.parse(raw)
+      if (d.redirect) {
+        window.location.href = d.redirect;
+      } else if (d.error) {
         showMessage({valid: false, msg: data.error});
       } else {
         showMessage({valid: false, msg: "Unknown Error occurred"});
