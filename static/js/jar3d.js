@@ -1,12 +1,19 @@
 $(window).load(function() {
   'use strict';
 
-  function formatRequest(sequences) {
-    var fasta = sequences.join('\n');
+  function formatRequest(sequences, counts, percent) {
     var headers = [];
+    counts.forEach(function(c) { headers.push('Count: ' + c); });
+    percent.forEach(function(p) { headers.push('Percent: ' + p); });
+    headers = headers.map(function(h) { h.join(' ') });
+
+    var fasta = sequences.map(function(s, i) {
+      return headers[i] + '\n' + s;
+    }).join("\n");
+
     return {
       valid: true,
-      query_type: "isNoFastaMultipleLoops",
+      query_type: "isFastaMultipleLoops",
       fasta: headers,
       data: sequences,
       ss: null,
@@ -18,45 +25,25 @@ $(window).load(function() {
     console.log(data);
   }
 
+  function invalidPart(sequence) {
+      var chars = sequence.split('')
+      // Check that sequence is only valid characters
+      return sequence.search(/[^ACGU-]/i) !== -1 &&
+        // Check that it does not end in gaps
+        chars[0] === '-' || chars[chars.length - 1] === '-' &&
+        // Check that the sequence is not all gaps between flanking
+        (sequence.length === 3 ? p.search(/^[^-].*[^-]$/) !== -1 : p.search(/^[^-].*[^-].*[^-]$/) !== -1)
+      ;
+  }
+
   function validSequence(sequence) {
     var parts = sequence.split('*')
     if (parts.length > 2) {
       return false;
     }
 
-    // A sequence is valid if it is only composed of A, C, G, U or -
-    var bad_parts = parts.filter(function(p) {
-      return sequence.search(/[^ACGU-]/i) !== -1;
-    });
-    if (bad_parts.length !== 0) {
-      return false;
-    }
-
-    // A sequence is valid if each part does not start or end with -
-    var flanking_gaps = parts.filter(function(p) {
-      var chars = p.split('')
-      return chars[0] === '-' || chars[chars.length - 1] === '-'
-    });
-
-    if (flanking_gaps.length !== 0) {
-      return false;
-    }
-
-    // A sequence is valid if each part has at least 1 internal sequence if it
-    // is long enough and each part does not start or end with '*'.
-      var long_enough = parts.filter(function(p) {
-      if (p.length === 3) {
-        return p.search(/^[^-].*[^-]$/) !== -1
-      }
-
-        return p.search(/^[^-].*[^-].*[^-]$/) !== -1
-    });
-
-    if (long_enough.length === 0) {
-      return false;
-    }
-
-    return true;
+    var invalid = parts.filter(invalidPart)
+    return invalid.length !== 0
   }
 
   function getAllChildSequences(parent) {
