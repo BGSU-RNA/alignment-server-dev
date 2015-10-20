@@ -93,13 +93,18 @@ if __name__ == '__main__':
                         help='Canned data to use if any')
     args = parser.parse_args()
 
+    log_args = {
+        'format': '%(levelname)s:%(asctime)s:%(message)s'
+    }
+
     if args.log_filename:
-        logging.basicConfig(filename=args.log_filename)
-    else:
-        logging.basicConfig()
+        log_args['filename'] = args.log_filename
+
+    logging.basicConfig(**log_args)
 
     canned = None
     if args.canned:
+        logging.warning("Using canned data from %s", args.canned)
         with open(args.canned, 'rb') as raw:
             canned = json.load(raw)
 
