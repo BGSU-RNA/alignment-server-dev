@@ -1,5 +1,4 @@
 import logging
-
 import _mssql
 
 
@@ -56,7 +55,7 @@ def seqvar(db, pdb, model, ranges):
         chain_name = '@Chain%s' % (index + 1)
 
         proc.bind(chain, _mssql.SQLCHAR, chain_name, null=False, output=False,
-                  max_length=1)
+                  max_length=5)
         proc.bind(start.get('number', False), _mssql.SQLINT4, name + 'a',
                   null=False, output=False)
         proc.bind(stop.get('number', False), _mssql.SQLINT4, name + 'b',
@@ -126,7 +125,7 @@ def seqvarM3A(db, pdb, model, ranges, m3daid):
         chain_name = '@Chain%s' % (index + 1)
 
         proc.bind(chain, _mssql.SQLCHAR, chain_name, null=False, output=False,
-                  max_length=1)
+                  max_length=5)
         proc.bind(start.get('number', False), _mssql.SQLINT4, name + 'a',
                   null=False, output=False)
         proc.bind(stop.get('number', False), _mssql.SQLINT4, name + 'b',
@@ -208,7 +207,7 @@ def get_translation(conn, pdb, model, chain):
               max_length=4)
     proc.bind(model, _mssql.SQLINT1, '@ModNum', null=False, output=False)
     proc.bind(chain, _mssql.SQLCHAR, '@ChainID', null=False, output=False,
-              max_length=1)
+              max_length=5)
     proc.execute()
 
     translation = {}
@@ -218,61 +217,6 @@ def get_translation(conn, pdb, model, chain):
             ins_code = None
         translation[(row['ChainNumber'], ins_code)] = row['NaturalNumber']
     return translation
-
-
-def list_options(conn):
-    """
-    Contact rCAD for the list of available structure-alignment mappings and
-    return the list.
-
-    No input parameters required (beyond connection).
-
-    Returns six columns per entry:  PDBID (char(4)), ModelNumber (tinyint),
-    ChainID (char(1)), Map3DAlnID (tinyint), Requires_Translation (bit),
-    Description (varchar(100)).
-    """
-
-    #   TODO:  identify any missing elements and add them.
-
-    proc = conn.init_procedure('BGSU.ListAlnServerOptions')
-    proc.execute()
-
-    data = []
-    for row in conn:
-        data.append({
-            'pdb': row['PDBID'],
-            'model_number': row['ModelNumber'],
-            'chain_id': row['ChainID'],
-            'option': row['Map3DAlnID'],
-            'description': row['Description'],
-            'requires_translation': row['Requires_Translation']
-        })
-    return data
-
-
-def list_structures(conn):
-    """
-    Contact rCAD for the list of available structures (PDB + model).
-
-    Necessary to split like this to handle queries between chains within
-    a model.
-
-    No input parameters required (beyond connection).
-    """
-
-    proc = conn.init_procedure('BGSU.ListAlnServerStructures')
-    proc.execute()
-
-    data = []
-    for row in conn:
-        data.append({
-            'pdb': row['PDBID'],
-            'model_number': row['ModelNumber'],
-            'organism': row['Description_Organism'],
-            'taxonomy': row['Description_Taxonomy'],
-            'contents': row['Description_Contents']
-        })
-    return data
 
 
 def all_options(conn):
