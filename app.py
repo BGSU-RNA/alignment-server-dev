@@ -169,6 +169,8 @@ def get_data():
     if 'units' in request.args:
         return result(request.args)
 
+    #d = {x: str(x) for x in range(10)}
+
     return {
         'template': 'form.html',
         'examples': examples(),
